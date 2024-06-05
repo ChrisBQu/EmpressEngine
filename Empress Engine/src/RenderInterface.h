@@ -20,6 +20,7 @@ struct RenderTransform {
 	glm::ivec2 spriteSize;
 	glm::vec2 pos;
 	glm::vec2 size;
+	float rotation;
 };
 
 struct RenderData {
@@ -31,7 +32,7 @@ struct RenderData {
 
 glm::mat4 makeOrthogrpahicProjectionMatrix(float left, float right, float top, float bottom);
 
-void drawSprite(SpriteID id, glm::vec2 pos, glm::vec2 scale);
+void drawSprite(SpriteID id, glm::vec2 pos, glm::vec2 scale, float rotation = 0.0f);
 
 extern RenderData renderData;
 

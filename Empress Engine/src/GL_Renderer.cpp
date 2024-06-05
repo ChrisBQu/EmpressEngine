@@ -119,9 +119,6 @@ void glRender() {
 
     // Pass in uniforms
    
-    // glm::vec2 screenSize = { (float)DEFAULT_SCREEN_WIDTH, (float)DEFAULT_SCREEN_HEIGHT };
-    // glUniform2fv(glcontext.screenSizeID, 1, &screenSize.x);
-
     OrthographicCamera cam = renderData.gameCamera;
     glm::mat4 orthoProjection = makeOrthogrpahicProjectionMatrix(
         cam.pos.x - cam.dimensions.x / 2.0,

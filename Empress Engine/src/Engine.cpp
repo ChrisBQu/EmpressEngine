@@ -79,7 +79,7 @@ void Engine::update() {
 
 void Engine::render() {
     glRender();
-    drawSprite(SPRITE_STAR, { 0, 0 }, { 1.0, 1.0 });
+    drawSprite(SPRITE_STAR, { 0, 0 }, { 1.0, 1.0 }, 0);
     SDL_GL_SwapWindow(myWindow);
 }
 

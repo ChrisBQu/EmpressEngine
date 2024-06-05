@@ -2,15 +2,19 @@
 #include "RenderInterface.h"
 #include "Sprite.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
+
 RenderData renderData;
 
-void drawSprite(SpriteID id, glm::vec2 pos, glm::vec2 scale) {
+void drawSprite(SpriteID id, glm::vec2 pos, glm::vec2 scale, float rotation) {
 	Sprite sprite = getSprite(id);
 	RenderTransform transform;
 	transform.pos = pos - glm::vec2(sprite.spriteSize) / 2.0f;
 	transform.size = glm::vec2(sprite.spriteSize.x * scale.x, sprite.spriteSize.y * scale.y);
 	transform.atlasOffset = sprite.atlasOffset;
 	transform.spriteSize = sprite.spriteSize;
+    transform.rotation = rotation;
 	renderData.transforms[renderData.transformCount++] = transform;
 }
 

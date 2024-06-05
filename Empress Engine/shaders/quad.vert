@@ -5,6 +5,7 @@ struct Transform {
 	ivec2 spriteSize;
 	vec2 pos;
 	vec2 size;
+	float rotation;
 };
 
 // Input
@@ -46,9 +47,19 @@ void main() {
 		vec2(right, bottom)
 	};
 
+	float radians = radians(transform.rotation);
+    float cosTheta = cos(radians);
+    float sinTheta = sin(radians);
+    mat4 rotationMatrix = mat4(
+        cosTheta, -sinTheta, 0.0, 0.0,
+        sinTheta,  cosTheta, 0.0, 0.0,
+        0.0,      0.0,      1.0, 0.0,
+        0.0,      0.0,      0.0, 1.0
+    );
+
 	// Normalize to screen coordinates
 	vec2 vertexPos = vertices[gl_VertexID];
-	gl_Position = orthoProjection * vec4(vertexPos, 0.0, 1.0);
+	gl_Position = orthoProjection * rotationMatrix * vec4(vertexPos, 0.0, 1.0);
 
 	textureCoordsOut = textureCoords[gl_VertexID];
 

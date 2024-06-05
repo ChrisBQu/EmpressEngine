@@ -56,8 +56,8 @@ void Logger::print(ConsoleTextColor color, Args&&... args) {
 }
 
 // Convenience macros
-
 #define LOG(...) Logger::log(CONSOLE_COLOR_DEFAULT, "LOG",  __VA_ARGS__)
+#define LOG_RAW(...) Logger::print(__VA_ARGS__)
 #define LOG_ERROR(...) Logger::log(CONSOLE_COLOR_RED, "ERROR",  __VA_ARGS__)
 #define LOG_DEBUG(...) Logger::log(CONSOLE_COLOR_BLUE, "DEBUG", __VA_ARGS__)
 #define LOG_WARNING(...) Logger::log(CONSOLE_COLOR_YELLOW, "WARNING", __VA_ARGS__)

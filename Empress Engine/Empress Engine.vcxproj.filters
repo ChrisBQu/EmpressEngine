@@ -16,6 +16,9 @@
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{457eef0f-9452-4419-8a6b-57f5aa9847dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\3rd Party">
+      <UniqueIdentifier>{735a62f3-ecaf-476c-bcd0-5f1691d880dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine.h">
@@ -24,7 +27,7 @@
     <ClInclude Include="src\GameConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Shader.h">
+    <ClInclude Include="src\GL_Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Sprite.h">
@@ -36,6 +39,12 @@
     <ClInclude Include="src\Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\3rdParty\stb_image.h">
+      <Filter>Header Files\3rd Party</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine.cpp">
@@ -44,7 +53,7 @@
     <ClCompile Include="src\Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Shader.cpp">
+    <ClCompile Include="src\GL_Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Sprite.cpp">
@@ -56,18 +65,18 @@
     <ClCompile Include="src\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\RenderInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\projection.vert">
+    <None Include="shaders\quad.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="shaders\projection.frag">
+    <None Include="shaders\default.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="shaders\simple.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="shaders\ripple.frag">
+    <None Include="shaders\blank.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

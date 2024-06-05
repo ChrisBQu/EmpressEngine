@@ -2,7 +2,7 @@
 #include "Engine.h"
 #include "GameConfig.h"
 #include "Logger.h"
-#include "Shader.h"
+#include "GL_Renderer.h"
 
 int main(int argc, char* args[])
 {

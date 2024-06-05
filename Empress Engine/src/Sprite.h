@@ -1,24 +1,19 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include <SDL.h>
-#include <GL/glew.h>
+#include <glm/glm.hpp>
 
-class Sprite {
-public:
-	Sprite(SDL_Renderer *renderer);
-	void render(GLuint VAO);
-private:
-	SDL_Renderer* myRenderer;
-	float rotation;
-	float x;
-	float y;
-	float width;
-	float height;
-	float x_scale;
-	float y_scale;
-	SDL_Texture* myTexture;
 
+enum SpriteID {
+	SPRITE_STAR,
+	SPRITE_COUNT
 };
+
+struct Sprite {
+	glm::ivec2 atlasOffset;
+	glm::ivec2 spriteSize;
+};
+
+Sprite getSprite(SpriteID id);
 
 #endif // SPRITE_H

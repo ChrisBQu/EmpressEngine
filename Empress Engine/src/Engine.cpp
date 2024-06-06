@@ -82,7 +82,8 @@ void Engine::handleInput() {
         }
 
         if (event.type == SDL_KEYUP || event.type == SDL_KEYDOWN ||
-            event.type == SDL_CONTROLLERBUTTONUP || event.type == SDL_CONTROLLERBUTTONDOWN) {
+            event.type == SDL_CONTROLLERBUTTONUP || event.type == SDL_CONTROLLERBUTTONDOWN ||
+            event.type == SDL_CONTROLLERAXISMOTION) {
             myController.handleInput(event);
         }
 

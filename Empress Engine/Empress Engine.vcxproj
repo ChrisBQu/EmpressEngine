@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\3rdParty\stb_image.h" />
+    <ClInclude Include="src\Controller.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\GameConfig.h" />
     <ClInclude Include="src\Logger.h" />
@@ -29,6 +30,7 @@
     <ClInclude Include="src\Utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Controller.cpp" />
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\GL_Renderer.cpp" />

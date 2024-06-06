@@ -1,6 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include "Controller.h"
 #include <SDL.h>
 #include <GL/glew.h>
 
@@ -17,7 +18,7 @@ private:
 	Uint32 frameStartTime;
 	unsigned int targetFPS;
 	bool active;
-	GLuint VAO;
+	Controller myController;
 	SDL_Window* myWindow;
 	SDL_Renderer* myRenderer;
 };

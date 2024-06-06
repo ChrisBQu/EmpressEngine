@@ -12,7 +12,7 @@ Engine::Engine() {
 }
 
 int Engine::init(const char* label, unsigned int width, unsigned int height, bool fullscreen, int fps) {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) != 0) {
         LOG_ERROR("Failed to initialize SDL: \n", SDL_GetError());
         return ERROR_CODE_SDL_UNINITIATED;
     }
@@ -57,19 +57,48 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
     }
     SDL_SetRenderDrawColor(myRenderer, 255, 255, 255, 255);
 
+    myController.initDefaultControls();
+
     renderData.gameCamera.pos = { 0, 0 };
     renderData.gameCamera.dimensions = { 640, 480 };
     active = true;
     return 0;
 }
 
+float xxx = 0;
+float yyy = 0;
+float rrr = 0;
+
 void Engine::handleInput() {
+
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) { active = false; }
-        else if (event.type == SDL_KEYUP) {
+
+        if (event.type == SDL_KEYUP) {
             if (event.key.keysym.sym == SDLK_ESCAPE) { active = false; }
         }
+
+        
+        if (event.type == SDL_JOYBUTTONUP) {
+            LOG((int)event.jbutton.button);
+        }
+
+        if (myController.getButton(ControllerButton::LEFT)) { xxx -= 5; }
+        if (myController.getButton(ControllerButton::RIGHT)) { xxx += 5; }
+        if (myController.getButton(ControllerButton::UP)) { yyy -= 5; }
+        if (myController.getButton(ControllerButton::DOWN)) { yyy += 5; }
+
+        if (event.type == SDL_KEYUP || event.type == SDL_KEYDOWN ||
+            event.type == SDL_JOYBUTTONDOWN || event.type == SDL_JOYBUTTONUP) {
+            myController.handleInput(event);
+        }
+
+
+        if (event.type == SDL_JOYDEVICEADDED || event.type == SDL_JOYDEVICEREMOVED) {
+            myController.handleDeviceConnections(event);
+        }
+
     }
 }
 
@@ -79,7 +108,7 @@ void Engine::update() {
 
 void Engine::render() {
     glRender();
-    drawSprite(SPRITE_STAR, { 0, 0 }, { 1.0, 1.0 }, 0);
+    drawSprite(SPRITE_STAR, { xxx, yyy }, { 1.0, 1.0 }, 0);
     SDL_GL_SwapWindow(myWindow);
 }
 

@@ -59,7 +59,11 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
 
     //myController.initDefaultControls();
     myController.findController();
-    myController.initDefaultKeyBindings();
+    myController.bindKeyToButton(SDLK_UP, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP);
+    myController.bindKeyToButton(SDLK_DOWN, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN);
+    myController.bindKeyToButton(SDLK_LEFT, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT);
+    myController.bindKeyToButton(SDLK_RIGHT, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT);
+
 
     renderData.gameCamera.pos = { 0, 0 };
     renderData.gameCamera.dimensions = { 640, 480 };

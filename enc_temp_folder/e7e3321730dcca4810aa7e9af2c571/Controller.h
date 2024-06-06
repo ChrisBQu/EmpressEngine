@@ -13,7 +13,6 @@ public:
 	void handleDeviceConnections(SDL_Event ev);
 	void handleInput(SDL_Event ev);
 	void bindKeyToButton(SDL_Keycode from, SDL_GameControllerButton to);
-	void initDefaultKeyBindings();
 	bool getPressed(SDL_GameControllerButton b);
 	bool getButton(SDL_GameControllerButton b);
 	bool getReleased(SDL_GameControllerButton b);

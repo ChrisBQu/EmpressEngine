@@ -5,7 +5,6 @@
 #include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 
-
 RenderData renderData;
 
 void drawSprite(SpriteID id, glm::vec2 pos, glm::vec2 scale, int depth, float rotation) {

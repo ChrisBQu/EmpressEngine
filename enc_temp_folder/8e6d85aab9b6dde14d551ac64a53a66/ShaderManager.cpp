@@ -71,6 +71,9 @@ GLuint ShaderManager::createShaderFromSourceFiles(std::string identifier, const 
     myShaderPrograms[identifier].timestamp = newtimestamp;
     myShaderPrograms[identifier].fragmentSourceFilePath = fragmentShaderSourceFile;
     myShaderPrograms[identifier].vertexSourceFilePath = vertexShaderSourceFile;
+
+    LOG(vertexShaderSourceFile);
+
     return newShader;
 }
 
@@ -89,6 +92,7 @@ int ShaderManager::buildShadersFromJSONList(const char* json_file) {
         std::string vertSource = it.value()["vertexSource"];
         std::string fragSource = it.value()["fragmentSource"];
         std::string identifier = it.key();
+        LOG(vertSource, " - ", fragSource);
         createShaderFromSourceFiles(identifier, vertSource.c_str(), fragSource.c_str());
 
     }

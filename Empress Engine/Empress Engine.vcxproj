@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\3rdParty\json.hpp" />
     <ClInclude Include="src\3rdParty\stb_image.h" />
     <ClInclude Include="src\Controller.h" />
     <ClInclude Include="src\Engine.h" />
@@ -47,6 +48,7 @@
     <None Include="shaders\blank.frag" />
     <None Include="shaders\default.frag" />
     <None Include="shaders\quad.vert" />
+    <None Include="shaders\shader_list.json" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

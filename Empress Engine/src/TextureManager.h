@@ -1,8 +1,9 @@
 #ifndef TEXTURE_MANAGER_H
 #define TEXTURE_MANAGER_H
 
-#include <sys/stat.h>
 #include <map>
+#include <string>
+#include <sys/stat.h>
 
 struct LoadedTexture {
 	int width;
@@ -12,19 +13,19 @@ struct LoadedTexture {
 
 	// Texture metadata is used for hot reloading
 	uint64_t timestamp;
-	const char* path;
+	std::string path;
 };
 
 class TextureManager {
 public:
 	TextureManager();
 	~TextureManager();
-	int loadTexture(const char* identifier, const char* path);
-	int freeTexture(const char* identifier);
-	LoadedTexture getTexture(const char* identifier);
+	int loadTexture(std::string identifier, std::string path);
+	int freeTexture(std::string identifier);
+	LoadedTexture getTexture(std::string identifier);
 	void hotReload();
 private:
-	std::map<const char*, LoadedTexture> myTextures;
+	std::map<std::string, LoadedTexture> myTextures;
 };
 
 #endif // TEXTURE_MANAGER_H

@@ -6,17 +6,18 @@
 #include <chrono>
 #include <cstdint>
 #include <map>
+#include <string>
 #include <thread>
 
 struct CompiledShaderProgram {
-	const char* identifier;
+	std::string identifier;
 	GLuint shaderID;
 
 	// Shader metadata for hot reload
 	bool builtFromFiles;
 	uint64_t timestamp;
-	const char* vertexSourceFilePath;
-	const char* fragmentSourceFilePath;
+	std::string vertexSourceFilePath;
+	std::string fragmentSourceFilePath;
 };
 
 class ShaderManager {
@@ -24,13 +25,14 @@ public:
 	ShaderManager();
 	~ShaderManager();
 	GLuint compileShader(GLenum type, const char* source);
-	GLuint createShaderProgram(const char* identifier, const char* vertexSource, const char* fragmentSource);
-	GLuint createShaderFromSourceFiles(const char* identifier, const char* vertexShaderSourceFile, const char* fragmentShaderSourceFile);
-	GLuint getShaderProgram(const char* identifier);
-	void deleteShaderProgram(const char* identifier);
+	GLuint createShaderProgram(std::string identifier, const char* vertexSource, const char* fragmentSource);
+	GLuint createShaderFromSourceFiles(std::string identifier, const char* vertexShaderSourceFile, const char* fragmentShaderSourceFile);
+	int buildShadersFromJSONList(const char* json_file);
+	GLuint getShaderProgram(std::string identifier);
+	void deleteShaderProgram(std::string identifier);
 	void hotReload();
 private:
-	std::map<const char*, CompiledShaderProgram> myShaderPrograms;
+	std::map<std::string, CompiledShaderProgram> myShaderPrograms;
 };
 
 #endif // SHADER_MANAGER_H

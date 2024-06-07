@@ -43,7 +43,9 @@ void swapTexture(const char* identifier) {
 
 void initGLRenderer() {
 
-    createShaders();
+    //createShaders();
+    glcontext.shaderManager.buildShadersFromJSONList("shaders/shader_list.json");
+
     glGenVertexArrays(1, &glcontext.VAO);
     glBindVertexArray(glcontext.VAO);
     glEnable(GL_FRAMEBUFFER_SRGB);

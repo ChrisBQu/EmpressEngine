@@ -5,6 +5,7 @@ struct Transform {
 	ivec2 spriteSize;
 	vec2 pos;
 	vec2 size;
+	float depth;
 	float rotation;
 };
 
@@ -59,7 +60,7 @@ void main() {
 
 	// Normalize to screen coordinates
 	vec2 vertexPos = vertices[gl_VertexID];
-	gl_Position = orthoProjection * rotationMatrix * vec4(vertexPos, 0.0, 1.0);
+	gl_Position = orthoProjection * rotationMatrix * vec4(vertexPos, transform.depth, 1.0);
 
 	textureCoordsOut = textureCoords[gl_VertexID];
 

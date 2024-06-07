@@ -64,7 +64,8 @@ void TextureManager::hotReload() {
                 each.second.width = width;
                 each.second.height = height;
                 each.second.channels = channels;
-            }     
+            }
+                
         }
     }
 }

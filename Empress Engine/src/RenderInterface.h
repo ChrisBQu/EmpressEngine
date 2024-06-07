@@ -4,6 +4,8 @@
 #include "Sprite.h"
 #include "Logger.h"
 
+#include <vector>
+
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
@@ -26,8 +28,7 @@ struct RenderTransform {
 struct RenderData {
 	OrthographicCamera uiCamera;
 	OrthographicCamera gameCamera;
-	int transformCount;
-	RenderTransform transforms[MAX_QUADS_ON_SCREEN];
+	std::vector<RenderTransform> transforms;
 };
 
 glm::mat4 makeOrthogrpahicProjectionMatrix(float left, float right, float top, float bottom);

@@ -15,8 +15,7 @@ void drawSprite(SpriteID id, glm::vec2 pos, glm::vec2 scale, float rotation) {
 	transform.atlasOffset = sprite.atlasOffset;
 	transform.spriteSize = sprite.spriteSize;
     transform.rotation = rotation;
-	renderData.transforms[renderData.transformCount++] = transform;
-}
+	renderData.transforms.push_back(transform);}
 
 glm::mat4 makeOrthogrpahicProjectionMatrix(float left, float right, float top, float bottom) {
     glm::mat4 result(1.0f); 

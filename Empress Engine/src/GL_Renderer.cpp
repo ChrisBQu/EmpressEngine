@@ -12,6 +12,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 struct GL_Context {
+    GLuint VAO;
     GLuint textureID;
     GLuint transformSBOID;
     GLuint screenSizeID;
@@ -90,9 +91,8 @@ void swapTexture(const char* identifier) {
 void initGLRenderer() {
 
     createShaders();
-    GLuint VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
+    glGenVertexArrays(1, &glcontext.VAO);
+    glBindVertexArray(glcontext.VAO);
     glEnable(GL_FRAMEBUFFER_SRGB);
     glDisable(0x809D);
     glEnable(GL_DEPTH_TEST);
@@ -100,11 +100,9 @@ void initGLRenderer() {
 
     glcontext.textureManager.loadTexture("tex0", "assets/textures/texture0.png");
 
-    swapTexture("tex0");
-
     glGenBuffers(1, &glcontext.transformSBOID);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, glcontext.transformSBOID);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderTransform) * MAX_QUADS_ON_SCREEN, renderData.transforms, GL_DYNAMIC_DRAW);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, glcontext.transformSBOID);
+
 
     // Get uniform handles
     glcontext.screenSizeID = glGetUniformLocation(SHADER_PROGRAM_DEFAULT, "screenSize");
@@ -113,6 +111,12 @@ void initGLRenderer() {
 }
 
 void glRender() {
+
+    glcontext.textureManager.hotReload();
+
+    swapTexture("tex0");
+
+
     glUseProgram(SHADER_PROGRAM_DEFAULT);
     glClearColor(SCREEN_CLEAR_COLOR[0], SCREEN_CLEAR_COLOR[1], SCREEN_CLEAR_COLOR[2], SCREEN_CLEAR_COLOR[3]);
     glClearDepth(0.0f);
@@ -128,12 +132,14 @@ void glRender() {
         cam.pos.y - cam.dimensions.y / 2.0,
         cam.pos.y + cam.dimensions.y / 2.0
     ); 
-
     glUniformMatrix4fv(glcontext.orthoProjectionID, 1, GL_FALSE, glm::value_ptr(orthoProjection));
 
-    glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(RenderTransform) * renderData.transformCount, renderData.transforms);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, renderData.transformCount);
-    renderData.transformCount = 0;
+    // Render the transforms
+    if (renderData.transforms.size() > 0) {
+        glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderTransform) * renderData.transforms.size(), &renderData.transforms[0], GL_DYNAMIC_DRAW);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 6, renderData.transforms.size());
+        renderData.transforms.clear();
+    }
 
     /*
     // Pass in the UI camera to render thing directly on the screen space coordinates

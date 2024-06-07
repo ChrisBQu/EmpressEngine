@@ -2,6 +2,7 @@
 
 #include "GameConfig.h"
 #include "RenderInterface.h"
+#include "TextureManager.h"
 #include "Utility.h"
 #include "Logger.h"
 
@@ -10,14 +11,12 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "3rdParty/stb_image.h"
-
 struct GL_Context {
     GLuint textureID;
     GLuint transformSBOID;
     GLuint screenSizeID;
     GLuint orthoProjectionID;
+    TextureManager textureManager;
 };
 
 GL_Context glcontext;
@@ -76,7 +75,20 @@ void createShaders() {
     SHADER_PROGRAM_BLANK = createShaderFromSourceFiles("shaders/quad.vert", "shaders/blank.frag");
 }
 
+void swapTexture(const char* identifier) {
+    LoadedTexture loadedtexture = glcontext.textureManager.getTexture(identifier);
+    glGenTextures(1, &glcontext.textureID);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, glcontext.textureID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, loadedtexture.width, loadedtexture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, loadedtexture.data);
+}
+
 void initGLRenderer() {
+
     createShaders();
     GLuint VAO;
     glGenVertexArrays(1, &VAO);
@@ -85,20 +97,10 @@ void initGLRenderer() {
     glDisable(0x809D);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_GREATER);
-    const char* TEXTURE_PATH = "assets/textures/texture0.png";
-    int width, height, channels;
-    char* data = (char*)stbi_load(TEXTURE_PATH, &width, &height, &channels, 4);
-    if (!data) { LOG_ERROR("Failed to load texture: ", TEXTURE_PATH); }
 
-    glGenTextures(1, &glcontext.textureID);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, glcontext.textureID);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    stbi_image_free(data);
+    glcontext.textureManager.loadTexture("tex0", "assets/textures/texture0.png");
+
+    swapTexture("tex0");
 
     glGenBuffers(1, &glcontext.transformSBOID);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, glcontext.transformSBOID);
@@ -117,21 +119,32 @@ void glRender() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glViewport(0, 0, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
 
-    // Pass in uniforms
-   
+    
+    // Pass in the gameCamera to render things in the camera's view
     OrthographicCamera cam = renderData.gameCamera;
     glm::mat4 orthoProjection = makeOrthogrpahicProjectionMatrix(
         cam.pos.x - cam.dimensions.x / 2.0,
         cam.pos.x + cam.dimensions.x / 2.0,
         cam.pos.y - cam.dimensions.y / 2.0,
         cam.pos.y + cam.dimensions.y / 2.0
-    );    
-    glUniformMatrix4fv(glcontext.orthoProjectionID, 1, GL_FALSE, glm::value_ptr(orthoProjection));
+    ); 
 
-    // End passing in uniforms
+    glUniformMatrix4fv(glcontext.orthoProjectionID, 1, GL_FALSE, glm::value_ptr(orthoProjection));
 
     glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(RenderTransform) * renderData.transformCount, renderData.transforms);
     glDrawArraysInstanced(GL_TRIANGLES, 0, 6, renderData.transformCount);
     renderData.transformCount = 0;
+
+    /*
+    // Pass in the UI camera to render thing directly on the screen space coordinates
+    OrthographicCamera uicam = renderData.uiCamera;
+    glm::mat4 orthoProjection2 = makeOrthogrpahicProjectionMatrix(
+        uicam.pos.x,
+        uicam.dimensions.x,
+        uicam.pos.y,
+        uicam.dimensions.y
+    );
+    glUniformMatrix4fv(glcontext.orthoProjectionID, 1, GL_FALSE, glm::value_ptr(orthoProjection2));
+    */
   
 }

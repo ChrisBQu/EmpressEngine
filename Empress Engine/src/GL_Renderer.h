@@ -8,9 +8,7 @@
 
 
 void initGLRenderer();
-
 void createShaders();
-
 void glRender();
 
 extern GLuint SHADER_PROGRAM_DEFAULT;

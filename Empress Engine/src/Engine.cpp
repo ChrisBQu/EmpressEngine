@@ -63,6 +63,10 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
 
     renderData.gameCamera.pos = { 0, 0 };
     renderData.gameCamera.dimensions = { 640, 480 };
+
+    renderData.uiCamera.pos = { 0, 0 };
+    renderData.uiCamera.dimensions = { 1280, 800 };
+
     active = true;
     return 0;
 }

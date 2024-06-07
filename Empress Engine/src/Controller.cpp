@@ -20,7 +20,6 @@ void Controller::initDefaultKeyBindings() {
     bindKeyToButton(SDLK_DOWN, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN);
     bindKeyToButton(SDLK_LEFT, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT);
     bindKeyToButton(SDLK_RIGHT, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT);
-
     bindStickToButton(0, 1, -1, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP);
     bindStickToButton(0, 1, 1, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN);
     bindStickToButton(0, 0, -1, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT);

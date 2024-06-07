@@ -9,6 +9,7 @@ struct LoadedTexture {
 	int height;
 	int channels;
 	char* data;
+
 	// Texture metadata is used for hot reloading
 	uint64_t timestamp;
 	const char* path;

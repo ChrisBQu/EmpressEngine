@@ -9,8 +9,6 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
-inline const int MAX_QUADS_ON_SCREEN = 1024;
-
 struct OrthographicCamera {
 	float zoom;
 	glm::ivec2 dimensions;

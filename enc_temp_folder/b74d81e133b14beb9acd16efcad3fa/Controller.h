@@ -25,7 +25,6 @@ const int MAX_NUMBER_OF_CONTROLLER_BUTTONS = 24;
 class Controller {
 public:
 	Controller();
-	~Controller();
 	void findController();
 	void handleDeviceConnections(SDL_Event ev);
 	void handleInput(SDL_Event ev);

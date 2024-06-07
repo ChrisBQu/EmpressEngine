@@ -7,12 +7,6 @@ Controller::Controller() {
     internalController = nullptr;
 };
 
-Controller::~Controller() {
-    if (internalController) {
-        SDL_GameControllerClose(internalController);
-    }
-}
-
 void Controller::initDefaultKeyBindings() {
     bindKeyToButton(SDLK_a, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_Y);
     bindKeyToButton(SDLK_s, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_X);

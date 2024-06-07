@@ -10,12 +10,6 @@
 
 TextureManager::TextureManager() {}
 
-TextureManager::~TextureManager() {
-    for (auto& each : myTextures) {
-        stbi_image_free(each.second.data);
-    }
-}
-
 int TextureManager::loadTexture(const char* identifier, const char* path) {;
     int width, height, channels;
     char* data = (char*)stbi_load(path, &width, &height, &channels, 4);

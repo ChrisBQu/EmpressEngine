@@ -17,7 +17,6 @@ struct LoadedTexture {
 class TextureManager {
 public:
 	TextureManager();
-	~TextureManager();
 	int loadTexture(const char* identifier, const char* path);
 	int freeTexture(const char* identifier);
 	LoadedTexture getTexture(const char* identifier);

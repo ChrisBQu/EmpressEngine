@@ -124,7 +124,7 @@ void ShaderManager::deleteShaderProgram(std::string identifier) {
   
 }
 
-// Get shader program by identifier
+// Get shader program by identifier (GLuint used by OpenGL)
 GLuint ShaderManager::getShaderProgram(std::string identifier) {
     if (myShaderPrograms.find(identifier) != myShaderPrograms.end()) {
         return myShaderPrograms[identifier].shaderID;

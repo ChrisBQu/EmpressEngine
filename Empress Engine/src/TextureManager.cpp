@@ -8,14 +8,17 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "3rdParty/stb_image.h"
 
+// Constructor
 TextureManager::TextureManager() {}
 
+// Destructor
 TextureManager::~TextureManager() {
     for (auto& each : myTextures) {
         stbi_image_free(each.second.data);
     }
 }
 
+// Take an identifier string, and load the texture from a filepath
 int TextureManager::loadTexture(std::string identifier, std::string path) {;
     int width, height, channels;
     char* data = (char*)stbi_load(path.c_str(), &width, &height, &channels, 4);
@@ -32,6 +35,7 @@ int TextureManager::loadTexture(std::string identifier, std::string path) {;
     return 0;
 }
 
+// Free the memory of a texture of a given identifier, and remove it from the loaded texture list
 int TextureManager::freeTexture(std::string identifier) {
     if (myTextures.find(identifier) == myTextures.end()) {
         LOG_ERROR("Tried to free the memory of a texture that doesn't exist: ", identifier);
@@ -43,6 +47,7 @@ int TextureManager::freeTexture(std::string identifier) {
     return 0;
 }
 
+// Get texture by identifier (GLuint used by OpenGL)
 LoadedTexture TextureManager::getTexture(std::string identifier) {
     if (myTextures.find(identifier) == myTextures.end()) {
         LOG_ERROR("Tried to retrieve a texture that doesn't exist: ", identifier);
@@ -52,6 +57,8 @@ LoadedTexture TextureManager::getTexture(std::string identifier) {
     return myTextures[identifier];
 }
 
+
+// Call once per frame so that changes to the texture files will automatically be reflected without having to restart the game
 void TextureManager::hotReload() {
     for (auto& each : myTextures) {
         uint64_t newstamp = getFileTimestamp(each.second.path.c_str());

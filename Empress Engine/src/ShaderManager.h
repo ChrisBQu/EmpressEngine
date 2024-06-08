@@ -9,6 +9,7 @@
 #include <string>
 #include <thread>
 
+// Structure is used internally to hold loaded shader programs in such a way that hot reloading, and mapping to a string identifier can be supported,
 struct CompiledShaderProgram {
 	std::string identifier;
 	GLuint shaderID;

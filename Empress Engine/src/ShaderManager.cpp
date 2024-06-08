@@ -6,8 +6,15 @@
 
 #include <algorithm>
 
+// Constructor
 ShaderManager::ShaderManager() {};
-ShaderManager::~ShaderManager() {};
+
+// Destructor
+ShaderManager::~ShaderManager() {
+    for (auto& each : myShaderPrograms) {
+        glDeleteShader(each.second.shaderID);
+    }
+};
 
 // Compile a GL Shader from source code string, and return the GLUint handle for it
 GLuint ShaderManager::compileShader(GLenum type, const char* source) {
@@ -74,6 +81,18 @@ GLuint ShaderManager::createShaderFromSourceFiles(std::string identifier, const 
     return newShader;
 }
 
+// Takes a JSON file, and builds all of the shaders defined in it. The format should be:
+// {
+//      "SHADER1" : {
+//          "vertexSource": "shaders/source.vert",
+//          "fragmentSource" : "shaders/source.frag"
+//      },
+//      "SHADER2" : {
+//          "vertexSource": "shaders/source.vert",
+//          "fragmentSource" : "shaders/source.frag"
+//      }
+//
+// }
 int ShaderManager::buildShadersFromJSONList(const char* json_file) {
     std::string s = readFileIntoString(json_file);
     if (s.length() == 0) {
@@ -94,7 +113,7 @@ int ShaderManager::buildShadersFromJSONList(const char* json_file) {
     }
 }
 
-
+// Unload a shader by identifier, and remove it from the list of shader programs
 void ShaderManager::deleteShaderProgram(std::string identifier) {
     if (myShaderPrograms.find(identifier) != myShaderPrograms.end()) {
         glDeleteShader(myShaderPrograms[identifier].shaderID);
@@ -105,6 +124,7 @@ void ShaderManager::deleteShaderProgram(std::string identifier) {
   
 }
 
+// Get shader program by identifier
 GLuint ShaderManager::getShaderProgram(std::string identifier) {
     if (myShaderPrograms.find(identifier) != myShaderPrograms.end()) {
         return myShaderPrograms[identifier].shaderID;
@@ -113,25 +133,33 @@ GLuint ShaderManager::getShaderProgram(std::string identifier) {
     return -1;
 }
 
+// Call once per frame to allow changes to shader file source codes to automatically result in recompiling/linking of the shader programs
 void ShaderManager::hotReload() {
-    std::string replaceIdentifier = "";
-    std::string replaceSourceVertex = "";
-    std::string replaceSourceFragment = "";
+
+    std::vector<std::string> replaceIdentifiers;
+    std::vector<std::string> replaceVertexSources;
+    std::vector<std::string> replaceFragSources;
+
+    // Loop through the array and find all of the shaders that need to be changed. This is to avoid modifying a map that we are iterating through
     for (auto& each : myShaderPrograms) {
         if (each.second.builtFromFiles) {
             uint64_t newtimestamp = std::max(getFileTimestamp(each.second.vertexSourceFilePath.c_str()), getFileTimestamp(each.second.fragmentSourceFilePath.c_str()));
             if (newtimestamp > each.second.timestamp) {
-                replaceIdentifier = each.first;
-                replaceSourceVertex = each.second.vertexSourceFilePath;
-                replaceSourceFragment = each.second.fragmentSourceFilePath;
+                replaceIdentifiers.push_back(each.first);
+                replaceVertexSources.push_back(each.second.vertexSourceFilePath);
+                replaceFragSources.push_back(each.second.fragmentSourceFilePath);
             }
         }
     }
 
-    if (replaceIdentifier.length() != 0) {
-        Logger::log(CONSOLE_COLOR_GREEN, "SHADER", "Hot reload triggered for shader program: ", replaceIdentifier);
-        deleteShaderProgram(replaceIdentifier);
-        createShaderFromSourceFiles(replaceIdentifier, replaceSourceVertex.c_str(), replaceSourceFragment.c_str());
+    
+
+    // Reload all of the shaders that need to be reloaded
+    for (size_t i = 0; i < replaceIdentifiers.size(); i++) {
+        Logger::log(CONSOLE_COLOR_GREEN, "SHADER", "Hot reload triggered for shader program: ", replaceIdentifiers[i]);
+        deleteShaderProgram(replaceIdentifiers[i]);
+        createShaderFromSourceFiles(replaceIdentifiers[i], replaceVertexSources[i].c_str(), replaceFragSources[i].c_str());
+
     }
 
 }

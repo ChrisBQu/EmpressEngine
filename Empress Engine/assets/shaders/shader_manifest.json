@@ -1,0 +1,10 @@
+{
+  "DEFAULT" : {
+    "vertexSource": "assets/shaders/quad.vert",
+    "fragmentSource": "assets/shaders/default.frag"
+  },
+  "BLANK" : {
+    "vertexSource": "assets/shaders/quad.vert",
+    "fragmentSource": "assets/shaders/blank.frag"
+  }
+}

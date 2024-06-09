@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Resource Files\Shaders">
-      <UniqueIdentifier>{457eef0f-9452-4419-8a6b-57f5aa9847dd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\3rd Party">
       <UniqueIdentifier>{735a62f3-ecaf-476c-bcd0-5f1691d880dd}</UniqueIdentifier>
     </Filter>
@@ -24,6 +21,9 @@
     </Filter>
     <Filter Include="Source Files\Graphics">
       <UniqueIdentifier>{3c9ccac2-ec17-4efa-9fd9-07bddcd8f350}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{333d1f4c-0bb0-41e5-94c8-e547f168c59c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -97,20 +97,20 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\quad.vert">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="shaders\default.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="shaders\blank.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="shaders\shader_list.json">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="assets\animation_data.json">
+    <None Include="assets\animation_manifest.json">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\blank.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\default.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\quad.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\shader_manifest.json">
+      <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

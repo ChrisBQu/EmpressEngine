@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "GameConfig.h"
 #include "GL_Renderer.h"
 #include "Logger.h"
 #include "RenderInterface.h"
@@ -8,6 +9,8 @@
 Sprite mySprite;
 
 Engine::Engine() {
+    frameCount = 0;
+    frameStartTime = 0;
     myWindow = NULL;
     myRenderer = NULL;
     targetFPS = 60;
@@ -20,7 +23,7 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
         return ERROR_CODE_SDL_UNINITIATED;
     }
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
@@ -76,10 +79,7 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
     mySprite.depth = 0;
     mySprite.scale = { 1.0, 1.0 };
 
-    buildSpriteAnimationList();
-
-    //SpriteAnimationData sad = createSpriteAnimationDataFromTemplate("PINK_BLOB_WALK");
-    buildSpriteAnimationList();
+    buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
     mySprite.animation = getSpriteAnimationData("PINK_BLOB_WALK");
 
     return 0;

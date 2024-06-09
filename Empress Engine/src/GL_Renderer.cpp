@@ -44,7 +44,7 @@ void swapTexture(const char* identifier) {
 void initGLRenderer() {
 
     //createShaders();
-    glcontext.shaderManager.buildShadersFromJSONList("shaders/shader_list.json");
+    glcontext.shaderManager.buildShadersFromJSONList(SHADER_MANIFEST_FILEPATH);
 
     glGenVertexArrays(1, &glcontext.VAO);
     glBindVertexArray(glcontext.VAO);

@@ -17,7 +17,7 @@ struct SpriteAnimationData {
 	unsigned int framesPerRow;
 };
 
-void buildSpriteAnimationList();
+void buildSpriteAnimationList(const char* filepath);
 SpriteAnimationData getSpriteAnimationData(std::string identifier);
 
 class Sprite {

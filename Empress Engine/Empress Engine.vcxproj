@@ -45,6 +45,7 @@
     <ClCompile Include="src\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\animation_data.json" />
     <None Include="shaders\blank.frag" />
     <None Include="shaders\default.frag" />
     <None Include="shaders\quad.vert" />

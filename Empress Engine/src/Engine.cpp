@@ -4,6 +4,9 @@
 #include "RenderInterface.h"
 #include <iostream>
 
+
+Sprite mySprite;
+
 Engine::Engine() {
     myWindow = NULL;
     myRenderer = NULL;
@@ -57,7 +60,6 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
     }
     SDL_SetRenderDrawColor(myRenderer, 255, 255, 255, 255);
 
-    //myController.initDefaultControls();
     myController.findController();
     myController.initDefaultKeyBindings();
 
@@ -68,6 +70,18 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
     renderData.uiCamera.dimensions = { 1280, 800 };
 
     active = true;
+
+
+    mySprite.rotation = 0.0f;
+    mySprite.depth = 0;
+    mySprite.scale = { 1.0, 1.0 };
+
+    buildSpriteAnimationList();
+
+    //SpriteAnimationData sad = createSpriteAnimationDataFromTemplate("PINK_BLOB_WALK");
+    buildSpriteAnimationList();
+    mySprite.animation = getSpriteAnimationData("PINK_BLOB_WALK");
+
     return 0;
 }
 
@@ -113,14 +127,21 @@ void Engine::handleInput() {
 
 }
 
+
 void Engine::update() {
+
     frameCount++;
+
+    mySprite.pos = { xxx, yyy };
+   
 }
 
+int frame = 0;
 void Engine::render() {
     glRender();
-    drawSprite(SPRITE_STAR, { xxx, yyy }, { 1.0, 1.0 }, 0, 0);
-    drawSprite(SPRITE_STAR, { xxx + 10, yyy }, { 1.0, 1.0 }, -24, 0);
+
+    mySprite.tickAnimation();
+    mySprite.render();
 
     SDL_GL_SwapWindow(myWindow);
 }

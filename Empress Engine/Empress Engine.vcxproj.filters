@@ -109,5 +109,8 @@
     <None Include="shaders\shader_list.json">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="assets\animation_data.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

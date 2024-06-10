@@ -7,19 +7,6 @@
 
 RenderData renderData;
 
-/*
-void drawSprite(SpriteID id, glm::vec2 pos, glm::vec2 scale, int depth, float rotation) {
-	Sprite sprite = getSprite(id);
-	RenderTransform transform;
-	transform.pos = pos - glm::vec2(sprite.spriteSize) / 2.0f;
-	transform.size = glm::vec2(sprite.spriteSize.x * scale.x, sprite.spriteSize.y * scale.y);
-	transform.atlasOffset = sprite.atlasOffset;
-	transform.spriteSize = sprite.spriteSize;
-    transform.depth = -1.0 / (1.0 + std::exp(-depth)); // Map an integer to a float in range [0, 1]
-    transform.rotation = rotation;
-	renderData.transforms.push_back(transform);}
-*/
-
 glm::mat4 makeOrthogrpahicProjectionMatrix(float left, float right, float top, float bottom) {
     glm::mat4 result(1.0f); 
     result[0][0] = 2.0f / (right - left);

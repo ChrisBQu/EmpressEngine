@@ -12,5 +12,7 @@ void main() {
 
 	if (textureColor.a == 0.0) { discard; }
 
+	textureColor.a = 0.5;
+
 	fragColor = textureColor;
 }

@@ -7,6 +7,7 @@
 
 
 Sprite mySprite;
+Sprite mySprite2;
 
 Engine::Engine() {
     frameCount = 0;
@@ -75,12 +76,10 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
     active = true;
 
 
-    mySprite.rotation = 0.0f;
-    mySprite.depth = 0;
-    mySprite.scale = { 1.0, 1.0 };
-
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
     mySprite.animation = getSpriteAnimationData("PINK_BLOB_WALK");
+    mySprite2.animation = getSpriteAnimationData("PINK_BLOB_WALK");
+
 
     return 0;
 }
@@ -133,15 +132,16 @@ void Engine::update() {
     frameCount++;
 
     mySprite.pos = { xxx, yyy };
-   
+    mySprite.scale = { -1.0, 1.0 };
+    mySprite2.pos = { xxx, yyy };
 }
 
-int frame = 0;
 void Engine::render() {
     glRender();
 
     mySprite.tickAnimation();
     mySprite.render();
+    mySprite2.render();
 
     SDL_GL_SwapWindow(myWindow);
 }

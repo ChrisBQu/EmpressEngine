@@ -52,6 +52,9 @@ void initGLRenderer() {
     glDisable(GL_MULTISAMPLE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_GREATER);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
     glcontext.textureManager.loadTexture("tex0", "assets/textures/texture0.png");
     glGenTextures(1, &glcontext.textureID);

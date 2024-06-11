@@ -29,19 +29,25 @@ struct GeometryRectangle {
 	GeometryPoint size;
 };
 
+struct GeometryTriangle {
+	GeometryPoint a;
+	GeometryPoint b;
+	GeometryPoint c;
+};
 
 enum class GeometryType {
-	POINT, LINE_SEGMENT, CIRCLE, RECTANGLE, RAY
+	POINT, LINE_SEGMENT, CIRCLE, RECTANGLE, RAY, TRIANGLE
 };
 
 struct GeometryShape {
-	GeometryType shapetype; // Should be GEOMETRY_TYPE::POINT, GEOMETRY_TYPE::LINE_SEGMENT, GEOMETRY_TYPE::CIRCLE or GEOMETRY_TYPE::RECTANGLE
+	GeometryType shapetype;
 	union {
 		GeometryPoint point;
 		GeometryCircle circle;
 		GeometryLineSegment line;
 		GeometryRectangle rectangle;
 		GeometryRay ray;
+		GeometryTriangle triangle;
 	} shape;
 };
 

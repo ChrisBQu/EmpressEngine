@@ -5,9 +5,148 @@
 #include <map>
 #include <tuple>
 
+// Helper function to calculate the distance from a point to a line segment
+float pointLineDistance(GeometryPoint p, GeometryPoint a, GeometryPoint b) {
+    float A = p.x - a.x;
+    float B = p.y - a.y;
+    float C = b.x - a.x;
+    float D = b.y - a.y;
+    float dot = A * C + B * D;
+    float len_sq = C * C + D * D;
+    float param = (len_sq != 0) ? dot / len_sq : -1;
+    float xx, yy;
+    if (param < 0) {
+        xx = a.x;
+        yy = a.y;
+    }
+    else if (param > 1) {
+        xx = b.x;
+        yy = b.y;
+    }
+    else {
+        xx = a.x + param * C;
+        yy = a.y + param * D;
+    }
+    float dx = p.x - xx;
+    float dy = p.y - yy;
+    return std::sqrt(dx * dx + dy * dy);
+}
+
 // Helper function to check if two floats are approximately equal
 bool almostEqual(float a, float b, float epsilon = 1e-5) {
     return std::abs(a - b) < epsilon;
+}
+
+// Helper contains function: Circle - Point
+bool circleContainsPoint(GeometryCircle circle, GeometryPoint point) {
+    float dx = point.x - circle.pos.x;
+    float dy = point.y - circle.pos.y;
+    return ((dx * dx + dy * dy) <= (circle.radius * circle.radius));
+}
+
+// Helper contains function: Circle - Circle
+bool circleContainsCircle(GeometryCircle circle1, GeometryCircle circle2) {
+    float dx = circle2.pos.x - circle1.pos.x;
+    float dy = circle2.pos.y - circle1.pos.y;
+    float distance = std::sqrt(dx * dx + dy * dy);
+    return ((distance + circle2.radius) <= circle1.radius);
+}
+
+// Helper contains function: Circle - Line
+bool circleContainsLine(GeometryCircle circle, GeometryLineSegment line) {
+    return (circleContainsPoint(circle, line.start) && circleContainsPoint(circle, line.end));
+}
+
+// Helper contains function: Circle - Rectangle
+bool circleContainsRectangle(GeometryCircle circle, GeometryRectangle rect) {
+    GeometryPoint topLeft = { rect.pos.x, rect.pos.y };
+    GeometryPoint topRight = { rect.pos.x + rect.size.x, rect.pos.y };
+    GeometryPoint bottomLeft = { rect.pos.x, rect.pos.y + rect.size.y };
+    GeometryPoint bottomRight = { rect.pos.x + rect.size.x, rect.pos.y + rect.size.y };
+    return (circleContainsPoint(circle, topLeft) && circleContainsPoint(circle, topRight) && circleContainsPoint(circle, bottomLeft) && circleContainsPoint(circle, bottomRight));
+}
+
+// Helper coontains function: Circle - Triangle
+bool circleContainsTriangle(GeometryCircle circle, GeometryTriangle tri) {
+    return (circleContainsPoint(circle, tri.a) && circleContainsPoint(circle, tri.b) && circleContainsPoint(circle, tri.c));
+}
+
+// Helper contains function: Rectangle - Point
+bool rectangleContainsPoint(GeometryRectangle rect, GeometryPoint point) {
+    return (point.x >= rect.pos.x && point.x <= rect.pos.x + rect.size.x && point.y >= rect.pos.y && point.y <= rect.pos.y + rect.size.y);
+}
+
+// Helper contains function: Rectangle - Circle
+bool rectangleContainsCircle(GeometryRectangle rect, GeometryCircle circle) {
+    GeometryPoint left = { circle.pos.x - circle.radius, circle.pos.y };
+    GeometryPoint right = { circle.pos.x + circle.radius, circle.pos.y };
+    GeometryPoint top = { circle.pos.x, circle.pos.y - circle.radius };
+    GeometryPoint bottom = { circle.pos.x, circle.pos.y + circle.radius };
+    return (rectangleContainsPoint(rect, left) && rectangleContainsPoint(rect, right) && rectangleContainsPoint(rect, top) && rectangleContainsPoint(rect, bottom));
+}
+
+// Helper contains function: Rectangle - Line
+bool rectangleContainsLine(GeometryRectangle rect, GeometryLineSegment line) {
+    return (rectangleContainsPoint(rect, line.start) && rectangleContainsPoint(rect, line.end));
+}
+
+// Helper contains function: Rectangle - Rectangle
+bool rectangleContainsRectangle(GeometryRectangle rect1, GeometryRectangle rect2) {
+    GeometryPoint topLeft = { rect2.pos.x, rect2.pos.y };
+    GeometryPoint topRight = { rect2.pos.x + rect2.size.x, rect2.pos.y };
+    GeometryPoint bottomLeft = { rect2.pos.x, rect2.pos.y + rect2.size.y };
+    GeometryPoint bottomRight = { rect2.pos.x + rect2.size.x, rect2.pos.y + rect2.size.y };
+    return (rectangleContainsPoint(rect1, topLeft) && rectangleContainsPoint(rect1, topRight) && rectangleContainsPoint(rect1, bottomLeft) && rectangleContainsPoint(rect1, bottomRight));
+}
+
+// Helper contains function: Rectangle - Triangle
+bool rectangleContainsTriangle(GeometryRectangle rect, GeometryTriangle tri) {
+    return (rectangleContainsPoint(rect, tri.a) && rectangleContainsPoint(rect, tri.b) && rectangleContainsPoint(rect, tri.c));
+}
+
+// Helper contains function: Triangle - Point
+bool triangleContainsPoint(GeometryTriangle tri, GeometryPoint point) {
+    float d1, d2, d3;
+    bool has_neg, has_pos;
+    auto sign = [](GeometryPoint p1, GeometryPoint p2, GeometryPoint p3) {
+        return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+        };
+    d1 = sign(point, tri.a, tri.b);
+    d2 = sign(point, tri.b, tri.c);
+    d3 = sign(point, tri.c, tri.a);
+    has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+    return !(has_neg && has_pos);
+}
+
+// Helper contains function: Triangle - Line
+bool triangleContainsLine(GeometryTriangle tri, GeometryLineSegment line) {
+    return (triangleContainsPoint(tri, line.start) && triangleContainsPoint(tri, line.end));
+}
+
+// Helper contains function: Triangle - Circle
+bool triangleContainsCircle(GeometryTriangle tri, GeometryCircle circle) {
+    if (!triangleContainsPoint(tri, circle.pos)) { return false; }
+    if (pointLineDistance(circle.pos, tri.a, tri.b) < circle.radius) return false;
+    if (pointLineDistance(circle.pos, tri.b, tri.c) < circle.radius) return false;
+    if (pointLineDistance(circle.pos, tri.c, tri.a) < circle.radius) return false;
+    return true;
+}
+
+// Helper contains function: Triangle - Rectangle
+bool triangleContainsRectangle(GeometryTriangle tri, GeometryRectangle rect) {
+    GeometryPoint topLeft = { rect.pos.x, rect.pos.y };
+    GeometryPoint topRight = { rect.pos.x + rect.size.x, rect.pos.y };
+    GeometryPoint bottomLeft = { rect.pos.x, rect.pos.y + rect.size.y };
+    GeometryPoint bottomRight = { rect.pos.x + rect.size.x, rect.pos.y + rect.size.y };
+    return (triangleContainsPoint(tri, topLeft) && triangleContainsPoint(tri, topRight) && triangleContainsPoint(tri, bottomLeft) && triangleContainsPoint(tri, bottomRight));
+}
+
+// Helper contains function: Triangle - Triangle
+bool triangleContainsTriangle(GeometryTriangle tri1, GeometryTriangle tri2) {
+    return triangleContainsPoint(tri1, tri2.a) &&
+        triangleContainsPoint(tri1, tri2.b) &&
+        triangleContainsPoint(tri1, tri2.c);
 }
 
 // Helper intersection function: Point - Point
@@ -73,6 +212,26 @@ std::vector<GeometryPoint> intersectsRectangles(GeometryRectangle rect1, Geometr
     if (x_overlap > 0 && y_overlap > 0) {
         intersections.push_back({ std::max(rect1.pos.x, rect2.pos.x), std::max(rect1.pos.y, rect2.pos.y) });
         intersections.push_back({ std::min(rect1.pos.x + rect1.size.x, rect2.pos.x + rect2.size.x), std::min(rect1.pos.y + rect1.size.y, rect2.pos.y + rect2.size.y) });
+    }
+    return intersections;
+}
+
+// Helper intersection function: Triangle - Triangle
+std::vector<GeometryPoint> intersectsTriangles(GeometryTriangle tri1, GeometryTriangle tri2) {
+    std::vector<GeometryPoint> intersections;
+    if (triangleContainsPoint(tri2, tri1.a)) intersections.push_back(tri1.a);
+    if (triangleContainsPoint(tri2, tri1.b)) intersections.push_back(tri1.b);
+    if (triangleContainsPoint(tri2, tri1.c)) intersections.push_back(tri1.c);
+    if (triangleContainsPoint(tri1, tri2.a)) intersections.push_back(tri2.a);
+    if (triangleContainsPoint(tri1, tri2.b)) intersections.push_back(tri2.b);
+    if (triangleContainsPoint(tri1, tri2.c)) intersections.push_back(tri2.c);
+    GeometryLineSegment edges1[] = { {tri1.a, tri1.b}, {tri1.b, tri1.c}, {tri1.c, tri1.a} };
+    GeometryLineSegment edges2[] = { {tri2.a, tri2.b}, {tri2.b, tri2.c}, {tri2.c, tri2.a} };
+    for (auto& edge1 : edges1) {
+        for (auto& edge2 : edges2) {
+            auto points = intersectsLines(edge1, edge2);
+            intersections.insert(intersections.end(), points.begin(), points.end());
+        }
     }
     return intersections;
 }
@@ -281,68 +440,78 @@ std::vector<GeometryPoint> intersectsRayRectangle(GeometryRay ray, GeometryRecta
     return intersections;
 }
 
-// Helper contains function: Circle - Point
-bool circleContainsPoint(GeometryCircle circle, GeometryPoint point) {
-    float dx = point.x - circle.pos.x;
-    float dy = point.y - circle.pos.y;
-    return ((dx * dx + dy * dy) <= (circle.radius * circle.radius));
+// Helper intersection function: Triangle - Point
+std::vector<GeometryPoint> intersectsTrianglePoint(GeometryTriangle tri, GeometryPoint point) {
+    std::vector<GeometryPoint> intersections;
+    if (triangleContainsPoint(tri, point)) {
+        intersections.push_back(point);
+    }
+    return intersections;
 }
 
-// Helper contains function: Circle - Circle
-bool circleContainsCircle(GeometryCircle circle1, GeometryCircle circle2) {
-    float dx = circle2.pos.x - circle1.pos.x;
-    float dy = circle2.pos.y - circle1.pos.y;
-    float distance = std::sqrt(dx * dx + dy * dy);
-    return ((distance + circle2.radius) <= circle1.radius);
+// Helper intersection function: Triangle - Line
+std::vector<GeometryPoint> intersectsTriangleLine(GeometryTriangle tri, GeometryLineSegment line) {
+    std::vector<GeometryPoint> intersections;
+    GeometryLineSegment edges[] = { {tri.a, tri.b}, {tri.b, tri.c}, {tri.c, tri.a} };
+    for (auto& edge : edges) {
+        auto points = intersectsLines(edge, line);
+        intersections.insert(intersections.end(), points.begin(), points.end());
+    }
+    return intersections;
 }
 
-// Helper contains function: Circle - Line
-bool circleContainsLine(GeometryCircle circle, GeometryLineSegment line) {
-    return (circleContainsPoint(circle, line.start) && circleContainsPoint(circle, line.end));
+// Helper intersection function: Triangle - Circle
+std::vector<GeometryPoint> intersectsTriangleCircle(GeometryTriangle tri, GeometryCircle circle) {
+    std::vector<GeometryPoint> intersections;
+    GeometryLineSegment edges[] = { {tri.a, tri.b}, {tri.b, tri.c}, {tri.c, tri.a} };
+    for (auto& edge : edges) {
+        auto points = intersectsLineCircle(edge, circle);
+        intersections.insert(intersections.end(), points.begin(), points.end());
+    }
+    return intersections;
 }
 
-// Helper contains function: Circle - Rectangle
-bool circleContainsRectangle(GeometryCircle circle, GeometryRectangle rect) {
-    GeometryPoint topLeft = { rect.pos.x, rect.pos.y };
-    GeometryPoint topRight = { rect.pos.x + rect.size.x, rect.pos.y };
-    GeometryPoint bottomLeft = { rect.pos.x, rect.pos.y + rect.size.y };
-    GeometryPoint bottomRight = { rect.pos.x + rect.size.x, rect.pos.y + rect.size.y };
-    return (circleContainsPoint(circle, topLeft) && circleContainsPoint(circle, topRight) && circleContainsPoint(circle, bottomLeft) && circleContainsPoint(circle, bottomRight));
+// Helper intersection function: Triangle - Rectangle
+std::vector<GeometryPoint> intersectsTriangleRectangle(GeometryTriangle tri, GeometryRectangle rect) {
+    std::vector<GeometryPoint> intersections;
+    GeometryLineSegment rectEdges[] = {
+        {rect.pos, {rect.pos.x + rect.size.x, rect.pos.y}},
+        {{rect.pos.x, rect.pos.y + rect.size.y}, {rect.pos.x + rect.size.x, rect.pos.y + rect.size.y}},
+        {rect.pos, {rect.pos.x, rect.pos.y + rect.size.y}},
+        {{rect.pos.x + rect.size.x, rect.pos.y}, {rect.pos.x + rect.size.x, rect.pos.y + rect.size.y}}
+    };
+    GeometryLineSegment triEdges[] = { {tri.a, tri.b}, {tri.b, tri.c}, {tri.c, tri.a} };
+    for (auto& triEdge : triEdges) {
+        for (auto& rectEdge : rectEdges) {
+            auto points = intersectsLines(triEdge, rectEdge);
+            intersections.insert(intersections.end(), points.begin(), points.end());
+        }
+    }
+    return intersections;
 }
 
-// Helper contains function: Rectangle - Point
-bool rectangleContainsPoint(GeometryRectangle rect, GeometryPoint point) {
-    return (point.x >= rect.pos.x && point.x <= rect.pos.x + rect.size.x && point.y >= rect.pos.y && point.y <= rect.pos.y + rect.size.y);
+// Helper intersection function: Triangle - Ray
+std::vector<GeometryPoint> intersectsTriangleRay(GeometryTriangle tri, GeometryRay ray) {
+    std::vector<GeometryPoint> intersections;
+    GeometryLineSegment edges[] = { {tri.a, tri.b}, {tri.b, tri.c}, {tri.c, tri.a} };
+    for (auto& edge : edges) {
+        auto points = intersectsRayLine(ray, edge);
+        intersections.insert(intersections.end(), points.begin(), points.end());
+    }
+    return intersections;
 }
-
-// Helper contains function: Rectangle - Circle
-bool rectangleContainsCircle(GeometryRectangle rect, GeometryCircle circle) {
-    GeometryPoint left = { circle.pos.x - circle.radius, circle.pos.y };
-    GeometryPoint right = { circle.pos.x + circle.radius, circle.pos.y };
-    GeometryPoint top = { circle.pos.x, circle.pos.y - circle.radius };
-    GeometryPoint bottom = { circle.pos.x, circle.pos.y + circle.radius };
-    return (rectangleContainsPoint(rect, left) && rectangleContainsPoint(rect, right) && rectangleContainsPoint(rect, top) && rectangleContainsPoint(rect, bottom));
-}
-
-// Helper contains function: Rectangle - Line
-bool rectangleContainsLine(GeometryRectangle rect, GeometryLineSegment line) {
-    return (rectangleContainsPoint(rect, line.start) && rectangleContainsPoint(rect, line.end));
-}
-
-// Helper contains function: Rectangle - Rectangle
-bool rectangleContainsRectangle(GeometryRectangle rect1, GeometryRectangle rect2) {
-    GeometryPoint topLeft = { rect2.pos.x, rect2.pos.y };
-    GeometryPoint topRight = { rect2.pos.x + rect2.size.x, rect2.pos.y };
-    GeometryPoint bottomLeft = { rect2.pos.x, rect2.pos.y + rect2.size.y };
-    GeometryPoint bottomRight = { rect2.pos.x + rect2.size.x, rect2.pos.y + rect2.size.y };
-    return (rectangleContainsPoint(rect1, topLeft) && rectangleContainsPoint(rect1, topRight) && rectangleContainsPoint(rect1, bottomLeft) && rectangleContainsPoint(rect1, bottomRight));
-}
-
-
 
 std::vector<GeometryPoint> geometryGetIntersections(GeometryShape first, GeometryShape second) {
     std::vector<GeometryPoint> intersections;
-    if (first.shapetype == GeometryType::RAY) {
+    if (first.shapetype == GeometryType::TRIANGLE) {
+        if (second.shapetype == GeometryType::TRIANGLE) { intersections = intersectsTriangles(first.shape.triangle, second.shape.triangle); }
+        else if (second.shapetype == GeometryType::POINT) { intersections = intersectsTrianglePoint(first.shape.triangle, second.shape.point); }
+        else if (second.shapetype == GeometryType::LINE_SEGMENT) { intersections = intersectsTriangleLine(first.shape.triangle, second.shape.line); }
+        else if (second.shapetype == GeometryType::RECTANGLE) { intersections = intersectsTriangleRectangle(first.shape.triangle, second.shape.rectangle); }
+        else if (second.shapetype == GeometryType::CIRCLE) { intersections = intersectsTriangleCircle(first.shape.triangle, second.shape.circle); }
+        else if (second.shapetype == GeometryType::RAY) { intersections = intersectsTriangleRay(first.shape.triangle, second.shape.ray); }
+    }
+    else if (first.shapetype == GeometryType::RAY) {
         if (second.shapetype == GeometryType::RAY) { intersections = intersectsRays(first.shape.ray, second.shape.ray); }
         else if (second.shapetype == GeometryType::POINT) { intersections = intersectsRayPoint(first.shape.ray, second.shape.point); }
         else if (second.shapetype == GeometryType::LINE_SEGMENT) { intersections = intersectsRayLine(first.shape.ray, second.shape.line); }
@@ -377,12 +546,21 @@ bool geometryShapeContains(GeometryShape first, GeometryShape second) {
         if (second.shapetype == GeometryType::LINE_SEGMENT) { return rectangleContainsLine(first.shape.rectangle, second.shape.line); }
         if (second.shapetype == GeometryType::RECTANGLE) { return rectangleContainsRectangle(first.shape.rectangle, second.shape.rectangle); }
         if (second.shapetype == GeometryType::CIRCLE) { return rectangleContainsCircle(first.shape.rectangle, second.shape.circle); }
+        if (second.shapetype == GeometryType::TRIANGLE) { return rectangleContainsTriangle(first.shape.rectangle, second.shape.triangle); }
     }
     if (first.shapetype == GeometryType::CIRCLE) {
         if (second.shapetype == GeometryType::POINT) { return circleContainsPoint(first.shape.circle, second.shape.point); }
         if (second.shapetype == GeometryType::LINE_SEGMENT) { return circleContainsLine(first.shape.circle, second.shape.line); }
         if (second.shapetype == GeometryType::RECTANGLE) { return circleContainsRectangle(first.shape.circle, second.shape.rectangle); }
         if (second.shapetype == GeometryType::CIRCLE) { return circleContainsCircle(first.shape.circle, second.shape.circle); }
+        if (second.shapetype == GeometryType::TRIANGLE) { return circleContainsTriangle (first.shape.circle, second.shape.triangle); }
+    }
+    if (first.shapetype == GeometryType::TRIANGLE) {
+        if (second.shapetype == GeometryType::POINT) { return triangleContainsPoint(first.shape.triangle, second.shape.point); }
+        if (second.shapetype == GeometryType::LINE_SEGMENT) { return triangleContainsLine(first.shape.triangle, second.shape.line); }
+        if (second.shapetype == GeometryType::RECTANGLE) { return triangleContainsRectangle(first.shape.triangle, second.shape.rectangle); }
+        if (second.shapetype == GeometryType::CIRCLE) { return triangleContainsCircle(first.shape.triangle, second.shape.circle); }
+        if (second.shapetype == GeometryType::TRIANGLE) { return triangleContainsTriangle(first.shape.triangle, second.shape.triangle); }
     }
     return false;
 }

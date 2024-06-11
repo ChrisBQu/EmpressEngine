@@ -77,6 +77,26 @@ std::vector<GeometryPoint> intersectsRectangles(GeometryRectangle rect1, Geometr
     return intersections;
 }
 
+// Helper intersection function: Ray - Ray
+std::vector<GeometryPoint> intersectsRays(GeometryRay ray1, GeometryRay ray2) {
+    std::vector<GeometryPoint> intersections;
+    float x1 = ray1.start.x, y1 = ray1.start.y;
+    float x2 = x1 + ray1.direction.x, y2 = y1 + ray1.direction.y;
+    float x3 = ray2.start.x, y3 = ray2.start.y;
+    float x4 = x3 + ray2.direction.x, y4 = y3 + ray2.direction.y;
+    float denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+    if (almostEqual(denom, 0.0f)) { return intersections; }
+    float ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
+    float ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
+    if (ua >= 0.0f && ub >= 0.0f) {
+        GeometryPoint intersection;
+        intersection.x = x1 + ua * (x2 - x1);
+        intersection.y = y1 + ua * (y2 - y1);
+        intersections.push_back(intersection);
+    }
+    return intersections;
+}
+
 // Helper intersection function: Point - Line
 std::vector<GeometryPoint> intersectsPointLine(GeometryPoint point, GeometryLineSegment line) {
     std::vector<GeometryPoint> intersections;
@@ -184,6 +204,83 @@ std::vector<GeometryPoint> intersectsCircleRectangle(GeometryCircle circle, Geom
     return intersections;
 }
 
+// Helper intersection function: Ray - Point
+std::vector<GeometryPoint> intersectsRayPoint(GeometryRay ray, GeometryPoint point) {
+    std::vector<GeometryPoint> intersections;
+    float t = (point.x - ray.start.x) / ray.direction.x;
+    if (t >= 0.0f && almostEqual(ray.start.y + t * ray.direction.y, point.y)) {
+        intersections.push_back(point);
+    }
+    return intersections;
+}
+
+// Helper intersection function: Ray - Line
+std::vector<GeometryPoint> intersectsRayLine(GeometryRay ray, GeometryLineSegment line) {
+    std::vector<GeometryPoint> intersections;
+    float x1 = ray.start.x, y1 = ray.start.y;
+    float x2 = x1 + ray.direction.x, y2 = y1 + ray.direction.y;
+    float x3 = line.start.x, y3 = line.start.y;
+    float x4 = line.end.x, y4 = line.end.y;
+    float denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+    if (almostEqual(denom, 0.0f)) { return intersections; }
+    float ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
+    float ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
+    if (ua >= 0.0f && ub >= 0.0f && ub <= 1.0f) {
+        GeometryPoint intersection;
+        intersection.x = x1 + ua * (x2 - x1);
+        intersection.y = y1 + ua * (y2 - y1);
+        intersections.push_back(intersection);
+    }
+    return intersections;
+}
+
+// Helper intersection function: Ray - Circle
+std::vector<GeometryPoint> intersectsRayCircle(GeometryRay ray, GeometryCircle circle) {
+    std::vector<GeometryPoint> intersections;
+    float x1 = ray.start.x - circle.pos.x;
+    float y1 = ray.start.y - circle.pos.y;
+    float dx = ray.direction.x;
+    float dy = ray.direction.y;
+    float dr = std::sqrt(dx * dx + dy * dy);
+    float D = x1 * dy - y1 * dx;
+    float discriminant = circle.radius * circle.radius * dr * dr - D * D;
+    if (discriminant < 0.0f) { return intersections; }
+    float sqrtDiscriminant = std::sqrt(discriminant);
+    float signDy = (dy < 0.0f) ? -1.0f : 1.0f;
+    GeometryPoint intersection1, intersection2;
+    intersection1.x = (D * dy + signDy * dx * sqrtDiscriminant) / (dr * dr) + circle.pos.x;
+    intersection1.y = (-D * dx + std::abs(dy) * sqrtDiscriminant) / (dr * dr) + circle.pos.y;
+    intersection2.x = (D * dy - signDy * dx * sqrtDiscriminant) / (dr * dr) + circle.pos.x;
+    intersection2.y = (-D * dx - std::abs(dy) * sqrtDiscriminant) / (dr * dr) + circle.pos.y;
+    float t1 = (intersection1.x - ray.start.x) / dx;
+    float t2 = (intersection2.x - ray.start.x) / dx;
+    if (t1 >= 0.0f) {
+        intersections.push_back(intersection1);
+    }
+    if (t2 >= 0.0f) {
+        intersections.push_back(intersection2);
+    }
+    return intersections;
+}
+
+// Helper intersection function: Ray - Rectangle
+std::vector<GeometryPoint> intersectsRayRectangle(GeometryRay ray, GeometryRectangle rect) {
+    std::vector<GeometryPoint> intersections;
+    GeometryLineSegment top = { rect.pos, {rect.pos.x + rect.size.x, rect.pos.y} };
+    GeometryLineSegment bottom = { {rect.pos.x, rect.pos.y + rect.size.y}, {rect.pos.x + rect.size.x, rect.pos.y + rect.size.y} };
+    GeometryLineSegment left = { rect.pos, {rect.pos.x, rect.pos.y + rect.size.y} };
+    GeometryLineSegment right = { {rect.pos.x + rect.size.x, rect.pos.y}, {rect.pos.x + rect.size.x, rect.pos.y + rect.size.y} };
+    std::vector<GeometryPoint> topIntersections = intersectsRayLine(ray, top);
+    std::vector<GeometryPoint> bottomIntersections = intersectsRayLine(ray, bottom);
+    std::vector<GeometryPoint> leftIntersections = intersectsRayLine(ray, left);
+    std::vector<GeometryPoint> rightIntersections = intersectsRayLine(ray, right);
+    intersections.insert(intersections.end(), topIntersections.begin(), topIntersections.end());
+    intersections.insert(intersections.end(), bottomIntersections.begin(), bottomIntersections.end());
+    intersections.insert(intersections.end(), leftIntersections.begin(), leftIntersections.end());
+    intersections.insert(intersections.end(), rightIntersections.begin(), rightIntersections.end());
+    return intersections;
+}
+
 // Helper contains function: Circle - Point
 bool circleContainsPoint(GeometryCircle circle, GeometryPoint point) {
     float dx = point.x - circle.pos.x;
@@ -242,9 +339,17 @@ bool rectangleContainsRectangle(GeometryRectangle rect1, GeometryRectangle rect2
 }
 
 
+
 std::vector<GeometryPoint> geometryGetIntersections(GeometryShape first, GeometryShape second) {
     std::vector<GeometryPoint> intersections;
-    if (first.shapetype == GeometryType::POINT) {
+    if (first.shapetype == GeometryType::RAY) {
+        if (second.shapetype == GeometryType::RAY) { intersections = intersectsRays(first.shape.ray, second.shape.ray); }
+        else if (second.shapetype == GeometryType::POINT) { intersections = intersectsRayPoint(first.shape.ray, second.shape.point); }
+        else if (second.shapetype == GeometryType::LINE_SEGMENT) { intersections = intersectsRayLine(first.shape.ray, second.shape.line); }
+        else if (second.shapetype == GeometryType::RECTANGLE) { intersections = intersectsRayRectangle(first.shape.ray, second.shape.rectangle); }
+        else if (second.shapetype == GeometryType::CIRCLE) { intersections = intersectsRayCircle(first.shape.ray, second.shape.circle); }
+    }
+    else if (first.shapetype == GeometryType::POINT) {
         if (second.shapetype == GeometryType::POINT) { intersections = intersectsPoints(first.shape.point, second.shape.point); }
         else if (second.shapetype == GeometryType::LINE_SEGMENT) { intersections = intersectsPointLine(first.shape.point, second.shape.line); }
         else if (second.shapetype == GeometryType::RECTANGLE) { intersections = intersectsPointRectangle(first.shape.point, second.shape.rectangle); }

@@ -3,7 +3,6 @@
 #include "Sprite.h"
 
 #include <cmath>
-#include <glm/gtc/matrix_transform.hpp>
 
 RenderData renderData;
 

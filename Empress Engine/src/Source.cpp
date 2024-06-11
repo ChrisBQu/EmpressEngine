@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+#include "Geometry.h"
+
 int main(int argc, char* args[])
 {
 	Engine engine;

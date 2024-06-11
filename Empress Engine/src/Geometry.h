@@ -14,6 +14,11 @@ struct GeometryLineSegment {
 	GeometryPoint end;
 };
 
+struct GeometryRay {
+	GeometryPoint start;
+	GeometryPoint direction;
+};
+
 struct GeometryCircle {
 	GeometryPoint pos;
 	float radius;
@@ -26,7 +31,7 @@ struct GeometryRectangle {
 
 
 enum class GeometryType {
-	POINT, LINE_SEGMENT, CIRCLE, RECTANGLE
+	POINT, LINE_SEGMENT, CIRCLE, RECTANGLE, RAY
 };
 
 struct GeometryShape {
@@ -36,6 +41,7 @@ struct GeometryShape {
 		GeometryCircle circle;
 		GeometryLineSegment line;
 		GeometryRectangle rectangle;
+		GeometryRay ray;
 	} shape;
 };
 

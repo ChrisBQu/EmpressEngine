@@ -1,7 +1,6 @@
 #ifndef RENDER_INTERFACE_H
 #define RENDER_INTERFACE_H
 
-#include "Sprite.h"
 #include "Logger.h"
 
 #include <vector>

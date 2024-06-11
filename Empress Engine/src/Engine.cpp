@@ -1,13 +1,15 @@
 #include "Engine.h"
 #include "GameConfig.h"
+#include "GameObject.h"
 #include "GL_Renderer.h"
 #include "Logger.h"
 #include "RenderInterface.h"
+#include "SpriteAnimation.h"
+
 #include <iostream>
 
 
-Sprite mySprite;
-Sprite mySprite2;
+GameObject myObj;
 
 Engine::Engine() {
     frameCount = 0;
@@ -75,12 +77,9 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
 
     active = true;
 
-
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
-    mySprite.animation = getSpriteAnimationData("PINK_BLOB_WALK");
-    mySprite2.animation = getSpriteAnimationData("PINK_BLOB_WALK");
-    mySprite2.alpha = 0.5;
 
+    myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_WALK");
 
     return 0;
 }
@@ -130,20 +129,17 @@ void Engine::handleInput() {
 
 void Engine::update() {
 
+    myObj.transform.pos = { xxx, yyy };
+    myObj.update();
+
     frameCount++;
 
-    mySprite.pos = { xxx, yyy };
-    mySprite.scale = { -1.0, 1.0 };
-    mySprite2.pos = { xxx, yyy + 5 };
-    mySprite2.depth = -4;
 }
 
 void Engine::render() {
     glRender();
 
-    mySprite.tickAnimation();
-    mySprite.render();
-    mySprite2.render();
+    myObj.render();
 
     SDL_GL_SwapWindow(myWindow);
 }

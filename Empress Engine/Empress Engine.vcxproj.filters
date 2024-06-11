@@ -25,6 +25,12 @@
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{333d1f4c-0bb0-41e5-94c8-e547f168c59c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game Object System">
+      <UniqueIdentifier>{fc43e443-dc2b-4ee6-b085-6fb29c14e408}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Object System">
+      <UniqueIdentifier>{6538d947-62a4-4e36-ae77-307287e89ab3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine.h">
@@ -48,9 +54,6 @@
     <ClInclude Include="src\GL_Renderer.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sprite.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\Controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -69,6 +72,18 @@
     <ClInclude Include="src\Geometry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\GameObject.h">
+      <Filter>Header Files\Game Object System</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TransformStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SpriteAnimation.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sprite.h">
+      <Filter>Header Files\Game Object System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine.cpp">
@@ -82,9 +97,6 @@
     </ClCompile>
     <ClCompile Include="src\Logger.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Sprite.cpp">
-      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\GL_Renderer.cpp">
       <Filter>Source Files\Graphics</Filter>
@@ -106,6 +118,15 @@
     </ClCompile>
     <ClCompile Include="src\Geometry.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject.cpp">
+      <Filter>Source Files\Game Object System</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpriteAnimation.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sprite.cpp">
+      <Filter>Source Files\Game Object System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

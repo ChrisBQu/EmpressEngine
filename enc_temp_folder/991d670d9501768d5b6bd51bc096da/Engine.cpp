@@ -135,7 +135,6 @@ void Engine::update() {
     mySprite.pos = { xxx, yyy };
     mySprite.scale = { -1.0, 1.0 };
     mySprite2.pos = { xxx, yyy + 5 };
-    mySprite2.depth = -4;
 }
 
 void Engine::render() {

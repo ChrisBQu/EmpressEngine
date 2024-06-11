@@ -67,6 +67,7 @@ Sprite::Sprite() {
 	scale = { 1.0, 1.0 };
 	depth = 0;
 	rotation = 0;
+	alpha = 1.0;
 	animation = { false, "_null_", {0, 0}, {0, 0}, 0, 0, 0, { 0 }, 0 };
 }
 
@@ -77,7 +78,7 @@ void Sprite::render() {
 		int atlasCol = animation.currentFrame % animation.framesPerRow;
 		int atlasX = animation.atlasOffset[0] + (animation.atlasSize[0] * atlasCol);
 		int atlasY = animation.atlasOffset[1] + (animation.atlasSize[1] * atlasRow);
-		drawQuad({ atlasX, atlasY }, animation.atlasSize, pos, scale, depth, rotation);
+		drawQuad({ atlasX, atlasY }, animation.atlasSize, pos, scale, depth, rotation, alpha);
 	}
 }
 

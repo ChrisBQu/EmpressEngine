@@ -28,6 +28,7 @@ public:
 	glm::ivec2 scale;
 	int depth;
 	float rotation;
+	float alpha;
 	SpriteAnimationData animation;
 	void tickAnimation();
 	void render();

@@ -1,6 +1,7 @@
 #version 430 core
 
 layout (location = 0) in vec2 textureCoordsIn;
+layout (location = 1) in float alphaIn;
 
 layout (location = 0) out vec4 fragColor;
 
@@ -12,7 +13,7 @@ void main() {
 
 	if (textureColor.a == 0.0) { discard; }
 
-	//textureColor.a = 0.5;
+	textureColor.a = alphaIn;
 
 	fragColor = textureColor;
 }

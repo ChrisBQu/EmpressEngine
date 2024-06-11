@@ -22,6 +22,10 @@ struct RenderTransform {
 	glm::vec2 size;
 	float depth;
 	float rotation;
+	float alpha;
+
+	// To handle alignment in the GPU
+	float alignment_padding;
 };
 
 struct RenderData {
@@ -32,9 +36,7 @@ struct RenderData {
 
 glm::mat4 makeOrthogrpahicProjectionMatrix(float left, float right, float top, float bottom);
 
-//void drawSprite(SpriteID id, glm::vec2 pos, glm::vec2 scale, int depth = 0, float rotation = 0.0f);
-
-void drawQuad(glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 scale, int depth = 0, float rotation = 0.0f);
+void drawQuad(glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 scale, int depth = 0, float rotation = 0.0f, float alpha = 1.0f);
 
 extern RenderData renderData;
 

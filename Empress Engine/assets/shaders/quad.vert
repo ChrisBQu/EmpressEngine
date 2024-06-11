@@ -1,12 +1,14 @@
 #version 430 core
 
 struct Transform {
-    ivec2 atlasOffset;
-    ivec2 spriteSize;
-    vec2 pos;
-    vec2 size;
-    float depth;
-    float rotation;
+    ivec2 atlasOffset;      // Size: 8
+    ivec2 spriteSize;       // Size: 8 
+    vec2 pos;               // Size: 8
+    vec2 size;              // Size: 8 
+    float depth;            // Size: 4
+    float rotation;         // Size: 4
+    float alpha;            // Size: 4
+    float padding;          // Size: 4
 };
 
 // Input
@@ -20,6 +22,7 @@ uniform mat4 orthoProjection;
 // Output
 
 layout (location = 0) out vec2 textureCoordsOut;
+layout (location = 1) out float alphaOut;
 
 void main() {
 
@@ -68,4 +71,5 @@ void main() {
     gl_Position = orthoProjection * vec4(vertexPos, transform.depth, 1.0);
 
     textureCoordsOut = textureCoords[gl_VertexID];
+    alphaOut = transform.alpha;
 }

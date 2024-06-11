@@ -76,6 +76,7 @@ void glRender() {
 
     swapTexture("tex0");
 
+
     glUseProgram(glcontext.shaderManager.getShaderProgram("DEFAULT"));
     glClearColor(SCREEN_CLEAR_COLOR[0], SCREEN_CLEAR_COLOR[1], SCREEN_CLEAR_COLOR[2], SCREEN_CLEAR_COLOR[3]);
     glClearDepth(0.0f);
@@ -92,6 +93,11 @@ void glRender() {
         cam.pos.y + cam.dimensions.y / 2.0
     ); 
     glUniformMatrix4fv(glcontext.orthoProjectionID, 1, GL_FALSE, glm::value_ptr(orthoProjection));
+
+
+    LOG("SIZE OF glm::ivec2: ", sizeof(glm::ivec2));
+    LOG("SIZE OF glm::vec2: ", sizeof(glm:: vec2));
+    LOG("SIZE OF float: ", sizeof(float));
 
     // Render the transforms
     if (renderData.transforms.size() > 0) {

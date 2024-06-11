@@ -90,6 +90,8 @@ float rrr = 0;
 
 void Engine::handleInput() {
 
+    myController.resetInput();
+
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) { active = false; }
@@ -112,16 +114,26 @@ void Engine::handleInput() {
 
 
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
-        xxx += 5;
+        xxx += 2;
     }
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
-        xxx -= 5;
+        xxx -= 2;
     }
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP)) {
-        yyy -= 5;
+        yyy -= 2;
     }
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN)) {
-        yyy += 5;
+        yyy += 2;
+    }
+
+    if (myController.getPressed(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
+        //LOG("Down");
+        myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_WALK");
+    }
+
+    if (myController.getReleased(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
+        LOG("Up");
+        myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_STAND");
     }
 
 }

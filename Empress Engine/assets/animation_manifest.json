@@ -1,10 +1,19 @@
 {
-   "PINK_BLOB_WALK" : {
-		"atlasIdentifier" : "tex0",
-		"atlasOffset" : [0, 0],
-		"atlasSize" : [32, 32],
-		"frameCount" : 4,
-		"framesPerRow" : 2,
-		"frameTimes" : [12, 12, 12, 12]
-   }
+	"PINK_BLOB_WALK": {
+		"atlasIdentifier": "tex0",
+		"atlasOffset": [ 0, 0 ],
+		"atlasSize": [ 32, 32 ],
+		"frameCount": 4,
+		"framesPerRow": 2,
+		"frameTimes": [ 12, 12, 12, 12 ]
+	},
+
+	"PINK_BLOB_STAND": {
+		"atlasIdentifier": "tex0",
+		"atlasOffset": [ 0, 0 ],
+		"atlasSize": [ 32, 32 ],
+		"frameCount": 1,
+		"framesPerRow": 1,
+		"frameTimes": [1]
+	}
 }

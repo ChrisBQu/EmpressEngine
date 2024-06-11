@@ -35,6 +35,7 @@ public:
 	bool getPressed(SDL_GameControllerButton b);
 	bool getButton(SDL_GameControllerButton b);
 	bool getReleased(SDL_GameControllerButton b);
+	void resetInput();
 private:
 	std::map<SDL_Keycode, SDL_GameControllerButton> bindings;
 	std::map<struct ControlStickMovement, SDL_GameControllerButton> stickBindings;

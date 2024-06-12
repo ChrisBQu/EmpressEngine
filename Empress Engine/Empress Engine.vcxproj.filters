@@ -133,7 +133,7 @@
     <None Include="assets\animation_manifest.json">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="assets\shaders\blank.frag">
+    <None Include="assets\shaders\invert.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="assets\shaders\default.frag">
@@ -143,6 +143,9 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="assets\shaders\shader_manifest.json">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\screen.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

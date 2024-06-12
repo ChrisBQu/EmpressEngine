@@ -70,7 +70,7 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
     myController.findController();
     myController.initDefaultKeyBindings();
 
-    renderData.gameCamera.pos = { 0, 0 };
+    renderData.gameCamera.pos = { 40, 0 };
     renderData.gameCamera.dimensions = { 640, 480 };
 
     renderData.uiCamera.pos = { 0, 0 };
@@ -141,6 +141,10 @@ void Engine::handleInput() {
 
 
 void Engine::update() {
+
+    renderData.gameCamera.pos = { 0, 0 };
+    renderData.gameCamera.dimensions = { 640, 480 };
+
 
     myObj.transform.pos = { xxx, yyy };
     myObj2.transform.pos = { xxx, yyy+32 };

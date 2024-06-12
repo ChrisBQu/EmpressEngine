@@ -3,8 +3,8 @@
     "vertexSource": "assets/shaders/quad.vert",
     "fragmentSource": "assets/shaders/default.frag"
   },
-  "BLANK" : {
-    "vertexSource": "assets/shaders/quad.vert",
-    "fragmentSource": "assets/shaders/blank.frag"
+  "COLOR_INVERSION" : {
+    "vertexSource": "assets/shaders/screen.vert",
+    "fragmentSource": "assets/shaders/invert.frag"
   }
 }

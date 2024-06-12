@@ -1,10 +1,10 @@
 {
-  "DEFAULT" : {
+  "DEFAULT_QUAD": {
     "vertexSource": "assets/shaders/quad.vert",
-    "fragmentSource": "assets/shaders/default.frag"
+    "fragmentSource": "assets/shaders/quad_default.frag"
   },
-  "COLOR_INVERSION" : {
+  "DEFAULT_POST": {
     "vertexSource": "assets/shaders/screen.vert",
-    "fragmentSource": "assets/shaders/invert.frag"
+    "fragmentSource": "assets/shaders/screen_default.frag"
   }
 }

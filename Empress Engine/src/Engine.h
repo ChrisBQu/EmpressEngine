@@ -2,6 +2,8 @@
 #define ENGINE_H
 
 #include "Controller.h"
+#include "GL_Renderer.h"
+
 #include <SDL.h>
 #include <GL/glew.h>
 
@@ -20,7 +22,7 @@ private:
 	bool active;
 	Controller myController;
 	SDL_Window* myWindow;
-	SDL_Renderer* myRenderer;
+	GL_Renderer myGLRenderer;
 };
 
 const Uint8 ERROR_CODE_SDL_UNINITIATED = 1;

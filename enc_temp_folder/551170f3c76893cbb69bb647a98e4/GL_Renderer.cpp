@@ -93,6 +93,7 @@ void GL_Renderer::render() {
     // Render the sprites to the FBO
     glBindFramebuffer(GL_FRAMEBUFFER, glcontext.FBO);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //glUseProgram(glcontext.shaderManager.getShaderProgram("DEFAULT_QUAD"));
     glcontext.orthoProjectionMatrixID = glGetUniformLocation(glcontext.shaderManager.getShaderProgram("DEFAULT_QUAD"), "orthoProjection");
     glUniformMatrix4fv(glcontext.orthoProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(orthoProjection));
     for (const auto& it : renderData.transforms) {

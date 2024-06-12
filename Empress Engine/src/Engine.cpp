@@ -16,7 +16,7 @@ Engine::Engine() {
     frameCount = 0;
     frameStartTime = 0;
     myWindow = NULL;
-    myRenderer = NULL;
+    myGLRenderer = GL_Renderer();
     targetFPS = 60;
     active = false;
 }
@@ -59,14 +59,11 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
         return ERROR_CODE_GL_INIT_FAILURE;
     }
 
-    initGLRenderer();
-    myRenderer = SDL_CreateRenderer(myWindow, -1, 0);
-    if (myRenderer == NULL) {
-        LOG_ERROR("Failed to create SDL Renderer: \n", SDL_GetError());
+    int renderer_status = myGLRenderer.init();
+    if (renderer_status != 0) {
+        LOG_ERROR("Error initializing renderer - Error code: ", renderer_status);
         return ERROR_CODE_NULL_RENDERER;
     }
-    SDL_SetRenderDrawColor(myRenderer, 255, 255, 255, 255);
-
     myController.findController();
     myController.initDefaultKeyBindings();
 
@@ -157,10 +154,11 @@ void Engine::update() {
 }
 
 void Engine::render() {
-    glRender();
-
+    
     myObj.render();
     myObj2.render();
+
+    myGLRenderer.render();
 
     SDL_GL_SwapWindow(myWindow);
 }

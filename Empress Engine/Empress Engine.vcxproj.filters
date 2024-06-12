@@ -133,10 +133,10 @@
     <None Include="assets\animation_manifest.json">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="assets\shaders\invert.frag">
+    <None Include="assets\shaders\screen_default.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="assets\shaders\default.frag">
+    <None Include="assets\shaders\quad_default.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="assets\shaders\quad.vert">

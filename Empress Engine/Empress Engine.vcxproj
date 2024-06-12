@@ -55,8 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\animation_manifest.json" />
-    <None Include="assets\shaders\invert.frag" />
-    <None Include="assets\shaders\default.frag" />
+    <None Include="assets\shaders\screen_default.frag" />
+    <None Include="assets\shaders\quad_default.frag" />
     <None Include="assets\shaders\quad.vert" />
     <None Include="assets\shaders\screen.vert" />
     <None Include="assets\shaders\shader_manifest.json" />

@@ -3,6 +3,8 @@
 
 #include "Logger.h"
 
+#include <map>
+#include <string>
 #include <vector>
 
 #include <GL/glew.h>
@@ -30,12 +32,12 @@ struct RenderTransform {
 struct RenderData {
 	OrthographicCamera uiCamera;
 	OrthographicCamera gameCamera;
-	std::vector<RenderTransform> transforms;
+	std::map<std::string, std::vector<RenderTransform>> transforms;
 };
 
 glm::mat4 makeOrthogrpahicProjectionMatrix(float left, float right, float top, float bottom);
 
-void drawQuad(glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 scale, int depth = 0, float rotation = 0.0f, float alpha = 1.0f);
+void drawQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 scale, int depth = 0, float rotation = 0.0f, float alpha = 1.0f);
 
 extern RenderData renderData;
 

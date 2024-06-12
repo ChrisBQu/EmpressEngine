@@ -10,6 +10,7 @@
 
 
 GameObject myObj;
+GameObject myObj2;
 
 Engine::Engine() {
     frameCount = 0;
@@ -79,7 +80,9 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
 
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
 
-    myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_WALK");
+    myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_STAND");
+    myObj2.sprite.animation = getSpriteAnimationData("BLUE_BLOB_WALK");
+
 
     return 0;
 }
@@ -127,12 +130,10 @@ void Engine::handleInput() {
     }
 
     if (myController.getPressed(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
-        //LOG("Down");
         myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_WALK");
     }
 
     if (myController.getReleased(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
-        LOG("Up");
         myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_STAND");
     }
 
@@ -142,7 +143,10 @@ void Engine::handleInput() {
 void Engine::update() {
 
     myObj.transform.pos = { xxx, yyy };
+    myObj2.transform.pos = { xxx, yyy+32 };
     myObj.update();
+    myObj2.update();
+    myObj2.transform.scale = { -1.0, 1.0 };
 
     frameCount++;
 
@@ -152,6 +156,7 @@ void Engine::render() {
     glRender();
 
     myObj.render();
+    myObj2.render();
 
     SDL_GL_SwapWindow(myWindow);
 }

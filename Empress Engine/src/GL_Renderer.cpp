@@ -57,6 +57,7 @@ void initGLRenderer() {
 
 
     glcontext.textureManager.loadTexture("tex0", "assets/textures/texture0.png");
+    glcontext.textureManager.loadTexture("tex1", "assets/textures/texture1.png");
     glGenTextures(1, &glcontext.textureID);
 
     glGenBuffers(1, &glcontext.transformSBOID);
@@ -73,8 +74,6 @@ void glRender() {
     // Hot reloading of assets should be toggle-able
     if (HOT_TEXTURE_SWAPPING_ENABLED) { glcontext.textureManager.hotReload(); }
     if (HOT_SHADER_SWAPPING_ENABLED) { glcontext.shaderManager.hotReload(); }
-
-    swapTexture("tex0");
 
     glUseProgram(glcontext.shaderManager.getShaderProgram("DEFAULT"));
     glClearColor(SCREEN_CLEAR_COLOR[0], SCREEN_CLEAR_COLOR[1], SCREEN_CLEAR_COLOR[2], SCREEN_CLEAR_COLOR[3]);
@@ -94,11 +93,14 @@ void glRender() {
     glUniformMatrix4fv(glcontext.orthoProjectionID, 1, GL_FALSE, glm::value_ptr(orthoProjection));
 
     // Render the transforms
-    if (renderData.transforms.size() > 0) {
-        glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderTransform) * renderData.transforms.size(), &renderData.transforms[0], GL_DYNAMIC_DRAW);
-        glDrawArraysInstanced(GL_TRIANGLES, 0, 6, renderData.transforms.size());
-        renderData.transforms.clear();
+    for (const auto& it : renderData.transforms) {
+        swapTexture(it.first.c_str());
+        if (it.second.size() > 0) {
+            glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderTransform) * it.second.size(), &it.second[0], GL_DYNAMIC_DRAW);
+            glDrawArraysInstanced(GL_TRIANGLES, 0, 6, it.second.size());
+        }
     }
+    renderData.transforms.clear();
 
     /*
     // Pass in the UI camera to render thing directly on the screen space coordinates

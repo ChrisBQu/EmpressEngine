@@ -14,6 +14,24 @@
 		"atlasSize": [ 32, 32 ],
 		"frameCount": 1,
 		"framesPerRow": 1,
-		"frameTimes": [1]
+		"frameTimes": [ 1 ]
+	},
+
+	"BLUE_BLOB_WALK": {
+		"atlasIdentifier": "tex1",
+		"atlasOffset": [ 0, 0 ],
+		"atlasSize": [ 32, 32 ],
+		"frameCount": 4,
+		"framesPerRow": 2,
+		"frameTimes": [ 12, 12, 12, 12 ]
+	},
+
+	"BLUE_BLOB_STAND": {
+		"atlasIdentifier": "tex1",
+		"atlasOffset": [ 0, 0 ],
+		"atlasSize": [ 32, 32 ],
+		"frameCount": 1,
+		"framesPerRow": 1,
+		"frameTimes": [ 1 ]
 	}
 }

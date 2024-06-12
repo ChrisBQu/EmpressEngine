@@ -13,7 +13,7 @@ void Sprite::render(TransformStruct T) {
 		int atlasCol = animation.currentFrame % animation.framesPerRow;
 		int atlasX = animation.atlasOffset[0] + (animation.atlasSize[0] * atlasCol);
 		int atlasY = animation.atlasOffset[1] + (animation.atlasSize[1] * atlasRow);
-		drawQuad({ atlasX, atlasY }, animation.atlasSize, T.pos, T.scale, T.depth, T.rotation, T.alpha);
+		drawQuad(animation.atlasIdentifier, { atlasX, atlasY }, animation.atlasSize, T.pos, T.scale, T.depth, T.rotation, T.alpha);
 	}
 }
 

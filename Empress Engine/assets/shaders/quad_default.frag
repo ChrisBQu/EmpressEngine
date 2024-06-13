@@ -5,7 +5,7 @@ layout (location = 1) in float alphaIn;
 
 layout (location = 0) out vec4 fragColor;
 
-layout (location = 0) uniform sampler2D textureAtlas;
+layout (binding = 0) uniform sampler2D textureAtlas;
 
 void main() {
 

@@ -109,8 +109,8 @@ int ShaderManager::buildShadersFromJSONList(const char* json_file) {
         std::string fragSource = it.value()["fragmentSource"];
         std::string identifier = it.key();
         createShaderFromSourceFiles(identifier, vertSource.c_str(), fragSource.c_str());
-
     }
+    return 0;
 }
 
 // Unload a shader by identifier, and remove it from the list of shader programs

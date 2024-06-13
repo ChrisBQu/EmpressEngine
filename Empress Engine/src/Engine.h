@@ -7,10 +7,12 @@
 #include <SDL.h>
 #include <GL/glew.h>
 
+enum class EngineErrorCode { SUCCESS, SDL_UNINITIATED, NULL_WINDOW, NULL_GL_RENDERER, NULL_SDL_RENDERER, GL_CONTEXT_NULL, GLEW_INIT_FAILURE, GL_INIT_FAILURE };
+
 class Engine {
 public:
 	Engine();
-	int init(const char *windowLabel, unsigned int width, unsigned int height, bool fullscreen, int fps);
+	EngineErrorCode init(const char *windowLabel, unsigned int width, unsigned int height, bool fullscreen, int fps);
 	void run();
 private:
 	void handleInput();
@@ -23,13 +25,7 @@ private:
 	Controller myController;
 	SDL_Window* myWindow;
 	GL_Renderer myGLRenderer;
+	SDL_Renderer *mySDLRenderer;
 };
-
-const Uint8 ERROR_CODE_SDL_UNINITIATED = 1;
-const Uint8 ERROR_CODE_NULL_WINDOW = 2;
-const Uint8 ERROR_CODE_NULL_RENDERER = 3;
-const Uint8 ERROR_CODE_GL_CONTEXT_NULL = 4;
-const Uint8 ERROR_CODE_GLEW_INIT_FAILURE = 5;
-const Uint8 ERROR_CODE_GL_INIT_FAILURE = 6;
 
 #endif // ENGINE_H

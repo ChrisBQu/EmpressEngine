@@ -1,5 +1,6 @@
 #include "GL_Renderer.h"
 
+#include "Font.h"
 #include "GameConfig.h"
 #include "RenderInterface.h"
 #include "Utility.h"
@@ -7,6 +8,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
 
 glm::mat4 makeOrthographicProjectionMatrix(float left, float right, float top, float bottom) {
     glm::mat4 result(1.0f);

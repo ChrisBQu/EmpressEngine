@@ -6,5 +6,9 @@
   "DEFAULT_POST": {
     "vertexSource": "assets/shaders/screen.vert",
     "fragmentSource": "assets/shaders/screen_default.frag"
+  },
+  "FONT_SHADER": {
+    "vertexSource": "assets/shaders/font.vert",
+    "fragmentSource" :  "assets/shaders/font.frag"
   }
 }

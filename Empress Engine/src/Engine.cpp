@@ -10,7 +10,6 @@
 
 
 GameObject myObj;
-
 std::vector<unsigned int> someTiles;
 
 Engine::Engine() {
@@ -22,10 +21,10 @@ Engine::Engine() {
     active = false;
 }
 
-int Engine::init(const char* label, unsigned int width, unsigned int height, bool fullscreen, int fps) {
+EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int height, bool fullscreen, int fps) {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0) {
         LOG_ERROR("Failed to initialize SDL: \n", SDL_GetError());
-        return ERROR_CODE_SDL_UNINITIATED;
+        return EngineErrorCode::SDL_UNINITIATED;
     }
 
     for (int i = 0; i < 1000000; i++) {
@@ -40,13 +39,13 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
     myWindow = SDL_CreateWindow(label, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, window_flags);
     if (myWindow == NULL) {
         LOG_ERROR("Failed to create window: \n", SDL_GetError());
-        return ERROR_CODE_NULL_WINDOW;
+        return EngineErrorCode::NULL_WINDOW;
     }
 
     SDL_GLContext glContext = SDL_GL_CreateContext(myWindow);
     if (!glContext) {
         LOG_ERROR("Failed to create OpenGL context: \n", SDL_GetError());
-        return ERROR_CODE_GL_CONTEXT_NULL;
+        return EngineErrorCode::GL_CONTEXT_NULL;
     }
 
     SDL_GL_MakeCurrent(myWindow, glContext);
@@ -56,27 +55,34 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
     GLenum err = glewInit();
     if (err != GLEW_OK) {
         LOG_ERROR("Failed to initialize GLEW: \n", glewGetErrorString(err));
-        return ERROR_CODE_GLEW_INIT_FAILURE;
+        return EngineErrorCode::GLEW_INIT_FAILURE;
     }
 
     while ((err = glGetError()) != GL_NO_ERROR) {
         LOG_ERROR("OpenGL error during initialization: \n", err);
-        return ERROR_CODE_GL_INIT_FAILURE;
+        return EngineErrorCode::GL_INIT_FAILURE;
     }
 
     int renderer_status = myGLRenderer.init();
     if (renderer_status != 0) {
         LOG_ERROR("Error initializing renderer - Error code: ", renderer_status);
-        return ERROR_CODE_NULL_RENDERER;
+        return EngineErrorCode::NULL_GL_RENDERER;
     }
+
+    mySDLRenderer = SDL_CreateRenderer(myWindow, -1, 0);
+    if (mySDLRenderer == NULL) {
+        LOG_ERROR("Failed to create SDL Renderer: \n", SDL_GetError());
+        return EngineErrorCode::NULL_SDL_RENDERER;
+    }
+
     myController.findController();
     myController.initDefaultKeyBindings();
 
     renderData.gameCamera.pos = { 160, 120 };
-    renderData.gameCamera.dimensions = { 320, 240 };
+    renderData.gameCamera.dimensions = { 426, 240 };
 
     renderData.uiCamera.pos = { 0, 0 };
-    renderData.uiCamera.dimensions = { 1280, 800 };
+    renderData.uiCamera.dimensions = { 1280, 720 };
 
     active = true;
 
@@ -84,7 +90,8 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
 
     myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_STAND");
 
-    return 0;
+
+    return EngineErrorCode::SUCCESS;
 }
 
 float xxx = 0;

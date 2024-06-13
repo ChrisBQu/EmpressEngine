@@ -24,6 +24,7 @@
     <ClInclude Include="src\3rdParty\stb_image.h" />
     <ClInclude Include="src\Controller.h" />
     <ClInclude Include="src\Engine.h" />
+    <ClInclude Include="src\Font.h" />
     <ClInclude Include="src\GameConfig.h" />
     <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\Geometry.h" />
@@ -42,6 +43,7 @@
     <ClCompile Include="EventSystem.cpp" />
     <ClCompile Include="src\Controller.cpp" />
     <ClCompile Include="src\Engine.cpp" />
+    <ClCompile Include="src\Font.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\Geometry.cpp" />
     <ClCompile Include="src\Logger.cpp" />
@@ -56,6 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\animation_manifest.json" />
+    <None Include="assets\shaders\font.frag" />
+    <None Include="assets\shaders\font.vert" />
     <None Include="assets\shaders\screen_default.frag" />
     <None Include="assets\shaders\quad_default.frag" />
     <None Include="assets\shaders\quad.vert" />
@@ -164,14 +168,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Program Files (x86)\glew-2.1.0\include;D:\Program Files (x86)\glfw-3.3.8\include;D:\SDL\glm\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Program Files (x86)\glew-2.1.0\include;D:\Program Files (x86)\glfw-3.3.8\include;D:\SDL\glm\;D:\SDL\SDL_ttf-2.0.10\include;D:\SDL\SDL_ttf-2.0.10\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_Image.lib;opengl32.lib;glfw3.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\SDL\SDL2_image-2.0.1\lib\x64;D:\Program Files (x86)\glfw-3.3.8\lib-vc2019;D:\Program Files (x86)\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_Image.lib;opengl32.lib;glfw3.lib;glew32.lib;Shell32.lib;freetype.lib;SDL_ttf.lib;SDL_ttf.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\SDL\SDL2_image-2.0.1\lib\x64;D:\Program Files (x86)\glfw-3.3.8\lib-vc2019;D:\SDL\SDL_ttf-2.0.10\lib;D:\Program Files (x86)\glew-2.1.0\lib\Release\x64;D:\Program Files (x86)\glew-2.1.0\lib\Release\x64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -182,7 +186,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Program Files (x86)\glew-2.1.0\include;D:\Program Files (x86)\glfw-3.3.8\include;D:\SDL\glm\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Program Files (x86)\glew-2.1.0\include;D:\Program Files (x86)\glfw-3.3.8\include;D:\SDL\glm\;D:\SDL\SDL2_ttf-2.22.0\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -190,8 +194,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_Image.lib;opengl32.lib;glfw3.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\SDL\SDL2_image-2.0.1\lib\x64;D:\Program Files (x86)\glfw-3.3.8\lib-vc2019;D:\Program Files (x86)\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_Image.lib;opengl32.lib;glfw3.lib;glew32.lib;Shell32.lib;SDL2_ttf.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\SDL\SDL2_image-2.0.1\lib\x64;D:\Program Files (x86)\glfw-3.3.8\lib-vc2019;D:\SDL\SDL2_ttf-2.22.0\lib\x64;D:\Program Files (x86)\glew-2.1.0\lib\Release\x64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

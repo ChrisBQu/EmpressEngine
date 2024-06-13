@@ -85,7 +85,7 @@
       <Filter>Header Files\Game Object System</Filter>
     </ClInclude>
     <ClInclude Include="src\Tileset.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

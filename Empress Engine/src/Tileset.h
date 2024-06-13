@@ -16,5 +16,4 @@ struct TilesetData {
 
 };
 
-
 #endif // TILESET_H

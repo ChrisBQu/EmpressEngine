@@ -100,7 +100,7 @@ void GL_Renderer::render() {
     );
 
     // Render the sprites to the FBO
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, glcontext.FBO);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -116,14 +116,13 @@ void GL_Renderer::render() {
     renderData.transforms.clear();
 
     // Post-Processing Steps
-    /*
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(shaderManager.getShaderProgram("DEFAULT_POST"));
     glBindTexture(GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer);
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    */
+    
     // Create and set the orthographic projection matrix for UI
     OrthographicCamera uicam = renderData.uiCamera;
     glm::mat4 orthoProjection2 = makeOrthographicProjectionMatrix(

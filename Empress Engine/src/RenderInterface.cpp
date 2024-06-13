@@ -32,8 +32,11 @@ void drawTileset(TilesetData tsd, std::vector<unsigned int> &tile_indices, unsig
         unsigned int pos_x = screen_col * tsd.atlasSize.x;
         unsigned int pos_y = screen_row * tsd.atlasSize.y;
 
+        // Only draw tiles that can be seen by the camera
         if (renderData.gameCamera.pos.x - tsd.atlasSize.x - (renderData.gameCamera.dimensions.x/2.0) < pos_x &&
-            renderData.gameCamera.pos.x + tsd.atlasSize.x + (renderData.gameCamera.dimensions.x/2.0) > pos_x) {
+            renderData.gameCamera.pos.x + tsd.atlasSize.x + (renderData.gameCamera.dimensions.x/2.0) > pos_x &&
+            renderData.gameCamera.pos.y - tsd.atlasSize.y - (renderData.gameCamera.dimensions.y / 2.0) < pos_x &&
+            renderData.gameCamera.pos.y + tsd.atlasSize.y + (renderData.gameCamera.dimensions.y / 2.0) > pos_y) {
 
             drawQuad(tsd.atlasIdentifier, { tsd.atlasSize.x * tex_col, tsd.atlasSize.y * tex_row }, tsd.atlasSize, { pos_x, pos_y }, { 1.0f, 1.0f }, depth, 0.0f, 1.0f);
 

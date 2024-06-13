@@ -19,7 +19,6 @@ void drawQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size,
 }
 
 
-// This function is optimized to handle very large number of tiles by only iterating through those that would actually appear in the camera's view
 void drawTileset(TilesetData tsd, std::vector<unsigned int>& tile_indices, glm::vec2 offset_pos, unsigned int tiles_per_row, unsigned int framecount, unsigned int depth) {
 
     float cameraLeft = renderData.gameCamera.pos.x - renderData.gameCamera.dimensions.x / 2.0f;
@@ -35,7 +34,7 @@ void drawTileset(TilesetData tsd, std::vector<unsigned int>& tile_indices, glm::
     for (unsigned int row = firstRow; row <= lastRow; row++) {
         for (unsigned int col = firstCol; col <= lastCol; col++) {
             unsigned int i = row * tiles_per_row + col;
-            if (i >= tile_indices.size()) { continue; }
+            if (i >= tile_indices.size()) continue; // Avoid out-of-bound access
 
             if (framecount % tsd.animatedTileMap[tile_indices[i]].second == 0) {
                 tile_indices[i] = tsd.animatedTileMap[tile_indices[i]].first;

@@ -13,4 +13,6 @@ inline constexpr const char* SHADER_MANIFEST_FILEPATH = "assets/shaders/shader_m
 inline constexpr bool HOT_TEXTURE_SWAPPING_ENABLED = true;
 inline constexpr bool HOT_SHADER_SWAPPING_ENABLED = true;
 
+inline constexpr bool PRINT_FPS_TO_CONSOLE = true;
+
 #endif // GAME_CONFIG_H

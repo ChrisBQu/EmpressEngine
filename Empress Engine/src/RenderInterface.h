@@ -37,7 +37,7 @@ struct RenderData {
 
 void drawQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 scale, int depth = 0, float rotation = 0.0f, float alpha = 1.0f);
 
-void drawTileset(TilesetData tsd, std::vector<unsigned int> &tile_indices, unsigned int tiles_per_row, unsigned int framecount, unsigned int depth);
+void drawTileset(TilesetData tsd, std::vector<unsigned int> &tile_indices, glm::vec2 offset_pos, unsigned int tiles_per_row, unsigned int framecount, unsigned int depth);
 
 extern RenderData renderData;
 

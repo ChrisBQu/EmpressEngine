@@ -34,6 +34,7 @@
     <ClInclude Include="src\Sprite.h" />
     <ClInclude Include="src\SpriteAnimation.h" />
     <ClInclude Include="src\TextureManager.h" />
+    <ClInclude Include="src\Tileset.h" />
     <ClInclude Include="src\TransformStruct.h" />
     <ClInclude Include="src\Utility.h" />
   </ItemGroup>

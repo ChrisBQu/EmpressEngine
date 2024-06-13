@@ -14,8 +14,7 @@ struct GL_Context {
     GLuint transformSBOID;
     GLuint orthoProjectionMatrixID;
     GLuint postProcessingTextureBuffer;
-    ShaderManager shaderManager;
-    TextureManager textureManager;
+    GLuint postProcessingDepthBuffer;
 };
 
 class GL_Renderer {
@@ -25,6 +24,8 @@ public:
     void swapTexture(const char* identifier);
 	void render();
 private:
+    ShaderManager shaderManager;
+    TextureManager textureManager;
     GL_Context glcontext;
 };
 

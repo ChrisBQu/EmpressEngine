@@ -67,8 +67,8 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
     myController.findController();
     myController.initDefaultKeyBindings();
 
-    renderData.gameCamera.pos = { 40, 0 };
-    renderData.gameCamera.dimensions = { 640, 480 };
+    renderData.gameCamera.pos = { 0, 0 };
+    renderData.gameCamera.dimensions = { 320, 240 };
 
     renderData.uiCamera.pos = { 0, 0 };
     renderData.uiCamera.dimensions = { 1280, 800 };
@@ -78,8 +78,6 @@ int Engine::init(const char* label, unsigned int width, unsigned int height, boo
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
 
     myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_STAND");
-    myObj2.sprite.animation = getSpriteAnimationData("BLUE_BLOB_WALK");
-
 
     return 0;
 }
@@ -114,24 +112,43 @@ void Engine::handleInput() {
 
 
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
-        xxx += 2;
+        renderData.gameCamera.pos.x += 2;
+        //xxx += 2;
     }
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
-        xxx -= 2;
+        renderData.gameCamera.pos.x -= 2;
+
+        //xxx -= 2;
     }
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP)) {
-        yyy -= 2;
+        renderData.gameCamera.pos.y -= 2;
     }
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN)) {
-        yyy += 2;
+        renderData.gameCamera.pos.y += 2;
     }
 
     if (myController.getPressed(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
         myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_WALK");
+        myObj.transform.scale = { 1.0, 1.0 };
+
     }
 
     if (myController.getReleased(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
         myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_STAND");
+        myObj.transform.scale = { 1.0, 1.0 };
+
+    }
+
+    if (myController.getPressed(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
+        myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_WALK");
+        myObj.transform.scale = { -1.0, 1.0 };
+
+    }
+
+    if (myController.getReleased(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
+        myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_STAND");
+        myObj.transform.scale = { -1.0, 1.0 };
+
     }
 
 }
@@ -139,24 +156,65 @@ void Engine::handleInput() {
 
 void Engine::update() {
 
-    renderData.gameCamera.pos = { 0, 0 };
-    renderData.gameCamera.dimensions = { 640, 480 };
-
-
     myObj.transform.pos = { xxx, yyy };
-    myObj2.transform.pos = { xxx, yyy+32 };
     myObj.update();
-    myObj2.update();
-    myObj2.transform.scale = { -1.0, 1.0 };
 
     frameCount++;
 
 }
 
+TilesetData tsd = {
+    "tex2", {16, 16}, 2, 16, 
+    {
+        {0, {0, 1}},
+        {1, {1, 1}},
+        {2, {3, 12}},
+        {3, {2, 12}}
+    },
+};
+
+std::vector<unsigned int> someTiles = { 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 1, 2, 3, 0, 1, 
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 1, 2, 3, 0, 1, 
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 1, 2, 3, 0, 1, 
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1,
+0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3,0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 0, 1, 2, 3, 0, 1, 1, 2, 3, 0, 1, };
+
+
 void Engine::render() {
-    
+
+    drawTileset(tsd, someTiles, 40, frameCount, 51);
+
+
+    myObj.transform.depth = 50;
+    myObj2.transform.depth = 52;
     myObj.render();
     myObj2.render();
+
 
     myGLRenderer.render();
 

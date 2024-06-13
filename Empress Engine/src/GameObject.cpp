@@ -12,12 +12,11 @@ GameObject::GameObject() {
 
 
 void GameObject::update() {
-	if (visible) {
-		sprite.tickAnimation();
-	}
+
 }
 
 void GameObject::render() {
+	sprite.tickAnimation();
 	if (visible) {
 		sprite.render(transform);
 	}

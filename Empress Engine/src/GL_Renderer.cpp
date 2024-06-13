@@ -26,7 +26,7 @@ glm::mat4 makeOrthographicProjectionMatrix(float left, float right, float top, f
 GL_Renderer::GL_Renderer() {}
 
 void GL_Renderer::swapTexture(const char* identifier) {
-    LoadedTexture loadedtexture = glcontext.textureManager.getTexture(identifier);
+    LoadedTexture loadedtexture = textureManager.getTexture(identifier);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, glcontext.textureID);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -38,7 +38,7 @@ void GL_Renderer::swapTexture(const char* identifier) {
 
 int GL_Renderer::init() {
 
-    glcontext.shaderManager.buildShadersFromJSONList(SHADER_MANIFEST_FILEPATH);
+    shaderManager.buildShadersFromJSONList(SHADER_MANIFEST_FILEPATH);
 
     glGenVertexArrays(1, &glcontext.VAO);
     glBindVertexArray(glcontext.VAO);
@@ -49,9 +49,9 @@ int GL_Renderer::init() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glcontext.textureManager.loadTexture("tex0", "assets/textures/texture0.png");
-    glcontext.textureManager.loadTexture("tex1", "assets/textures/texture1.png");
-    glcontext.textureManager.loadTexture("tex2", "assets/textures/texture2.png");
+    textureManager.loadTexture("tex0", "assets/textures/texture0.png");
+    textureManager.loadTexture("tex1", "assets/textures/texture1.png");
+    textureManager.loadTexture("tex2", "assets/textures/texture2.png");
 
     glGenTextures(1, &glcontext.textureID);
 
@@ -60,6 +60,7 @@ int GL_Renderer::init() {
 
     glGenFramebuffers(1, &glcontext.FBO);
     glBindFramebuffer(GL_FRAMEBUFFER, glcontext.FBO);
+
     glGenTextures(1, &glcontext.postProcessingTextureBuffer);
     glBindTexture(GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
@@ -67,19 +68,27 @@ int GL_Renderer::init() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer, 0);
 
+    glGenRenderbuffers(1, &glcontext.postProcessingDepthBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, glcontext.postProcessingDepthBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, glcontext.postProcessingDepthBuffer);
+
     return 0;
 }
 
 void GL_Renderer::render() {
-    // Hot reloading of assets should be toggle-able
-    if (HOT_TEXTURE_SWAPPING_ENABLED) { glcontext.textureManager.hotReload(); }
-    if (HOT_SHADER_SWAPPING_ENABLED) { glcontext.shaderManager.hotReload(); }
+    if (HOT_TEXTURE_SWAPPING_ENABLED) { textureManager.hotReload(); }
+    if (HOT_SHADER_SWAPPING_ENABLED) { shaderManager.hotReload(); }
 
-    glUseProgram(glcontext.shaderManager.getShaderProgram("DEFAULT_QUAD"));
+    // Prepare for rendering to FBO
+    glBindFramebuffer(GL_FRAMEBUFFER, glcontext.FBO);
     glClearColor(SCREEN_CLEAR_COLOR[0], SCREEN_CLEAR_COLOR[1], SCREEN_CLEAR_COLOR[2], SCREEN_CLEAR_COLOR[3]);
-    glClearDepth(0.0f);
+    glClearDepth(1.0f); // Depth clear value should be 1.0f for the farthest depth
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glViewport(0, 0, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
+
+    glUseProgram(shaderManager.getShaderProgram("DEFAULT_QUAD"));
+
 
     // Pass in the gameCamera to render things in the camera's view
     OrthographicCamera cam = renderData.gameCamera;
@@ -88,12 +97,14 @@ void GL_Renderer::render() {
         cam.pos.x + cam.dimensions.x / 2.0,
         cam.pos.y - cam.dimensions.y / 2.0,
         cam.pos.y + cam.dimensions.y / 2.0
-    ); 
+    );
 
     // Render the sprites to the FBO
-    glBindFramebuffer(GL_FRAMEBUFFER, glcontext.FBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glcontext.orthoProjectionMatrixID = glGetUniformLocation(glcontext.shaderManager.getShaderProgram("DEFAULT_QUAD"), "orthoProjection");
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glcontext.orthoProjectionMatrixID = glGetUniformLocation(shaderManager.getShaderProgram("DEFAULT_QUAD"), "orthoProjection");
     glUniformMatrix4fv(glcontext.orthoProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(orthoProjection));
     for (const auto& it : renderData.transforms) {
         swapTexture(it.first.c_str());
@@ -105,12 +116,15 @@ void GL_Renderer::render() {
     renderData.transforms.clear();
 
     // Post-Processing Steps
-    glUseProgram(glcontext.shaderManager.getShaderProgram("DEFAULT_POST"));
+    /*
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glUseProgram(shaderManager.getShaderProgram("DEFAULT_POST"));
     glBindTexture(GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer);
     glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    // Create and set the orthographic projection matrix
+    */
+    // Create and set the orthographic projection matrix for UI
     OrthographicCamera uicam = renderData.uiCamera;
     glm::mat4 orthoProjection2 = makeOrthographicProjectionMatrix(
         uicam.pos.x,

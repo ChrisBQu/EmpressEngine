@@ -2,6 +2,7 @@
 #include "RenderInterface.h"
 #include "Sprite.h"
 
+
 #include <cmath>
 
 RenderData renderData;

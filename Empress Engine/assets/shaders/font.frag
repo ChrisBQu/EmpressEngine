@@ -1,12 +1,15 @@
 #version 430 core
+out vec4 FragColor;
 
 in vec2 TexCoords;
-out vec4 color;
 
-uniform sampler2D text;
-uniform vec3 textColor;
+uniform sampler2D screenTexture;
 
-void main() {    
-    float alpha = texture(text, TexCoords).r;
-    color = vec4(textColor, alpha);
+void main()
+{
+    vec4 color = texture(screenTexture, TexCoords);
+
+    if (color.a == 0.0) { discard; }
+
+    FragColor = color;
 }

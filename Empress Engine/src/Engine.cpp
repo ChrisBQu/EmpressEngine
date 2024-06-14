@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "Font.h"
 #include "GameConfig.h"
 #include "GameObject.h"
 #include "GL_Renderer.h"
@@ -8,6 +9,7 @@
 
 #include <iostream>
 
+#include <SDL_ttf.h>
 
 GameObject myObj;
 std::vector<unsigned int> someTiles;
@@ -28,7 +30,7 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     }
 
     for (int i = 0; i < 1000000; i++) {
-        someTiles.push_back(2);
+        someTiles.push_back(rand()%4);
     }
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
@@ -75,6 +77,11 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
         return EngineErrorCode::NULL_SDL_RENDERER;
     }
 
+    if (TTF_Init() == -1) {
+        LOG_ERROR("Failed to initialize SDL_TTF: ", TTF_GetError());
+        return EngineErrorCode::TTF_ERROR;
+    }
+
     myController.findController();
     myController.initDefaultKeyBindings();
 
@@ -89,7 +96,6 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
 
     myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_STAND");
-
 
     return EngineErrorCode::SUCCESS;
 }

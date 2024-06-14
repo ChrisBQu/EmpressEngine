@@ -6,9 +6,9 @@
 #include "Utility.h"
 #include "Logger.h"
 
+
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
 
 glm::mat4 makeOrthographicProjectionMatrix(float left, float right, float top, float bottom) {
     glm::mat4 result(1.0f);
@@ -75,6 +75,10 @@ int GL_Renderer::init() {
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, glcontext.postProcessingDepthBuffer);
 
+    initFont();
+    drawFont();
+
+
     return 0;
 }
 
@@ -133,4 +137,11 @@ void GL_Renderer::render() {
         uicam.pos.y,
         uicam.dimensions.y
     );
+
+    // Draw the text
+    glUseProgram(shaderManager.getShaderProgram("FONT_SHADER"));
+    glBindTexture(GL_TEXTURE_2D, fontTextureID);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
 }

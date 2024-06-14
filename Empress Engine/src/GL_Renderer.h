@@ -1,9 +1,11 @@
 #ifndef GL_RENDERER_H
 #define GL_RENDERER_H
 
+
 #include "ShaderManager.h"
 #include "TextureManager.h"
 
+#include <GL/glew.h>
 #include <vector>
 #include <SDL.h>
 

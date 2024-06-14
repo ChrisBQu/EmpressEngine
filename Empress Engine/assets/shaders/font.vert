@@ -1,11 +1,28 @@
 #version 430 core
-
-layout(location = 0) in vec4 vertex; // <vec2 pos, vec2 tex>
 out vec2 TexCoords;
 
-uniform mat4 projection;
+void main()
+{
 
-void main() {
-    gl_Position = projection * vec4(vertex.xy, 0.0, 1.0);
-    TexCoords = vertex.zw;
+    float d = 0.10;
+    vec2 positions[6] = vec2[](
+        vec2(-d,  d),
+        vec2(-d, -d),
+        vec2( d, -d),
+        vec2(-d,  d),
+        vec2( d, -d),
+        vec2( d,  d)
+    );
+    
+vec2 texCoords[6] = vec2[](
+    vec2(0.0, 0.0),
+    vec2(0.0, 1.0),
+    vec2(1.0, 1.0),
+    vec2(0.0, 0.0),
+    vec2(1.0, 1.0),
+    vec2(1.0, 0.0)
+);
+
+    TexCoords = texCoords[gl_VertexID];
+    gl_Position = vec4(positions[gl_VertexID], 0.35, 1.0);
 }

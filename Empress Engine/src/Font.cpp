@@ -4,53 +4,70 @@
 #include <SDL_ttf.h>
 #include <GL/glew.h>
 
-// Declare the font and texture variables
-TTF_Font* theFont = nullptr;
-SDL_Surface* theSurface = nullptr;
-GLuint fontTextureID = 0;
+TTF_Font* theFont;
 
-int recentFontWidth = 0;
-int recentFontHeight = 0;
+FontManager fontManager;
 
-// Initialize the font
-void initFont() {
+// Constructor
+FontManager::FontManager() {};
+
+int FontManager::initFont() {
     if (TTF_Init() == -1) {
-        LOG_ERROR("Failed to initialize TTF: %s", TTF_GetError());
-        return;
+        LOG_ERROR("Failed to initialize TTF: ", TTF_GetError());
+        return 1;
     }
 
     theFont = TTF_OpenFont("assets/fonts/public_pixel.ttf", 28);
     if (!theFont) {
-        LOG_ERROR("Failed to open font: %s", TTF_GetError());
-        return;
+        LOG_ERROR("Failed to open font: ", TTF_GetError());
+        return 1;
     }
+
+    return 0;
 }
 
 // Draw the text using the font
-void drawFont() {
+int FontManager::makeTexture(std::string text, glm::vec2 pos, glm::vec3 color) {
+
+    FontTexture newFontTexture;
+    newFontTexture.pos = pos;
+
+    SDL_Surface* theSurface;
+
     if (!theFont) {
         LOG_ERROR("Font not initialized.");
-        return;
+        return 1;
     }
 
-    SDL_Color textColor = { 255, 0, 0, 255 };  // Magenta
-    theSurface = TTF_RenderText_Blended(theFont, "Hello World", textColor); // Use Blended rendering for better quality
+    SDL_Color textColor = { color[0], color[1], color[2], 255 };
+    theSurface = TTF_RenderText_Blended(theFont, text.c_str(), textColor);
     if (!theSurface) {
-        LOG_ERROR("Failed to create surface: %s", TTF_GetError());
-        return;
+        LOG_ERROR("Failed to create surface: ", TTF_GetError());
+        return 1;
     }
 
     // Convert surface to a format suitable for OpenGL
     SDL_Surface* formattedSurface = SDL_ConvertSurfaceFormat(theSurface, SDL_PIXELFORMAT_ABGR8888, 0);
     if (!formattedSurface) {
-        LOG_ERROR("Failed to convert surface format: %s", SDL_GetError());
+        LOG_ERROR("Failed to convert surface format: ", SDL_GetError());
         SDL_FreeSurface(theSurface);
-        return;
+        return 1;
     }
 
-    // Generate and bind texture
-    glGenTextures(1, &fontTextureID);
-    glBindTexture(GL_TEXTURE_2D, fontTextureID);
+    newFontTexture.size = { formattedSurface->w, formattedSurface->h };
+    newFontTexture.surf = formattedSurface;
+    // Free the surfaces after use
+    //SDL_FreeSurface(formattedSurface);
+    SDL_FreeSurface(theSurface);
+
+    fontTextures.push_back(newFontTexture);
+
+    return 0;
+}
+
+void FontManager::bindFontTextureToGLTexture(FontTexture ft, GLuint &texID) {
+    glGenTextures(1, &texID);
+    glBindTexture(GL_TEXTURE_2D, texID);
 
     // Enable blending
     glEnable(GL_BLEND);
@@ -63,28 +80,22 @@ void drawFont() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // Upload the texture data
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, formattedSurface->w, formattedSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, formattedSurface->pixels);
-
-    recentFontWidth = formattedSurface->w;
-    recentFontHeight = formattedSurface->h;
-
-    // Free the surfaces after use
-    SDL_FreeSurface(formattedSurface);
-    SDL_FreeSurface(theSurface);
-    theSurface = nullptr;  // Avoid dangling pointer
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ft.surf->w, ft.surf->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, ft.surf->pixels);
 }
 
-// Clean up resources
-void cleanupFont() {
+void FontManager::clearFontTextures() {
+    for (FontTexture& each_texture : fontTextures) {
+        SDL_FreeSurface(each_texture.surf);
+    }
+    fontTextures.clear();
+}
+
+// Destructor
+FontManager::~FontManager() {
     if (theFont) {
         TTF_CloseFont(theFont);
         theFont = nullptr;
     }
     TTF_Quit();
-
-    if (fontTextureID) {
-        glDeleteTextures(1, &fontTextureID);
-        fontTextureID = 0;
-    }
 }
 

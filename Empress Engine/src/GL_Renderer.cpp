@@ -6,7 +6,6 @@
 #include "Utility.h"
 #include "Logger.h"
 
-
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -75,10 +74,6 @@ int GL_Renderer::init() {
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, glcontext.postProcessingDepthBuffer);
 
-    initFont();
-    drawFont();
-
-
     return 0;
 }
 
@@ -131,7 +126,7 @@ void GL_Renderer::render() {
     
     // Create and set the orthographic projection matrix for UI
     OrthographicCamera uicam = renderData.uiCamera;
-    glm::mat4 orthoProjection2 = makeOrthographicProjectionMatrix(
+    glm::mat4 orthoProjectionUI = makeOrthographicProjectionMatrix(
         uicam.pos.x,
         uicam.dimensions.x,
         uicam.pos.y,
@@ -139,9 +134,24 @@ void GL_Renderer::render() {
     );
 
     // Draw the text
-    glUseProgram(shaderManager.getShaderProgram("FONT_SHADER"));
-    glBindTexture(GL_TEXTURE_2D, fontTextureID);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glm::vec2 screenShape = { DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
+    GLuint fontTextureID;
+    for (FontTexture& each_texture : fontManager.fontTextures) {
+        fontManager.bindFontTextureToGLTexture(each_texture, fontTextureID);
+        glUseProgram(shaderManager.getShaderProgram("FONT_SHADER"));
+        glm::vec2 fontTextureShape = { each_texture.size.x, each_texture.size.y };
+        glm::vec2 fontTexturePos = { each_texture.pos.x, each_texture.pos.y };
+        GLuint  screenSizeHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "screenSize");
+        GLuint  fontTextureSizeHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "fontTextureSize");
+        GLuint  fontTexturePosHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "fontTexturePos");
+        glUniform2fv(screenSizeHandle, 1, glm::value_ptr(screenShape));
+        glUniform2fv(fontTextureSizeHandle, 1, glm::value_ptr(fontTextureShape));
+        glUniform2fv(fontTexturePosHandle, 1, glm::value_ptr(fontTexturePos));
+        glBindTexture(GL_TEXTURE_2D, fontTextureID);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDeleteTextures(1, &fontTextureID);
 
+    }
+    fontManager.clearFontTextures();
 
 }

@@ -168,14 +168,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Program Files (x86)\glew-2.1.0\include;D:\Program Files (x86)\glfw-3.3.8\include;D:\SDL\glm\;D:\SDL\SDL_ttf-2.0.10\include;D:\SDL\SDL_ttf-2.0.10\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Program Files (x86)\glew-2.1.0\include;D:\Program Files (x86)\glfw-3.3.8\include;D:\SDL\glm\;D:\SDL\SDL2_ttf-2.22.0\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_Image.lib;opengl32.lib;glfw3.lib;glew32.lib;Shell32.lib;freetype.lib;SDL_ttf.lib;SDL_ttf.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\SDL\SDL2_image-2.0.1\lib\x64;D:\Program Files (x86)\glfw-3.3.8\lib-vc2019;D:\SDL\SDL_ttf-2.0.10\lib;D:\Program Files (x86)\glew-2.1.0\lib\Release\x64;D:\Program Files (x86)\glew-2.1.0\lib\Release\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_Image.lib;opengl32.lib;glfw3.lib;glew32.lib;Shell32.lib;SDL2_ttf.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\SDL\SDL2_image-2.0.1\lib\x64;D:\Program Files (x86)\glfw-3.3.8\lib-vc2019;D:\SDL\SDL2_ttf-2.22.0\lib\x64;D:\Program Files (x86)\glew-2.1.0\lib\Release\x64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

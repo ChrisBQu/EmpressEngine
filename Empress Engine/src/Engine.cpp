@@ -13,15 +13,20 @@
 
 GameObject myObj;
 std::vector<unsigned int> someTiles;
+std::vector<unsigned int> randX;
+std::vector<unsigned int> randY;
 
 Engine::Engine() {
     frameCount = 0;
     frameStartTime = 0;
-    myWindow = NULL;
+    myWindow = nullptr;
+    mySDLRenderer = nullptr;
     myGLRenderer = GL_Renderer();
     targetFPS = 60;
     active = false;
 }
+
+
 
 EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int height, bool fullscreen, int fps) {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0) {
@@ -29,9 +34,15 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
         return EngineErrorCode::SDL_UNINITIATED;
     }
 
+    // TESTING
     for (int i = 0; i < 1000000; i++) {
         someTiles.push_back(rand()%4);
     }
+    for (int i = 0; i < 20; i++) {
+        randX.push_back(rand() % 1280);
+        randY.push_back(rand() % 720);
+    }
+    //
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
@@ -77,8 +88,7 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
         return EngineErrorCode::NULL_SDL_RENDERER;
     }
 
-    if (TTF_Init() == -1) {
-        LOG_ERROR("Failed to initialize SDL_TTF: ", TTF_GetError());
+    if (fontManager.initFont() != 0) {
         return EngineErrorCode::TTF_ERROR;
     }
 
@@ -142,7 +152,7 @@ void Engine::handleInput() {
         renderData.gameCamera.pos.y -= 2;
     }
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN)) {
-        renderData.gameCamera.pos.y += 2;
+        renderData.gameCamera.pos.y += 0;
     }
 
     if (myController.getPressed(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
@@ -177,6 +187,7 @@ void Engine::update() {
     myObj.transform.pos = { xxx, yyy };
     myObj.update();
 
+
     frameCount++;
 
 }
@@ -192,7 +203,13 @@ TilesetData tsd = {
 };
 
 
+
 void Engine::render() {
+
+    for (unsigned int i = 0; i < 20; i++) {
+        fontManager.makeTexture("Hello", { randX[i], randY[i] }, { rand() % 255, rand() % 255, rand() % 255 });
+
+    }
 
     drawTileset(tsd, someTiles, { 0, 0 }, 1000, frameCount, 100);
 

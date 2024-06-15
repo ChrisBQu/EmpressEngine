@@ -124,21 +124,12 @@ void GL_Renderer::render() {
     glBindTexture(GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     
-    // Create and set the orthographic projection matrix for UI
-    OrthographicCamera uicam = renderData.uiCamera;
-    glm::mat4 orthoProjectionUI = makeOrthographicProjectionMatrix(
-        uicam.pos.x,
-        uicam.dimensions.x,
-        uicam.pos.y,
-        uicam.dimensions.y
-    );
-
     // Draw the text
     glm::vec2 screenShape = { DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
     GLuint fontTextureID;
+    glUseProgram(shaderManager.getShaderProgram("FONT_SHADER"));
     for (FontTexture& each_texture : fontManager.fontTextures) {
         fontManager.bindFontTextureToGLTexture(each_texture, fontTextureID);
-        glUseProgram(shaderManager.getShaderProgram("FONT_SHADER"));
         glm::vec2 fontTextureShape = { each_texture.size.x, each_texture.size.y };
         glm::vec2 fontTexturePos = { each_texture.pos.x, each_texture.pos.y };
         GLuint  screenSizeHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "screenSize");

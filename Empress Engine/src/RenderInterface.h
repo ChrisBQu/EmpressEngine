@@ -30,7 +30,6 @@ struct RenderTransform {
 };
 
 struct RenderData {
-	OrthographicCamera uiCamera;
 	OrthographicCamera gameCamera;
 	std::map<std::string, std::vector<RenderTransform>> transforms;
 };

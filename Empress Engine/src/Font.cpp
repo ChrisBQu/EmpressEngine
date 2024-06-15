@@ -17,7 +17,7 @@ int FontManager::initFont() {
         return 1;
     }
 
-    theFont = TTF_OpenFont("assets/fonts/public_pixel.ttf", 28);
+    theFont = TTF_OpenFont("assets/fonts/public_pixel.ttf", 24);
     if (!theFont) {
         LOG_ERROR("Failed to open font: ", TTF_GetError());
         return 1;
@@ -40,7 +40,7 @@ int FontManager::makeTexture(std::string text, glm::vec2 pos, glm::vec3 color) {
     }
 
     SDL_Color textColor = { color[0], color[1], color[2], 255 };
-    theSurface = TTF_RenderText_Blended(theFont, text.c_str(), textColor);
+    theSurface = TTF_RenderText_Solid(theFont, text.c_str(), textColor);
     if (!theSurface) {
         LOG_ERROR("Failed to create surface: ", TTF_GetError());
         return 1;

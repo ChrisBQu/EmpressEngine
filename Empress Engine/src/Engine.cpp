@@ -38,7 +38,7 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     for (int i = 0; i < 1000000; i++) {
         someTiles.push_back(rand()%4);
     }
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 500; i++) {
         randX.push_back(rand() % 1280);
         randY.push_back(rand() % 720);
     }
@@ -97,9 +97,6 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
 
     renderData.gameCamera.pos = { 160, 120 };
     renderData.gameCamera.dimensions = { 426, 240 };
-
-    renderData.uiCamera.pos = { 0, 0 };
-    renderData.uiCamera.dimensions = { 1280, 720 };
 
     active = true;
 
@@ -206,8 +203,8 @@ TilesetData tsd = {
 
 void Engine::render() {
 
-    for (unsigned int i = 0; i < 20; i++) {
-        fontManager.makeTexture("Hello", { randX[i], randY[i] }, { rand() % 255, rand() % 255, rand() % 255 });
+    for (unsigned int i = 0; i < 100; i++) {
+        fontManager.makeTexture("Hello", { randX[i], randY[i] }, { 255, 255, 255 });
 
     }
 

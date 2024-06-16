@@ -1,5 +1,4 @@
 #include "Engine.h"
-#include "Font.h"
 #include "GameConfig.h"
 #include "GameObject.h"
 #include "GL_Renderer.h"
@@ -88,7 +87,7 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
         return EngineErrorCode::NULL_SDL_RENDERER;
     }
 
-    if (fontManager.initFont() != 0) {
+    if (renderData.fontRenderer.initFont() != 0) {
         return EngineErrorCode::TTF_ERROR;
     }
 
@@ -204,7 +203,7 @@ TilesetData tsd = {
 void Engine::render() {
 
     for (unsigned int i = 0; i < 100; i++) {
-        fontManager.makeTexture("Hello", { randX[i], randY[i] }, { 255, 255, 255 });
+        drawText("Hello", { 40, i * 20}, { i * 20, 255, 255 - i * 20, 255});
 
     }
 

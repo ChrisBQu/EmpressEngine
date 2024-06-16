@@ -1,23 +1,18 @@
-#include "Font.h"
+#include "FontRenderer.h"
 #include "Logger.h"
 
-#include <SDL_ttf.h>
 #include <GL/glew.h>
 
-TTF_Font* theFont;
-
-FontManager fontManager;
-
 // Constructor
-FontManager::FontManager() {};
+FontRenderer::FontRenderer() {};
 
-int FontManager::initFont() {
+int FontRenderer::initFont() {
     if (TTF_Init() == -1) {
         LOG_ERROR("Failed to initialize TTF: ", TTF_GetError());
         return 1;
     }
 
-    theFont = TTF_OpenFont("assets/fonts/public_pixel.ttf", 24);
+    theFont = TTF_OpenFont("assets/fonts/public_pixel.ttf", 32);
     if (!theFont) {
         LOG_ERROR("Failed to open font: ", TTF_GetError());
         return 1;
@@ -27,7 +22,7 @@ int FontManager::initFont() {
 }
 
 // Draw the text using the font
-int FontManager::makeTexture(std::string text, glm::vec2 pos, glm::vec3 color) {
+int FontRenderer::makeTexture(std::string text, glm::vec2 pos, glm::vec3 color) {
 
     FontTexture newFontTexture;
     newFontTexture.pos = pos;
@@ -65,7 +60,7 @@ int FontManager::makeTexture(std::string text, glm::vec2 pos, glm::vec3 color) {
     return 0;
 }
 
-void FontManager::bindFontTextureToGLTexture(FontTexture ft, GLuint &texID) {
+void FontRenderer::bindFontTextureToGLTexture(FontTexture ft, GLuint &texID) {
     glGenTextures(1, &texID);
     glBindTexture(GL_TEXTURE_2D, texID);
 
@@ -83,7 +78,7 @@ void FontManager::bindFontTextureToGLTexture(FontTexture ft, GLuint &texID) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ft.surf->w, ft.surf->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, ft.surf->pixels);
 }
 
-void FontManager::clearFontTextures() {
+void FontRenderer::clearFontTextures() {
     for (FontTexture& each_texture : fontTextures) {
         SDL_FreeSurface(each_texture.surf);
     }
@@ -91,7 +86,7 @@ void FontManager::clearFontTextures() {
 }
 
 // Destructor
-FontManager::~FontManager() {
+FontRenderer::~FontRenderer() {
     if (theFont) {
         TTF_CloseFont(theFont);
         theFont = nullptr;

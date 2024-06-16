@@ -1,6 +1,7 @@
 #ifndef RENDER_INTERFACE_H
 #define RENDER_INTERFACE_H
 
+#include "FontRenderer.h"
 #include "Logger.h"
 #include "Tileset.h"
 
@@ -32,10 +33,13 @@ struct RenderTransform {
 struct RenderData {
 	OrthographicCamera gameCamera;
 	std::map<std::string, std::vector<RenderTransform>> transforms;
+	FontRenderer fontRenderer;
 };
 
 void drawQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 scale, int depth = 0, float rotation = 0.0f, float alpha = 1.0f);
 void drawTileset(TilesetData tsd, std::vector<unsigned int> &tile_indices, glm::vec2 offset_pos, unsigned int tiles_per_row, unsigned int framecount, unsigned int depth);
+void drawText(std::string, glm::vec2 pos, glm::vec4 color);
+
 
 extern RenderData renderData;
 

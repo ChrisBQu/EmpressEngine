@@ -1,5 +1,5 @@
-#ifndef FONT_H
-#define FONT_H
+#ifndef FONT_RENDERER_H
+#define FONT_RENDERER_H
 
 #include <string>
 #include <vector>
@@ -7,6 +7,7 @@
 #include <SDL.h>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <SDL_ttf.h>
 
 
 extern int recentFontWidth;
@@ -19,17 +20,17 @@ struct FontTexture {
 	SDL_Surface* surf;
 };
 
-class FontManager {
+class FontRenderer {
 public:
-	FontManager();
-	~FontManager();
+	FontRenderer();
+	~FontRenderer();
 	int initFont();
 	int makeTexture(std::string, glm::vec2 pos, glm::vec3 color);
 	void bindFontTextureToGLTexture(FontTexture ft, GLuint& texID);
 	void clearFontTextures();
 	std::vector<FontTexture> fontTextures;
+private:
+	TTF_Font* theFont;
 };
 
-extern FontManager fontManager;
-
-#endif // FONT_H
+#endif // FONT_RENDERER_H

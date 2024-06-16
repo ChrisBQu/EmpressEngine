@@ -1,6 +1,5 @@
 #include "GL_Renderer.h"
 
-#include "Font.h"
 #include "GameConfig.h"
 #include "RenderInterface.h"
 #include "Utility.h"
@@ -128,8 +127,8 @@ void GL_Renderer::render() {
     glm::vec2 screenShape = { DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
     GLuint fontTextureID;
     glUseProgram(shaderManager.getShaderProgram("FONT_SHADER"));
-    for (FontTexture& each_texture : fontManager.fontTextures) {
-        fontManager.bindFontTextureToGLTexture(each_texture, fontTextureID);
+    for (FontTexture& each_texture : renderData.fontRenderer.fontTextures) {
+        renderData.fontRenderer.bindFontTextureToGLTexture(each_texture, fontTextureID);
         glm::vec2 fontTextureShape = { each_texture.size.x, each_texture.size.y };
         glm::vec2 fontTexturePos = { each_texture.pos.x, each_texture.pos.y };
         GLuint  screenSizeHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "screenSize");
@@ -143,6 +142,6 @@ void GL_Renderer::render() {
         glDeleteTextures(1, &fontTextureID);
 
     }
-    fontManager.clearFontTextures();
+    renderData.fontRenderer.clearFontTextures();
 
 }

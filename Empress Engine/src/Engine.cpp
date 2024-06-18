@@ -8,8 +8,6 @@
 
 #include <iostream>
 
-#include <SDL_ttf.h>
-
 GameObject myObj;
 std::vector<unsigned int> someTiles;
 std::vector<unsigned int> randX;
@@ -85,10 +83,6 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     if (mySDLRenderer == NULL) {
         LOG_ERROR("Failed to create SDL Renderer: \n", SDL_GetError());
         return EngineErrorCode::NULL_SDL_RENDERER;
-    }
-
-    if (renderData.fontRenderer.initFont() != 0) {
-        return EngineErrorCode::TTF_ERROR;
     }
 
     myController.findController();
@@ -202,10 +196,7 @@ TilesetData tsd = {
 
 void Engine::render() {
 
-    for (unsigned int i = 0; i < 100; i++) {
-        drawText("Hello", { 40, i * 20}, { i * 20, 255, 255 - i * 20, 255});
 
-    }
 
     drawTileset(tsd, someTiles, { 0, 0 }, 1000, frameCount, 100);
 

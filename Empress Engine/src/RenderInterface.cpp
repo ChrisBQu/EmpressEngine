@@ -1,7 +1,7 @@
 #include "Logger.h"
 #include "RenderInterface.h"
 #include "Sprite.h"
-
+#include "Utility.h"
 
 #include <cmath>
 
@@ -57,8 +57,4 @@ void drawTileset(TilesetData tsd, std::vector<unsigned int>& tile_indices, glm::
             }
         }
     }
-}
-
-void drawText(std::string text, glm::vec2 pos, glm::vec4 color) {
-    renderData.fontRenderer.makeTexture(text, pos, color);
 }

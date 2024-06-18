@@ -4,7 +4,7 @@
 inline constexpr const char* WINDOW_LABEL = "My Window";
 inline constexpr int DEFAULT_SCREEN_WIDTH = 1280;
 inline constexpr int DEFAULT_SCREEN_HEIGHT = 720;
-inline constexpr float SCREEN_CLEAR_COLOR[4] = {0.0f, 0.0f, 0.0f, 1.0f };
+inline constexpr float SCREEN_CLEAR_COLOR[4] = {1.0f, 1.0f, 1.0f, 1.0f };
 inline constexpr int TARGET_FPS = 60;
 
 inline constexpr const char* ANIMATION_MANIFEST_FILEPATH = "assets/animation_manifest.json";

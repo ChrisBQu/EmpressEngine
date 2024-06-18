@@ -5,7 +5,6 @@
 #include "Utility.h"
 #include "Logger.h"
 
-#include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 glm::mat4 makeOrthographicProjectionMatrix(float left, float right, float top, float bottom) {
@@ -61,30 +60,92 @@ int GL_Renderer::init() {
     glGenFramebuffers(1, &glcontext.FBO);
     glBindFramebuffer(GL_FRAMEBUFFER, glcontext.FBO);
 
+    // Init post-processing
     glGenTextures(1, &glcontext.postProcessingTextureBuffer);
     glBindTexture(GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer, 0);
-
     glGenRenderbuffers(1, &glcontext.postProcessingDepthBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, glcontext.postProcessingDepthBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, glcontext.postProcessingDepthBuffer);
 
+    // Init text rendering
+    fontManager.loadFont("assets/fonts/public_pixel.ttf");
+    glGenVertexArrays(1, &glcontext.textVAO);
+    glGenBuffers(1, &glcontext.textVBO);
+    glBindVertexArray(glcontext.textVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, glcontext.textVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
     return 0;
 }
+
+void GL_Renderer::drawText(std::string shader_identifier, std::string font_identifier, std::string text, float x, float y, float scale, glm::vec3 color) {
+    GLuint shaderProgram = shaderManager.getShaderProgram(shader_identifier);
+    glUseProgram(shaderProgram);
+    GLuint textColorLocation = glGetUniformLocation(shaderProgram, "textColor");
+    glUniform3f(textColorLocation, color.x, color.y, color.z);
+    GLuint projectionLocation = glGetUniformLocation(shaderProgram, "projection");
+    glm::mat4 projection = glm::ortho(0.0f, 1280.0f, 0.0f, 720.0f);
+    glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
+    glActiveTexture(GL_TEXTURE0);
+    glBindVertexArray(glcontext.textVAO);
+
+    std::string::const_iterator c;
+    for (c = text.begin(); c != text.end(); c++) {
+        Character ch = Characters[*c];
+        LOG(ch.Size[0]);
+        if (ch.TextureID == 0) {
+            LOG_ERROR("Character texture not loaded for character: ", std::string(1, *c));
+            continue;
+        }
+
+        float xpos = x + ch.Bearing.x * scale;
+        float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+        float w = ch.Size.x * scale;
+        float h = ch.Size.y * scale;
+
+        float vertices[6][4] = {
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos,     ypos,       0.0f, 1.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+            { xpos + w, ypos + h,   1.0f, 0.0f }
+        };
+        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+        glBindBuffer(GL_ARRAY_BUFFER, glcontext.textVBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        x += (ch.Advance >> 6) * scale;
+    }
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
 
 void GL_Renderer::render() {
     if (HOT_TEXTURE_SWAPPING_ENABLED) { textureManager.hotReload(); }
     if (HOT_SHADER_SWAPPING_ENABLED) { shaderManager.hotReload(); }
 
+    
+
     // Prepare for rendering to FBO
+    glBindVertexArray(glcontext.VAO);
     glBindFramebuffer(GL_FRAMEBUFFER, glcontext.FBO);
     glClearColor(SCREEN_CLEAR_COLOR[0], SCREEN_CLEAR_COLOR[1], SCREEN_CLEAR_COLOR[2], SCREEN_CLEAR_COLOR[3]);
     glClearDepth(1.0f); // Depth clear value should be 1.0f for the farthest depth
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glViewport(0, 0, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
 
     glUseProgram(shaderManager.getShaderProgram("DEFAULT_QUAD"));
@@ -123,25 +184,8 @@ void GL_Renderer::render() {
     glBindTexture(GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     
-    // Draw the text
-    glm::vec2 screenShape = { DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
-    GLuint fontTextureID;
-    glUseProgram(shaderManager.getShaderProgram("FONT_SHADER"));
-    for (FontTexture& each_texture : renderData.fontRenderer.fontTextures) {
-        renderData.fontRenderer.bindFontTextureToGLTexture(each_texture, fontTextureID);
-        glm::vec2 fontTextureShape = { each_texture.size.x, each_texture.size.y };
-        glm::vec2 fontTexturePos = { each_texture.pos.x, each_texture.pos.y };
-        GLuint  screenSizeHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "screenSize");
-        GLuint  fontTextureSizeHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "fontTextureSize");
-        GLuint  fontTexturePosHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "fontTexturePos");
-        glUniform2fv(screenSizeHandle, 1, glm::value_ptr(screenShape));
-        glUniform2fv(fontTextureSizeHandle, 1, glm::value_ptr(fontTextureShape));
-        glUniform2fv(fontTexturePosHandle, 1, glm::value_ptr(fontTexturePos));
-        glBindTexture(GL_TEXTURE_2D, fontTextureID);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        glDeleteTextures(1, &fontTextureID);
-
-    }
-    renderData.fontRenderer.clearFontTextures();
-
+    glm::mat4 projection = glm::ortho(0.0f, 1280.0f, 0.0f, 720.0f);
+    GLuint textOrthoHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "projection");
+    glUniformMatrix4fv(textOrthoHandle, 1, GL_FALSE, glm::value_ptr(projection));
+    drawText("FONT_SHADER", "Hello World", "pixel", 10, 10, 1.0, { 0, 1.0, 1.0 });
 }

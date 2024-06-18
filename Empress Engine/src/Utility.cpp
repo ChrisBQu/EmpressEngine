@@ -28,3 +28,8 @@ uint64_t getFileTimestamp(const char* filename) {
     }
     return (uint64_t)fileInfo.st_mtime;
 }
+
+float mapRange(int value, int fromMin, int fromMax, float toMin, float toMax) {
+    float normalized = static_cast<float>(value - fromMin) / (fromMax - fromMin);
+    return toMin + normalized * (toMax - toMin);
+}

@@ -1,8 +1,11 @@
 #version 430 core
 out vec2 TexCoords;
+out vec4 passThroughColor;
 
+uniform float fontTextureDepth;
 uniform vec2 fontTexturePos;
 uniform vec2 fontTextureSize;
+uniform vec4 fontTextureColor;
 uniform vec2 screenSize;
 
 void main()
@@ -36,9 +39,11 @@ void main()
 
     // Set the texture coordinates
     TexCoords = texCoords[gl_VertexID];
+    passThroughColor = fontTextureColor;
+
 
     // Offset the vertex position by the base position
     vec2 vertexPos = vertices[gl_VertexID] + pos;
 
-    gl_Position = vec4(vertexPos, 0.0, 1.0);
+    gl_Position = vec4(vertexPos, -fontTextureDepth, 1.0);
 }

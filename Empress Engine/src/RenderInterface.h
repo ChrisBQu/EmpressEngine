@@ -29,14 +29,24 @@ struct RenderTransform {
 	float alignment_padding;
 };
 
+struct TextRenderItem {
+	std::string text;
+	std::string fontIdentifier;
+	glm::vec2 pos;
+	glm::vec4 color;
+	glm::vec2 scale;
+};
+
 struct RenderData {
 	OrthographicCamera gameCamera;
+	OrthographicCamera uiCamera;
+	std::vector<TextRenderItem> textItems;
 	std::map<std::string, std::vector<RenderTransform>> transforms;
 };
 
 void drawQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 scale, int depth = 0, float rotation = 0.0f, float alpha = 1.0f);
 void drawTileset(TilesetData tsd, std::vector<unsigned int> &tile_indices, glm::vec2 offset_pos, unsigned int tiles_per_row, unsigned int framecount, unsigned int depth);
-
+void drawText(std::string text, std::string font_identifier, glm::vec2 pos, glm::vec2 scale, glm::vec4 color);
 
 extern RenderData renderData;
 

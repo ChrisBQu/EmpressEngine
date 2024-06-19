@@ -87,7 +87,7 @@
     <ClInclude Include="src\Tileset.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Font.h">
+    <ClInclude Include="src\FontManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -134,8 +134,8 @@
     <ClCompile Include="src\Sprite.cpp">
       <Filter>Source Files\Game Object System</Filter>
     </ClCompile>
-    <ClCompile Include="src\Font.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\FontManager.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +168,9 @@
     </None>
     <None Include="assets\shaders\simple_font.vert">
       <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="assets\fonts\font_manifest.json">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
 </Project>

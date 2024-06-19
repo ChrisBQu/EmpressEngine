@@ -24,7 +24,7 @@
     <ClInclude Include="src\3rdParty\stb_image.h" />
     <ClInclude Include="src\Controller.h" />
     <ClInclude Include="src\Engine.h" />
-    <ClInclude Include="src\Font.h" />
+    <ClInclude Include="src\FontManager.h" />
     <ClInclude Include="src\GameConfig.h" />
     <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\Geometry.h" />
@@ -43,7 +43,7 @@
     <ClCompile Include="EventSystem.cpp" />
     <ClCompile Include="src\Controller.cpp" />
     <ClCompile Include="src\Engine.cpp" />
-    <ClCompile Include="src\Font.cpp" />
+    <ClCompile Include="src\FontManager.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\Geometry.cpp" />
     <ClCompile Include="src\Logger.cpp" />
@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\animation_manifest.json" />
+    <None Include="assets\fonts\font_manifest.json" />
     <None Include="assets\shaders\font.frag" />
     <None Include="assets\shaders\font.vert" />
     <None Include="assets\shaders\screen_default.frag" />

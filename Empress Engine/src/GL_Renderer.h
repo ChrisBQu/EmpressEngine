@@ -1,7 +1,7 @@
 #ifndef GL_RENDERER_H
 #define GL_RENDERER_H
 
-#include "Font.h"
+#include "FontManager.h"
 #include "ShaderManager.h"
 #include "TextureManager.h"
 
@@ -31,7 +31,7 @@ public:
     void swapTexture(const char* identifier);
 	void render();
 private:
-    void drawText(std::string shader_identifier, std::string font_identifier, std::string text, float x, float y, float scale, glm::vec3 color);
+    void drawText(std::string shader_identifier, std::string font_identifier, std::string text, glm::vec2 pos, glm::vec2 scale, glm::vec4 color);
     FontManager fontManager;
     ShaderManager shaderManager;
     TextureManager textureManager;

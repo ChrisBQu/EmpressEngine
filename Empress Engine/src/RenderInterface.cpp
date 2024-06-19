@@ -3,6 +3,8 @@
 #include "Sprite.h"
 #include "Utility.h"
 
+#include "GameConfig.h"
+
 #include <cmath>
 
 RenderData renderData;
@@ -57,4 +59,14 @@ void drawTileset(TilesetData tsd, std::vector<unsigned int>& tile_indices, glm::
             }
         }
     }
+}
+
+void drawText(std::string text, std::string font_identifier, glm::vec2 pos, glm::vec2 scale, glm::vec4 color) {
+    TextRenderItem tri;
+    tri.color = { color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, color[3] / 255.0 };
+    tri.scale = scale;
+    tri.pos = { pos[0], DEFAULT_SCREEN_HEIGHT - pos[1] };
+    tri.fontIdentifier = font_identifier;
+    tri.text = text;
+    renderData.textItems.push_back(tri);
 }

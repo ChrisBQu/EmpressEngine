@@ -73,7 +73,7 @@ int GL_Renderer::init() {
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, glcontext.postProcessingDepthBuffer);
 
     // Init text rendering
-    fontManager.loadFont("assets/fonts/public_pixel.ttf");
+    fontManager.buildFontList(FONT_MANIFEST_FILEPATH);
     glGenVertexArrays(1, &glcontext.textVAO);
     glGenBuffers(1, &glcontext.textVBO);
     glBindVertexArray(glcontext.textVAO);
@@ -87,12 +87,12 @@ int GL_Renderer::init() {
     return 0;
 }
 
-void GL_Renderer::drawText(std::string shader_identifier, std::string font_identifier, std::string text, float x, float y, float scale, glm::vec3 color) {
+void GL_Renderer::drawText(std::string shader_identifier, std::string font_identifier, std::string text, glm::vec2 pos, glm::vec2 scale, glm::vec4 color) {
     GLuint shaderProgram = shaderManager.getShaderProgram(shader_identifier);
     glUseProgram(shaderProgram);
     GLuint textColorLocation = glGetUniformLocation(shaderProgram, "textColor");
-    glUniform3f(textColorLocation, color.x, color.y, color.z);
     GLuint projectionLocation = glGetUniformLocation(shaderProgram, "projection");
+    glUniform4f(textColorLocation, color[0], color[1], color[2], color[3]);
     glm::mat4 projection = glm::ortho(0.0f, 1280.0f, 0.0f, 720.0f);
     glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
     glActiveTexture(GL_TEXTURE0);
@@ -100,17 +100,16 @@ void GL_Renderer::drawText(std::string shader_identifier, std::string font_ident
 
     std::string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++) {
-        Character ch = Characters[*c];
-        LOG(ch.Size[0]);
-        if (ch.TextureID == 0) {
+        Character ch = fontManager.getFont(font_identifier)[*c];
+        if (ch.textureID == 0) {
             LOG_ERROR("Character texture not loaded for character: ", std::string(1, *c));
             continue;
         }
 
-        float xpos = x + ch.Bearing.x * scale;
-        float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-        float w = ch.Size.x * scale;
-        float h = ch.Size.y * scale;
+        float xpos = pos[0] + ch.bearing.x * scale[0];
+        float ypos = pos[1] - (ch.size.y - ch.bearing.y) * scale[1];
+        float w = ch.size.x * scale[0];
+        float h = ch.size.y * scale[1];
 
         float vertices[6][4] = {
             { xpos,     ypos + h,   0.0f, 0.0f },
@@ -120,12 +119,12 @@ void GL_Renderer::drawText(std::string shader_identifier, std::string font_ident
             { xpos + w, ypos,       1.0f, 1.0f },
             { xpos + w, ypos + h,   1.0f, 0.0f }
         };
-        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+        glBindTexture(GL_TEXTURE_2D, ch.textureID);
         glBindBuffer(GL_ARRAY_BUFFER, glcontext.textVBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        x += (ch.Advance >> 6) * scale;
+        pos[0] += (ch.advance >> 6) * scale[0];
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -184,8 +183,19 @@ void GL_Renderer::render() {
     glBindTexture(GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     
-    glm::mat4 projection = glm::ortho(0.0f, 1280.0f, 0.0f, 720.0f);
+    // Draw text
+    glm::mat4 projection = glm::ortho(0.0f, (float)DEFAULT_SCREEN_WIDTH, 0.0f, (float)DEFAULT_SCREEN_HEIGHT);
     GLuint textOrthoHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "projection");
     glUniformMatrix4fv(textOrthoHandle, 1, GL_FALSE, glm::value_ptr(projection));
-    drawText("FONT_SHADER", "Hello World", "pixel", 10, 10, 1.0, { 0, 1.0, 1.0 });
+
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+    for (TextRenderItem& each_text : renderData.textItems) {
+        drawText("FONT_SHADER", each_text.fontIdentifier, each_text.text, each_text.pos, each_text.scale, each_text.color);
+    }
+    renderData.textItems.clear();
+
 }

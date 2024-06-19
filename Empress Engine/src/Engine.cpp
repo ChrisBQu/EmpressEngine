@@ -91,6 +91,9 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     renderData.gameCamera.pos = { 160, 120 };
     renderData.gameCamera.dimensions = { 426, 240 };
 
+    renderData.uiCamera.pos = { 0, 0 };
+    renderData.uiCamera.dimensions = { DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT };
+
     active = true;
 
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
@@ -200,6 +203,7 @@ void Engine::render() {
 
     drawTileset(tsd, someTiles, { 0, 0 }, 1000, frameCount, 100);
 
+    drawText("HELLO!!!", "pixel", { 100, 100 }, { 1.0, 1.0 }, { 0,0,255,255 });
 
     myObj.transform.depth = 50;
     myObj.render();

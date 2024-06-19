@@ -28,11 +28,9 @@ void drawUIQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_siz
     float ys = (float)gameConfig.screenHeight / (float)DEFAULT_SCREEN_HEIGHT;
 
     RenderTransform transform;
-    // No need to adjust position for center, we want top-left
+    // Adjust the position so that the top-left corner is at the specified pos
     transform.pos = pos;
-    // Scale the position to screen dimensions
     transform.pos = { transform.pos[0] * xs, transform.pos[1] * ys };
-    // Scale the size to screen dimensions
     transform.size = glm::vec2(tex_size[0] * scale.x * xs, tex_size[1] * scale.y * ys);
     transform.atlasOffset = tex_pos;
     transform.spriteSize = tex_size;
@@ -41,7 +39,6 @@ void drawUIQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_siz
     transform.alpha = alpha;
     renderData.uitransforms[tex_identifier].push_back(transform);
 }
-
 
 
 

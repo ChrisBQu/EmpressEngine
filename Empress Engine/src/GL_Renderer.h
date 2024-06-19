@@ -15,9 +15,7 @@ struct GL_Context {
     GLuint VAO;
     GLuint FBO;
     GLuint textureID;
-    GLuint fontAtlasID;
     GLuint transformSBOID;
-    GLuint orthoProjectionMatrixID;
     GLuint postProcessingTextureBuffer;
     GLuint postProcessingDepthBuffer;
     GLuint textVAO;

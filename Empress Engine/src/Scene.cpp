@@ -17,7 +17,7 @@ Scene::Scene() {
 	}
 }
 
-void Scene::addObject(GameObject g) {
+void Scene::addObject(GameObject *g) {
 	myObjects.push_back(g);
 }
 
@@ -31,15 +31,15 @@ void Scene::toggleTileLayer(int layer, bool toggle) {
 
 
 void Scene::update() {
-	for (GameObject& each_object : myObjects) {
-		each_object.update();
+	for (GameObject* each_object : myObjects) {
+		each_object->update();
 	}
 	frameCount++;
 }
 
 void Scene::render() {
-	for (GameObject &each_object : myObjects) {
-		each_object.render();
+	for (GameObject* each_object : myObjects) {
+		each_object->render();
 	}
 
 	for (TileLayer &each_layer : tileLayers) {

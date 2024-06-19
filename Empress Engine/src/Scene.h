@@ -17,7 +17,7 @@ struct TileLayer {
 class Scene {
 public:
 	Scene();
-	void addObject(GameObject g);
+	void addObject(GameObject *g);
 	void setTileLayer(int layer, TilesetLayerData tld);
 	void toggleTileLayer(int layer, bool toggle);
 	void update();
@@ -25,7 +25,7 @@ public:
 private:
 	unsigned int frameCount;
 	TileLayer tileLayers[NUMBER_OF_TILE_LAYERS];
-	std::vector<GameObject> myObjects;
+	std::vector<GameObject*> myObjects;
 };
 
 #endif

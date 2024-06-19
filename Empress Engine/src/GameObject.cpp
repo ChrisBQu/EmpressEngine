@@ -10,7 +10,6 @@ GameObject::GameObject() {
 	transform.alpha = 1.0;
 }
 
-
 void GameObject::update() {
 }
 

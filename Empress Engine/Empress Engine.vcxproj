@@ -26,6 +26,7 @@
     <ClInclude Include="src\FontManager.h" />
     <ClInclude Include="src\GameConfig.h" />
     <ClInclude Include="src\GameObject.h" />
+    <ClInclude Include="src\GameObj_TestHUD.h" />
     <ClInclude Include="src\Geometry.h" />
     <ClInclude Include="src\Logger.h" />
     <ClInclude Include="src\GL_Renderer.h" />
@@ -45,6 +46,7 @@
     <ClCompile Include="src\FontManager.cpp" />
     <ClCompile Include="src\GameConfig.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\GameObj_TestHUD.cpp" />
     <ClCompile Include="src\Geometry.cpp" />
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\GL_Renderer.cpp" />
@@ -69,6 +71,7 @@
     <None Include="assets\shaders\shader_manifest.json" />
     <None Include="assets\shaders\simple_font.frag" />
     <None Include="assets\shaders\simple_font.vert" />
+    <None Include="assets\shaders\ui_quad.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

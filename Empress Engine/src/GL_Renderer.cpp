@@ -118,7 +118,7 @@ void GL_Renderer::drawText(std::string shader_identifier, std::string font_ident
     glBindVertexArray(glcontext.textVAO);
 
     float scaledPosX = pos[0] * xs;
-    float scaledPosY = pos[1] * ys;
+    float scaledPosY = gameConfig.screenHeight - (pos[1] * ys);
 
     std::string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++) {
@@ -174,14 +174,16 @@ void GL_Renderer::render() {
         cam.pos.y - cam.dimensions.y / 2.0,
         cam.pos.y + cam.dimensions.y / 2.0
     );
+    glm::mat4 screenProjection = glm::ortho(0.0f, (float)gameConfig.screenWidth, (float)gameConfig.screenHeight, 0.0f);
+
 
     // Render the sprites to the FBO
     glBindFramebuffer(GL_FRAMEBUFFER, glcontext.FBO);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-    glcontext.orthoProjectionMatrixID = glGetUniformLocation(shaderManager.getShaderProgram("DEFAULT_QUAD"), "orthoProjection");
-    glUniformMatrix4fv(glcontext.orthoProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(orthoProjection));
+    GLuint orthoProjectionMatrixID = glGetUniformLocation(shaderManager.getShaderProgram("DEFAULT_QUAD"), "orthoProjection");
+    glUniformMatrix4fv(orthoProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(orthoProjection));
     for (const auto& it : renderData.transforms) {
         swapTexture(it.first.c_str());
         if (it.second.size() > 0) {
@@ -190,11 +192,22 @@ void GL_Renderer::render() {
         }
     }
     renderData.transforms.clear();
+
+    // Render the UI sprites to the FBO
+    glUseProgram(shaderManager.getShaderProgram("UI_QUAD"));
+    glUniformMatrix4fv(orthoProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(screenProjection));
+    for (const auto& it : renderData.uitransforms) {
+        swapTexture(it.first.c_str());
+        if (it.second.size() > 0) {
+            glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderTransform) * it.second.size(), &it.second[0], GL_DYNAMIC_DRAW);
+            glDrawArraysInstanced(GL_TRIANGLES, 0, 6, it.second.size());
+        }
+    }
+    renderData.uitransforms.clear();
     
     // Draw text
-    glm::mat4 projection = glm::ortho(0.0f, (float)gameConfig.screenWidth, 0.0f, (float)gameConfig.screenHeight);
     GLuint textOrthoHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "projection");
-    glUniformMatrix4fv(textOrthoHandle, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(textOrthoHandle, 1, GL_FALSE, glm::value_ptr(screenProjection));
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

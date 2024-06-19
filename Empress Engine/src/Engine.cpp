@@ -7,9 +7,12 @@
 #include "Scene.h"
 #include "SpriteAnimation.h"
 
+#include "GameObj_TestHUD.h"
+
 #include <iostream>
 
 GameObject myObj;
+GameObject_HUD myHUD;
 std::vector<unsigned int> someTiles;
 std::vector<unsigned int> randX;
 std::vector<unsigned int> randY;
@@ -102,8 +105,11 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
 
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
 
-    myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_STAND");
-    myScene.addObject(myObj);
+    myObj.sprite.setAnimation("PINK_BLOB_WALK");
+    myObj.transform.pos = { 0, 0 };
+    myObj.transform.scale = { 1, 1 };
+    myScene.addObject(&myObj);
+    myScene.addObject(&myHUD);
     TilesetLayerData tld = { 1000, 100, {0, 0}, someTiles, tsd };
     myScene.setTileLayer(0, tld);
     myScene.toggleTileLayer(0, true);
@@ -146,35 +152,24 @@ void Engine::handleInput() {
         renderData.gameCamera.pos.x -= 2;
     }
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP)) {
-        
         renderData.gameCamera.pos.y -= 2;
     }
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN)) {
-        
         renderData.gameCamera.pos.y += 2;
     }
 
     if (myController.getPressed(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
-        myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_WALK");
-        myObj.transform.scale = { 1.0, 1.0 };
 
     }
 
     if (myController.getReleased(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
-        myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_STAND");
-        myObj.transform.scale = { 1.0, 1.0 };
 
     }
 
     if (myController.getPressed(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
-        myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_WALK");
-        myObj.transform.scale = { -1.0, 1.0 };
-
     }
 
     if (myController.getReleased(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
-        myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_STAND");
-        myObj.transform.scale = { -1.0, 1.0 };
 
     }
 

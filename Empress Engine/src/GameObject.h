@@ -9,8 +9,9 @@
 class GameObject {
 public:
 	GameObject();
-	void update();
-	void render();
+
+	virtual void update();
+	virtual void render();
 
 	// Variables
 	bool visible;

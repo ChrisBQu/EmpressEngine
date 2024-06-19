@@ -3,6 +3,10 @@
     "vertexSource": "assets/shaders/quad.vert",
     "fragmentSource": "assets/shaders/quad_default.frag"
   },
+  "UI_QUAD" : {
+    "vertexSource": "assets/shaders/ui_quad.vert",
+    "fragmentSource": "assets/shaders/quad_default.frag"
+  },
   "DEFAULT_POST": {
     "vertexSource": "assets/shaders/screen.vert",
     "fragmentSource": "assets/shaders/screen_default.frag"
@@ -11,4 +15,5 @@
     "vertexSource": "assets/shaders/simple_font.vert",
     "fragmentSource": "assets/shaders/simple_font.frag"
   }
-  }
+
+}

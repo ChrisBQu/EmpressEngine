@@ -31,6 +31,12 @@
     <Filter Include="Source Files\Game Object System">
       <UniqueIdentifier>{6538d947-62a4-4e36-ae77-307287e89ab3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game Object System\Game Objects">
+      <UniqueIdentifier>{9c07d9d5-c751-469d-b700-14bf6a9f364c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Object System\Game Objects">
+      <UniqueIdentifier>{7eefdaa0-a5b9-4f7d-b961-5b7d2cc851bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine.h">
@@ -90,6 +96,9 @@
     <ClInclude Include="src\Scene.h">
       <Filter>Header Files\Game Object System</Filter>
     </ClInclude>
+    <ClInclude Include="src\GameObj_TestHUD.h">
+      <Filter>Header Files\Game Object System\Game Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine.cpp">
@@ -140,6 +149,9 @@
     <ClCompile Include="src\Sprite.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameObj_TestHUD.cpp">
+      <Filter>Source Files\Game Object System\Game Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\animation_manifest.json">
@@ -174,6 +186,9 @@
     </None>
     <None Include="assets\fonts\font_manifest.json">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\ui_quad.vert">
+      <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

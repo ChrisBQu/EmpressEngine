@@ -7,9 +7,12 @@
 class Sprite {
 public:
 	Sprite();
-	SpriteAnimationData animation;
+	void setAnimation(std::string identifier);
+	void setStaticSprite(std::string atlasIdentifier, glm::ivec2 atlasOffset, glm::ivec2 atlasSize);
 	void tickAnimation();
 	void render(TransformStruct T);
+private:
+	SpriteAnimationData animation;
 };
 
 #endif // SPRITE_H

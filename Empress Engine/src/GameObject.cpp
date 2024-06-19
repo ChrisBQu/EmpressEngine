@@ -1,5 +1,5 @@
 #include "GameObject.h"
-
+#include "Logger.h"
 
 GameObject::GameObject() {
 	visible = true;
@@ -12,7 +12,7 @@ GameObject::GameObject() {
 
 
 void GameObject::update() {
-
+	LOG("Alive");
 }
 
 void GameObject::render() {

@@ -63,13 +63,13 @@ int GL_Renderer::init() {
     // Init post-processing
     glGenTextures(1, &glcontext.postProcessingTextureBuffer);
     glBindTexture(GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gameConfig.screenWidth, gameConfig.screenHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer, 0);
     glGenRenderbuffers(1, &glcontext.postProcessingDepthBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, glcontext.postProcessingDepthBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, gameConfig.screenWidth, gameConfig.screenHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, glcontext.postProcessingDepthBuffer);
 
     // Init text rendering
@@ -87,16 +87,37 @@ int GL_Renderer::init() {
     return 0;
 }
 
+void GL_Renderer::resize(int width, int height) {
+    gameConfig.screenWidth = width;
+    gameConfig.screenHeight = height;
+
+    // Update post-processing texture buffer
+    glBindTexture(GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // Update post-processing depth buffer
+    glBindRenderbuffer(GL_RENDERBUFFER, glcontext.postProcessingDepthBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+}
+
 void GL_Renderer::drawText(std::string shader_identifier, std::string font_identifier, std::string text, glm::vec2 pos, glm::vec2 scale, glm::vec4 color) {
+    float xs = (float)gameConfig.screenWidth / (float)DEFAULT_SCREEN_WIDTH;
+    float ys = (float)gameConfig.screenHeight / (float)DEFAULT_SCREEN_HEIGHT;
+
     GLuint shaderProgram = shaderManager.getShaderProgram(shader_identifier);
     glUseProgram(shaderProgram);
     GLuint textColorLocation = glGetUniformLocation(shaderProgram, "textColor");
     GLuint projectionLocation = glGetUniformLocation(shaderProgram, "projection");
     glUniform4f(textColorLocation, color[0], color[1], color[2], color[3]);
-    glm::mat4 projection = glm::ortho(0.0f, 1280.0f, 0.0f, 720.0f);
+    glm::mat4 projection = glm::ortho(0.0f, (float)gameConfig.screenWidth, 0.0f, (float)gameConfig.screenHeight);
     glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projection));
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(glcontext.textVAO);
+
+    float scaledPosX = pos[0] * xs;
+    float scaledPosY = pos[1] * ys;
 
     std::string::const_iterator c;
     for (c = text.begin(); c != text.end(); c++) {
@@ -106,10 +127,10 @@ void GL_Renderer::drawText(std::string shader_identifier, std::string font_ident
             continue;
         }
 
-        float xpos = pos[0] + ch.bearing.x * scale[0];
-        float ypos = pos[1] - (ch.size.y - ch.bearing.y) * scale[1];
-        float w = ch.size.x * scale[0];
-        float h = ch.size.y * scale[1];
+        float xpos = scaledPosX + ch.bearing.x * xs;
+        float ypos = scaledPosY - (ch.size.y - ch.bearing.y) * ys;
+        float w = ch.size.x * xs;
+        float h = ch.size.y * ys;
 
         float vertices[6][4] = {
             { xpos,     ypos + h,   0.0f, 0.0f },
@@ -124,7 +145,7 @@ void GL_Renderer::drawText(std::string shader_identifier, std::string font_ident
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        pos[0] += (ch.advance >> 6) * scale[0];
+        scaledPosX += (ch.advance >> 6) * xs;
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -132,11 +153,10 @@ void GL_Renderer::drawText(std::string shader_identifier, std::string font_ident
 
 
 
+
 void GL_Renderer::render() {
     if (HOT_TEXTURE_SWAPPING_ENABLED) { textureManager.hotReload(); }
     if (HOT_SHADER_SWAPPING_ENABLED) { shaderManager.hotReload(); }
-
-    
 
     // Prepare for rendering to FBO
     glBindVertexArray(glcontext.VAO);
@@ -145,7 +165,7 @@ void GL_Renderer::render() {
     glClearDepth(1.0f); // Depth clear value should be 1.0f for the farthest depth
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glViewport(0, 0, DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT);
+    glViewport(0, 0, gameConfig.screenWidth, gameConfig.screenHeight);
 
     glUseProgram(shaderManager.getShaderProgram("DEFAULT_QUAD"));
 
@@ -182,20 +202,19 @@ void GL_Renderer::render() {
     glUseProgram(shaderManager.getShaderProgram("DEFAULT_POST"));
     glBindTexture(GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer);
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    
+
     // Draw text
-    glm::mat4 projection = glm::ortho(0.0f, (float)DEFAULT_SCREEN_WIDTH, 0.0f, (float)DEFAULT_SCREEN_HEIGHT);
+    
+    glm::mat4 projection = glm::ortho(0.0f, (float)gameConfig.screenWidth, 0.0f, (float)gameConfig.screenHeight);
     GLuint textOrthoHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "projection");
     glUniformMatrix4fv(textOrthoHandle, 1, GL_FALSE, glm::value_ptr(projection));
-
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
     for (TextRenderItem& each_text : renderData.textItems) {
         drawText("FONT_SHADER", each_text.fontIdentifier, each_text.text, each_text.pos, each_text.scale, each_text.color);
     }
     renderData.textItems.clear();
+    
 
 }

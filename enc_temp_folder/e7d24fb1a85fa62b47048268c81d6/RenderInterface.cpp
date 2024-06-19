@@ -29,15 +29,15 @@ void drawTileset(TilesetData tsd, std::vector<unsigned int>& tile_indices, glm::
     float cameraBottom = renderData.gameCamera.pos.y - renderData.gameCamera.dimensions.y / 2.0f;
     float cameraTop = renderData.gameCamera.pos.y + renderData.gameCamera.dimensions.y / 2.0f;
 
-    // Calculate the number of tiles that fit in the camera view plus an extra tile on each side for partially visible tiles
-    int firstCol = std::max(0, (int)std::floor((cameraLeft - offset_pos.x) / tsd.atlasSize.x));
-    int lastCol = std::min((int)tiles_per_row - 1, (int)std::ceil((cameraRight - offset_pos.x) / tsd.atlasSize.x));
-    int firstRow = std::max(0, (int)std::floor((cameraBottom - offset_pos.y) / tsd.atlasSize.y));
-    int lastRow = std::min((int)(tile_indices.size() / tiles_per_row) - 1, (int)std::ceil((cameraTop - offset_pos.y) / tsd.atlasSize.y));
+    // Tile iteration bounds (adjusted to include tiles partially within view)
+    unsigned int firstCol = std::max(0, (int)std::floor((cameraLeft - offset_pos.x) / tsd.atlasSize.x) - 1);
+    unsigned int lastCol = std::min(tiles_per_row - 1, (unsigned int)std::ceil((cameraRight - offset_pos.x) / tsd.atlasSize.x) + 1);
+    unsigned int firstRow = std::max(0, (int)std::floor((cameraBottom - offset_pos.y) / tsd.atlasSize.y) - 1);
+    unsigned int lastRow = std::min((unsigned int)(tile_indices.size() / tiles_per_row), (unsigned int)std::ceil((cameraTop - offset_pos.y) / tsd.atlasSize.y) + 1);
 
     // Tile drawing loop
-    for (int row = firstRow; row <= lastRow; row++) {
-        for (int col = firstCol; col <= lastCol; col++) {
+    for (unsigned int row = firstRow; row <= lastRow; row++) {
+        for (unsigned int col = firstCol; col <= lastCol; col++) {
             unsigned int i = row * tiles_per_row + col;
             if (i >= tile_indices.size()) { continue; }
 
@@ -47,7 +47,7 @@ void drawTileset(TilesetData tsd, std::vector<unsigned int>& tile_indices, glm::
             unsigned int tex_col = tile_indices[i] % tsd.framesPerRow;
             unsigned int tex_row = tile_indices[i] / tsd.framesPerRow;
 
-            // Calculate the position
+            // Calculate unadjusted position
             float pos_x = col * tsd.atlasSize.x + offset_pos.x;
             float pos_y = row * tsd.atlasSize.y + offset_pos.y;
 
@@ -57,9 +57,8 @@ void drawTileset(TilesetData tsd, std::vector<unsigned int>& tile_indices, glm::
             float tileBottom = pos_y - tsd.atlasSize.y / 2.0f;
             float tileTop = pos_y + tsd.atlasSize.y / 2.0f;
 
-            // Check if the tile is within the camera view
-            if (tileRight > cameraLeft && tileLeft < cameraRight + tsd.atlasSize.x && tileTop > cameraBottom && tileBottom < cameraTop + tsd.atlasSize.y) {
-                // Draw the tile
+            if (tileRight > cameraLeft && tileLeft < cameraRight && tileTop > cameraBottom && tileBottom < cameraTop) {
+                // Pass unadjusted position to drawQuad
                 drawQuad(tsd.atlasIdentifier, { tsd.atlasSize.x * tex_col, tsd.atlasSize.y * tex_row }, tsd.atlasSize, { pos_x, pos_y }, { 1.0f, 1.0f }, depth, 0.0f, 1.0f);
             }
         }

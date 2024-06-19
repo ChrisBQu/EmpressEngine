@@ -39,7 +39,6 @@ struct TextRenderItem {
 
 struct RenderData {
 	OrthographicCamera gameCamera;
-	OrthographicCamera uiCamera;
 	std::vector<TextRenderItem> textItems;
 	std::map<std::string, std::vector<RenderTransform>> transforms;
 };

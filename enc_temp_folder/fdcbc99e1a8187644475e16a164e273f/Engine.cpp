@@ -208,7 +208,7 @@ void Engine::render() {
     LOG(xs);
     drawText("HELLO!!!", "pixel", { 32, 64 }, { xs, ys }, { 0,0,255,255 });
 
-    myObj.transform.depth = 150;
+    myObj.transform.depth = 50;
     myObj.render();
 
 

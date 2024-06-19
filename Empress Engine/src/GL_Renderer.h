@@ -30,6 +30,7 @@ public:
 	int init();
     void swapTexture(const char* identifier);
 	void render();
+    void resize(int width, int height);
 private:
     void drawText(std::string shader_identifier, std::string font_identifier, std::string text, glm::vec2 pos, glm::vec2 scale, glm::vec4 color);
     FontManager fontManager;

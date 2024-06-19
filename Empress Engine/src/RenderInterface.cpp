@@ -22,6 +22,18 @@ void drawQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size,
     renderData.transforms[tex_identifier].push_back(transform);
 }
 
+void drawUIQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 scale, int depth, float rotation, float alpha) {
+    RenderTransform transform;
+    transform.pos = pos - glm::vec2(tex_size) / 2.0f;
+    transform.size = glm::vec2(tex_size[0] * scale.x, tex_size[1] * scale.y);
+    transform.atlasOffset = tex_pos;
+    transform.spriteSize = tex_size;
+    transform.depth = (depth + 100.0) / 200.0;
+    transform.rotation = rotation;
+    transform.alpha = alpha;
+    renderData.uitransforms[tex_identifier].push_back(transform);
+}
+
 void drawTileset(TilesetData tsd, std::vector<unsigned int>& tile_indices, glm::vec2 offset_pos, unsigned int tiles_per_row, unsigned int framecount, unsigned int depth) {
     // Camera bounds calculation
     float cameraLeft = renderData.gameCamera.pos.x - renderData.gameCamera.dimensions.x / 2.0f;

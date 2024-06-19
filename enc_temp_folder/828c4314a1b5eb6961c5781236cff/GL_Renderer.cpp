@@ -148,6 +148,8 @@ void GL_Renderer::drawText(std::string shader_identifier, std::string font_ident
         glDrawArrays(GL_TRIANGLES, 0, 6);
         scaledPosX += (ch.advance >> 6) * xs * scale[0];
     }
+    //glBindVertexArray(0);
+    //glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 
@@ -163,8 +165,11 @@ void GL_Renderer::render() {
     glClearColor(SCREEN_CLEAR_COLOR[0], SCREEN_CLEAR_COLOR[1], SCREEN_CLEAR_COLOR[2], SCREEN_CLEAR_COLOR[3]);
     glClearDepth(1.0f); // Depth clear value should be 1.0f for the farthest depth
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glViewport(0, 0, gameConfig.screenWidth, gameConfig.screenHeight);
+
     glUseProgram(shaderManager.getShaderProgram("DEFAULT_QUAD"));
+
 
     // Pass in the gameCamera to render things in the camera's view
     OrthographicCamera cam = renderData.gameCamera;
@@ -190,8 +195,9 @@ void GL_Renderer::render() {
         }
     }
     renderData.transforms.clear();
-    
-    // Draw text
+
+    // Post-Processing Steps
+
     glm::mat4 projection = glm::ortho(0.0f, (float)gameConfig.screenWidth, 0.0f, (float)gameConfig.screenHeight);
     GLuint textOrthoHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "projection");
     glUniformMatrix4fv(textOrthoHandle, 1, GL_FALSE, glm::value_ptr(projection));
@@ -203,12 +209,15 @@ void GL_Renderer::render() {
     }
     renderData.textItems.clear();
 
-    // Post-Processing Steps
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(shaderManager.getShaderProgram("DEFAULT_POST"));
     glBindTexture(GL_TEXTURE_2D, glcontext.postProcessingTextureBuffer);
     glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    // Draw text
+
+
     
 
 }

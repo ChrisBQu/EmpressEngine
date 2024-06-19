@@ -103,6 +103,7 @@ void GL_Renderer::resize(int width, int height) {
 }
 
 void GL_Renderer::drawText(std::string shader_identifier, std::string font_identifier, std::string text, glm::vec2 pos, glm::vec2 scale, glm::vec4 color) {
+    
     float xs = (float)gameConfig.screenWidth / (float)DEFAULT_SCREEN_WIDTH;
     float ys = (float)gameConfig.screenHeight / (float)DEFAULT_SCREEN_HEIGHT;
 
@@ -127,10 +128,10 @@ void GL_Renderer::drawText(std::string shader_identifier, std::string font_ident
             continue;
         }
 
-        float xpos = scaledPosX + ch.bearing.x * xs;
-        float ypos = scaledPosY - (ch.size.y - ch.bearing.y) * ys;
-        float w = ch.size.x * xs;
-        float h = ch.size.y * ys;
+        float xpos = scaledPosX + ch.bearing.x * xs * scale[0];
+        float ypos = scaledPosY - (ch.size.y - ch.bearing.y) * ys * scale[1];
+        float w = ch.size.x * xs * scale[0];
+        float h = ch.size.y * ys * scale[1];
 
         float vertices[6][4] = {
             { xpos,     ypos + h,   0.0f, 0.0f },
@@ -145,7 +146,7 @@ void GL_Renderer::drawText(std::string shader_identifier, std::string font_ident
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        scaledPosX += (ch.advance >> 6) * xs;
+        scaledPosX += (ch.advance >> 6) * xs * scale[0];
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);

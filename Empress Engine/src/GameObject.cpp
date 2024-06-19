@@ -12,7 +12,6 @@ GameObject::GameObject() {
 
 
 void GameObject::update() {
-	LOG("Alive");
 }
 
 void GameObject::render() {

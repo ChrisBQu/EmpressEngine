@@ -4,6 +4,7 @@
 #include "GL_Renderer.h"
 #include "Logger.h"
 #include "RenderInterface.h"
+#include "Scene.h"
 #include "SpriteAnimation.h"
 
 #include <iostream>
@@ -12,6 +13,22 @@ GameObject myObj;
 std::vector<unsigned int> someTiles;
 std::vector<unsigned int> randX;
 std::vector<unsigned int> randY;
+TilesetData tsd = {
+    "tex2", {16, 16}, 2,
+    {
+        {0, {0, 1}},
+        {1, {1, 1}},
+        {2, {3, 12}},
+        {3, {2, 12}}
+    },
+};
+
+int depth;
+unsigned int tilesPerRow;
+glm::vec2 pos;
+std::vector<unsigned int> tileData;
+TilesetData tilesetData;
+Scene myScene;
 
 Engine::Engine() {
     frameCount = 0;
@@ -20,8 +37,6 @@ Engine::Engine() {
     myGLRenderer = GL_Renderer();
     active = false;
 }
-
-
 
 EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int height, bool fullscreen, int fps) {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0) {
@@ -88,6 +103,10 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
 
     myObj.sprite.animation = getSpriteAnimationData("PINK_BLOB_STAND");
+    myScene.addObject(myObj);
+    TilesetLayerData tld = { 1000, 100, {0, 0}, someTiles, tsd };
+    myScene.setTileLayer(0, tld);
+    myScene.toggleTileLayer(0, true);
 
     return EngineErrorCode::SUCCESS;
 }
@@ -122,29 +141,16 @@ void Engine::handleInput() {
 
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
         renderData.gameCamera.pos.x += 2;
-        //xxx += 2;
     }
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
         renderData.gameCamera.pos.x -= 2;
-
-        //yyy -= 2;
     }
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP)) {
-        /*
-        gameConfig.screenWidth = 1280;
-        gameConfig.screenHeight = 720;
-        myGLRenderer.resize(gameConfig.screenWidth, gameConfig.screenHeight);
-        SDL_SetWindowSize(myWindow, gameConfig.screenWidth, gameConfig.screenHeight);
-        */
+        
         renderData.gameCamera.pos.y -= 2;
     }
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN)) {
-        /*
-        gameConfig.screenWidth = 640;
-        gameConfig.screenHeight = 360;
-        myGLRenderer.resize(gameConfig.screenWidth, gameConfig.screenHeight);
-        SDL_SetWindowSize(myWindow, gameConfig.screenWidth, gameConfig.screenHeight);
-        */
+        
         renderData.gameCamera.pos.y += 2;
     }
 
@@ -177,39 +183,19 @@ void Engine::handleInput() {
 
 void Engine::update() {
 
-    myObj.transform.pos = { 0,0 };
-    myObj.update();
-
+    myScene.update();
 
     frameCount++;
 
 }
 
-TilesetData tsd = {
-    "tex2", {16, 16}, 2, 16, 
-    {
-        {0, {0, 1}},
-        {1, {1, 1}},
-        {2, {3, 12}},
-        {3, {2, 12}}
-    },
-};
-
-
 
 void Engine::render() {
 
 
+    drawText("HELLO!!!", "pixel", { 64, 64 }, { 1, 1 }, { 0,0,255,255 });
 
-    drawTileset(tsd, someTiles, { 0, 0 }, 1000, frameCount, 100);
-
-    float xs = (float)gameConfig.screenWidth / (float)DEFAULT_SCREEN_WIDTH;
-    float ys = (float)gameConfig.screenHeight / (float)DEFAULT_SCREEN_HEIGHT;
-    LOG(xs);
-    drawText("HELLO!!!", "pixel", { 32, 64 }, { xs, ys }, { 0,0,255,255 });
-
-    myObj.transform.depth = 150;
-    myObj.render();
+    myScene.render();
 
 
     myGLRenderer.render();

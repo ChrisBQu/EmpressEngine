@@ -2,6 +2,7 @@
 #define SCENE_H
 
 #include "GameObject.h"
+#include "Controller.h"
 #include "Tileset.h"
 
 #include <vector>
@@ -20,6 +21,8 @@ public:
 	void addObject(GameObject *g);
 	void setTileLayer(int layer, TilesetLayerData tld);
 	void toggleTileLayer(int layer, bool toggle);
+	void deleteObjects();
+	void handleInput(Controller c);
 	void update();
 	void render();
 private:

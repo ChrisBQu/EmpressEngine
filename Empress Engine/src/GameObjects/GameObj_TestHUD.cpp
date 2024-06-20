@@ -1,11 +1,13 @@
 #include "GameObj_TestHUD.h"
-#include "Logger.h"
-#include "RenderInterface.h"
+#include "../Logger.h"
+#include "../RenderInterface.h"
 
 GameObject_HUD::GameObject_HUD() {
 	x = 100;
 	y = 0;
 }
+
+GameObject_HUD::~GameObject_HUD() { }
 
 void GameObject_HUD::update() {
 }

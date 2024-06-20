@@ -9,9 +9,49 @@
 class GameObject {
 public:
 	GameObject();
-
+	virtual ~GameObject();
 	virtual void update();
 	virtual void render();
+
+	virtual void trigger_onPressedUp();
+	virtual void trigger_onPressedDown();
+	virtual void trigger_onPressedLeft();
+	virtual void trigger_onPressedRight();
+	virtual void trigger_onPressedA();
+	virtual void trigger_onPressedB();
+	virtual void trigger_onPressedX();
+	virtual void trigger_onPressedY();
+	virtual void trigger_onPressedL();
+	virtual void trigger_onPressedR();
+	virtual void trigger_onPressedStart();
+	virtual void trigger_onPressedBack();
+
+	virtual void trigger_onHeldUp();
+	virtual void trigger_onHeldDown();
+	virtual void trigger_onHeldLeft();
+	virtual void trigger_onHeldRight();
+	virtual void trigger_onHeldA();
+	virtual void trigger_onHeldB();
+	virtual void trigger_onHeldX();
+	virtual void trigger_onHeldY();
+	virtual void trigger_onHeldL();
+	virtual void trigger_onHeldR();
+	virtual void trigger_onHeldStart();
+	virtual void trigger_onHeldBack();
+
+	virtual void trigger_onReleasedUp();
+	virtual void trigger_onReleasedDown();
+	virtual void trigger_onReleasedLeft();
+	virtual void trigger_onReleasedRight();
+	virtual void trigger_onReleasedA();
+	virtual void trigger_onReleasedB();
+	virtual void trigger_onReleasedX();
+	virtual void trigger_onReleasedY();
+	virtual void trigger_onReleasedL();
+	virtual void trigger_onReleasedR();
+	virtual void trigger_onReleasedStart();
+	virtual void trigger_onReleasedBack();
+
 
 	// Variables
 	bool visible;

@@ -52,9 +52,13 @@ void buildSpriteAnimationList(const char* filepath) {
 }
 
 SpriteAnimationData getSpriteAnimationData(std::string identifier) {
+	SpriteAnimationData blankdata = { true, "_null_", {0, 0}, {0, 0}, 0, 0, 0, {0}, 0 };
+	if (SpriteAnimationList.size() == 0) {
+		LOG_ERROR("Requested sprite animation data before building animation list: ", identifier);
+		return blankdata;
+	}
 	if (SpriteAnimationList.find(identifier) == SpriteAnimationList.end()) {
 		LOG_ERROR("Requested sprite animation data that doesn't exist: ", identifier);
-		SpriteAnimationData blankdata = { true, "_null_", {0, 0}, {0, 0}, 0, 0, 0, {0}, 0 };
 		return blankdata;
 	}
 	return SpriteAnimationList[identifier];

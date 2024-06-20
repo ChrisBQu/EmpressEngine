@@ -7,12 +7,11 @@
 #include "Scene.h"
 #include "SpriteAnimation.h"
 
-#include "GameObj_TestHUD.h"
+#include "GameObjects/GameObj_TestCharacter.h"
+#include "GameObjects/GameObj_TestHUD.h"
 
 #include <iostream>
 
-GameObject myObj;
-GameObject_HUD myHUD;
 std::vector<unsigned int> someTiles;
 std::vector<unsigned int> randX;
 std::vector<unsigned int> randY;
@@ -105,11 +104,11 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
 
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
 
-    myObj.sprite.setAnimation("PINK_BLOB_WALK");
-    myObj.transform.pos = { 0, 0 };
-    myObj.transform.scale = { 1, 1 };
-    myScene.addObject(&myObj);
-    myScene.addObject(&myHUD);
+    GameObject_Character *myObj = new GameObject_Character();
+    GameObject_HUD* myHUD = new GameObject_HUD();
+
+    myScene.addObject(myObj);
+    myScene.addObject(myHUD);
     TilesetLayerData tld = { 1000, 100, {0, 0}, someTiles, tsd };
     myScene.setTileLayer(0, tld);
     myScene.toggleTileLayer(0, true);
@@ -144,7 +143,9 @@ void Engine::handleInput() {
         }
     }
 
+    myScene.handleInput(myController);
 
+    /*
     if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
         renderData.gameCamera.pos.x += 2;
     }
@@ -172,6 +173,7 @@ void Engine::handleInput() {
     if (myController.getReleased(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
 
     }
+    */
 
 }
 

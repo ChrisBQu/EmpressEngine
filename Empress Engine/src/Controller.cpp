@@ -22,7 +22,7 @@ void Controller::initDefaultKeyBindings() {
     bindKeyToButton(SDLK_d, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B);
     bindKeyToButton(SDLK_f, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_A);
     bindKeyToButton(SDLK_z, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
-    bindKeyToButton(SDLK_x, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+    bindKeyToButton(SDLK_x, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
     bindKeyToButton(SDLK_RETURN, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_START);
     bindKeyToButton(SDLK_LSHIFT, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_BACK);
     bindKeyToButton(SDLK_UP, SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP);

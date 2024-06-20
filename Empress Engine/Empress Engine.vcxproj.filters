@@ -96,7 +96,10 @@
     <ClInclude Include="src\Scene.h">
       <Filter>Header Files\Game Object System</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameObj_TestHUD.h">
+    <ClInclude Include="src\GameObjects\GameObj_TestCharacter.h">
+      <Filter>Header Files\Game Object System\Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameObjects\GameObj_TestHUD.h">
       <Filter>Header Files\Game Object System\Game Objects</Filter>
     </ClInclude>
   </ItemGroup>
@@ -149,7 +152,10 @@
     <ClCompile Include="src\Sprite.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameObj_TestHUD.cpp">
+    <ClCompile Include="src\GameObjects\GameObj_TestHUD.cpp">
+      <Filter>Source Files\Game Object System\Game Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObjects\GameObj_TestCharacter.cpp">
       <Filter>Source Files\Game Object System\Game Objects</Filter>
     </ClCompile>
   </ItemGroup>

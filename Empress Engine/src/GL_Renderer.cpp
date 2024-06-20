@@ -2,6 +2,7 @@
 
 #include "GameConfig.h"
 #include "RenderInterface.h"
+#include "Scene.h"
 #include "Utility.h"
 #include "Logger.h"
 
@@ -167,7 +168,7 @@ void GL_Renderer::render() {
     glUseProgram(shaderManager.getShaderProgram("DEFAULT_QUAD"));
 
     // Pass in the gameCamera to render things in the camera's view
-    OrthographicCamera cam = renderData.gameCamera;
+    OrthographicCamera cam = getLoadedScene()->getCamera();
     glm::mat4 orthoProjection = makeOrthographicProjectionMatrix(
         cam.pos.x - cam.dimensions.x / 2.0,
         cam.pos.x + cam.dimensions.x / 2.0,

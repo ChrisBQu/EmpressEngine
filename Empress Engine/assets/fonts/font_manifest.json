@@ -2,5 +2,9 @@
   "pixel": {
     "path": "assets/fonts/public_pixel.ttf",
     "size": 32
+  },
+  "editundo": {
+    "path": "assets/fonts/Pixel-UniCode.ttf",
+    "size": 16
   }
 }

@@ -31,6 +31,7 @@
     <ClInclude Include="src\Geometry.h" />
     <ClInclude Include="src\Logger.h" />
     <ClInclude Include="src\GL_Renderer.h" />
+    <ClInclude Include="src\OrthographicCamera.h" />
     <ClInclude Include="src\RenderInterface.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\ShaderManager.h" />

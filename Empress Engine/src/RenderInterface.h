@@ -9,12 +9,6 @@
 #include <vector>
 
 #include <GL/glew.h>
-#include <glm/glm.hpp>
-
-struct OrthographicCamera {
-	glm::ivec2 dimensions;
-	glm::ivec2 pos;
-};
 
 struct RenderTransform {
 	glm::ivec2 atlasOffset;
@@ -38,7 +32,6 @@ struct TextRenderItem {
 };
 
 struct RenderData {
-	OrthographicCamera gameCamera;
 	std::vector<TextRenderItem> textItems;
 	std::map<std::string, std::vector<RenderTransform>> transforms;
 	std::map<std::string, std::vector<RenderTransform>> uitransforms;

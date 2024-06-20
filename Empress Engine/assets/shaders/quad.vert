@@ -68,7 +68,7 @@ void main() {
     vec2 vertexPos = (rotationMatrix * vec4(vertices[gl_VertexID], 0.0, 1.0)).xy + transform.pos;
 
     // Normalize to screen coordinates
-    gl_Position = orthoProjection * vec4(vertexPos, transform.depth, 1.0);
+    gl_Position = orthoProjection * vec4(vertexPos, 1.0 - transform.depth, 1.0);
 
     textureCoordsOut = textureCoords[gl_VertexID];
     alphaOut = transform.alpha;

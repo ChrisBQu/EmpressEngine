@@ -1,15 +1,20 @@
 #include "GameObj_TestHUD.h"
 #include "../Logger.h"
 #include "../RenderInterface.h"
+#include "../Scene.h"
 
 GameObject_HUD::GameObject_HUD() {
-	x = 100;
-	y = 0;
+	x = rand()%1280;
+	y = rand()%720;
 }
 
 GameObject_HUD::~GameObject_HUD() { }
 
 void GameObject_HUD::update() {
+
+	glm::vec2 gotpos = getLoadedScene()->getTileLayerPosition(0);
+	getLoadedScene()->setTileLayerPosition(0, { gotpos[0] - 1, gotpos[1] });
+
 }
 
 void GameObject_HUD::render() {

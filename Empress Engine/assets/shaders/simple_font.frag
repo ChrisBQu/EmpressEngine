@@ -7,6 +7,8 @@ uniform vec4 textColor;
 
 void main()
 {    
-    vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);
+    float threshold = .003; // Adjust this value as needed
+    float alpha = step(threshold, texture(text, TexCoords).r);
+    vec4 sampled = vec4(1.0, 1.0, 1.0, alpha);
     color = textColor * sampled;
-}  
+}

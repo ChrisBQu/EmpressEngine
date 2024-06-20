@@ -1,6 +1,7 @@
 #include "FontManager.h"
 #include "Logger.h"
 #include "RenderInterface.h"
+#include "Scene.h"
 #include "Sprite.h"
 #include "Utility.h"
 
@@ -16,43 +17,41 @@ void drawQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size,
     transform.size = glm::vec2(tex_size[0] * scale.x, tex_size[1] * scale.y);
     transform.atlasOffset = tex_pos;
     transform.spriteSize = tex_size;
-    transform.depth = (depth + 100.0) / 200.0;
+    float minVal = -200.0;
+    float maxVal = 200.0;
+    float normalizedDepth = (float)((depth - minVal) / (maxVal - minVal));
+    transform.depth = normalizedDepth;
     transform.rotation = rotation;
     transform.alpha = alpha;
     renderData.transforms[tex_identifier].push_back(transform);
 }
 
 void drawUIQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 scale, int depth, float rotation, float alpha) {
-
     float xs = (float)gameConfig.screenWidth / (float)DEFAULT_SCREEN_WIDTH;
     float ys = (float)gameConfig.screenHeight / (float)DEFAULT_SCREEN_HEIGHT;
-
     RenderTransform transform;
-    // No need to adjust position for center, we want top-left
     transform.pos = pos;
-    // Scale the position to screen dimensions
     transform.pos = { transform.pos[0] * xs, transform.pos[1] * ys };
-    // Scale the size to screen dimensions
     transform.size = glm::vec2(tex_size[0] * scale.x * xs, tex_size[1] * scale.y * ys);
     transform.atlasOffset = tex_pos;
     transform.spriteSize = tex_size;
-    transform.depth = (depth + 100.0) / 200.0;
+    float minVal = -200.0;
+    float maxVal = 200.0;
+    float normalizedDepth = (float)((depth - minVal) / (maxVal - minVal));
+    transform.depth = normalizedDepth;
     transform.rotation = rotation;
     transform.alpha = alpha;
     renderData.uitransforms[tex_identifier].push_back(transform);
 }
 
 
-
-
-
-
 void drawTileset(TilesetData tsd, std::vector<unsigned int>& tile_indices, glm::vec2 offset_pos, unsigned int tiles_per_row, unsigned int framecount, unsigned int depth) {
     // Camera bounds calculation
-    float cameraLeft = renderData.gameCamera.pos.x - renderData.gameCamera.dimensions.x / 2.0f;
-    float cameraRight = renderData.gameCamera.pos.x + renderData.gameCamera.dimensions.x / 2.0f;
-    float cameraBottom = renderData.gameCamera.pos.y - renderData.gameCamera.dimensions.y / 2.0f;
-    float cameraTop = renderData.gameCamera.pos.y + renderData.gameCamera.dimensions.y / 2.0f;
+    OrthographicCamera cam = getLoadedScene()->getCamera();
+    float cameraLeft = cam.pos.x - cam.dimensions.x / 2.0f;
+    float cameraRight = cam.pos.x + cam.dimensions.x / 2.0f;
+    float cameraBottom = cam.pos.y - cam.dimensions.y / 2.0f;
+    float cameraTop = cam.pos.y + cam.dimensions.y / 2.0f;
 
     // Calculate the number of tiles that fit in the camera view plus an extra tile on each side for partially visible tiles
     int firstCol = std::max(0, (int)std::floor((cameraLeft - offset_pos.x) / tsd.atlasSize.x));

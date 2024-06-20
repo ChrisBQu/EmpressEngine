@@ -48,6 +48,7 @@ int FontManager::loadFont(std::string filename, int fontsize, std::string identi
     FT_Set_Pixel_Sizes(face, 0, fontsize);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
+    glDisable(GL_BLEND);
 
     for (unsigned char c = 0; c < 128; c++) {
         // load character glyph 

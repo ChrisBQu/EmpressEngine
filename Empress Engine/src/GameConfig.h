@@ -16,7 +16,7 @@ inline constexpr const char* FONT_MANIFEST_FILEPATH = "assets/fonts/font_manifes
 inline constexpr bool HOT_TEXTURE_SWAPPING_ENABLED = true;
 inline constexpr bool HOT_SHADER_SWAPPING_ENABLED = true;
 
-inline constexpr bool PRINT_FPS_TO_CONSOLE = false;
+inline constexpr bool PRINT_FPS_TO_CONSOLE = true;
 
 struct GameConfiguration {
 	int screenWidth;

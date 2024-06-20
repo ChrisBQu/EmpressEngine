@@ -97,9 +97,6 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     myController.findController();
     myController.initDefaultKeyBindings();
 
-    renderData.gameCamera.pos = { 0, 0 };
-    renderData.gameCamera.dimensions = { 426, 240 };
-
     active = true;
 
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
@@ -109,9 +106,13 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
 
     myScene.addObject(myObj);
     myScene.addObject(myHUD);
-    TilesetLayerData tld = { 1000, 100, {0, 0}, someTiles, tsd };
+
+    TilesetLayerData tld = { 100, 100, {0, 0}, someTiles, tsd };
     myScene.setTileLayer(0, tld);
     myScene.toggleTileLayer(0, true);
+    loadScene(&myScene);
+
+    myScene.setCamera({ 0,0 }, { 320, 180 });
 
     return EngineErrorCode::SUCCESS;
 }
@@ -145,36 +146,6 @@ void Engine::handleInput() {
 
     myScene.handleInput(myController);
 
-    /*
-    if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
-        renderData.gameCamera.pos.x += 2;
-    }
-    if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
-        renderData.gameCamera.pos.x -= 2;
-    }
-    if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_UP)) {
-        renderData.gameCamera.pos.y -= 2;
-    }
-    if (myController.getButton(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_DOWN)) {
-        renderData.gameCamera.pos.y += 2;
-    }
-
-    if (myController.getPressed(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
-
-    }
-
-    if (myController.getReleased(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
-
-    }
-
-    if (myController.getPressed(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
-    }
-
-    if (myController.getReleased(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
-
-    }
-    */
-
 }
 
 
@@ -190,7 +161,8 @@ void Engine::update() {
 void Engine::render() {
 
 
-    drawText("HELLO!!!", "pixel", { 64, 64 }, { 1, 1 }, { 0,0,255,255 });
+    drawText("This is a dialogue test.", "editundo", { 32, 64 - 7}, { 4.0 , 4.0 }, { 0,0,255,255 });
+    //drawText("This is a dialogue test.", "editundo", { 32, 96 - 7}, { 1.0 , 1.0 }, { 0,0,255,255 });
 
     myScene.render();
 

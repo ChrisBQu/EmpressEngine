@@ -1,6 +1,10 @@
 #include "Scene.h"
+#include "Logger.h"
 #include "RenderInterface.h"
 
+Scene *CurrentlyLoadedScene;
+void loadScene(Scene* s) { CurrentlyLoadedScene = s; }
+Scene* getLoadedScene() { return CurrentlyLoadedScene; }
 
 // Constructor
 Scene::Scene() { 
@@ -21,12 +25,29 @@ void Scene::addObject(GameObject *g) {
 	myObjects.push_back(g);
 }
 
+void Scene::setCamera(glm::vec2 position, glm::vec2 dimensions) {
+	myCamera.pos = position;
+	myCamera.dimensions = dimensions;
+}
+
+OrthographicCamera Scene::getCamera() {
+	return myCamera;
+}
+
 void Scene::setTileLayer(int layer, TilesetLayerData tld) {
 	tileLayers[layer].data = tld;
 }
 
 void Scene::toggleTileLayer(int layer, bool toggle) {
 	tileLayers[layer].active = toggle;
+}
+
+glm::vec2 Scene::getTileLayerPosition(int layer) {
+	return tileLayers[layer].data.pos;
+}
+
+void Scene::setTileLayerPosition(int layer, glm::vec2 pos) {
+	tileLayers[layer].data.pos = pos;
 }
 
 void Scene::handleInput(Controller c) {

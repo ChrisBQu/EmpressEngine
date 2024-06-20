@@ -102,6 +102,9 @@
     <ClInclude Include="src\GameObjects\GameObj_TestHUD.h">
       <Filter>Header Files\Game Object System\Game Objects</Filter>
     </ClInclude>
+    <ClInclude Include="src\OrthographicCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine.cpp">

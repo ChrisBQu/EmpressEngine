@@ -21,7 +21,8 @@ public:
 	TextureManager();
 	~TextureManager();
 	int loadTexture(std::string identifier, std::string path);
-	int freeTexture(std::string identifier);
+	int unloadTexture(std::string identifier);
+	void unloadAllTextures();
 	LoadedTexture getTexture(std::string identifier);
 	void hotReload();
 private:

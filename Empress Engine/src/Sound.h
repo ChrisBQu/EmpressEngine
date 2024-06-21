@@ -16,7 +16,7 @@ public:
 	int getSoundEffectVolume(int channel);
 	void setSoundEffectVolume(int channel, int volume);
 	int loadSoundEffect(std::string identifier, std::string filepath);
-	void unloadSoundEffect(std::string identifier);
+	int unloadSoundEffect(std::string identifier);
 	void unloadAllSoundEffects();
 
 	// Music
@@ -27,7 +27,7 @@ public:
 	int getMusicVolume();
 	void setMusicVolume(int volume);
 	int loadMusic(std::string identifier, std::string filepath);
-	void unloadMusic(std::string identifier);
+	int unloadMusic(std::string identifier);
 	void unloadAllMusic();
 
 private:

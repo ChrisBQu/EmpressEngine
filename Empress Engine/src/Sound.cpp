@@ -47,9 +47,15 @@ int SoundManager::loadSoundEffect(std::string identifier, std::string filepath)
 }
 
 // Unload a single sound effect by identifier, properly freeing its memory if the sound exists
-void SoundManager::unloadSoundEffect(std::string identifier) {
-	if (myEffects[identifier] != 0) { Mix_FreeChunk(myEffects[identifier]); }
+int SoundManager::unloadSoundEffect(std::string identifier) {
+	if (myEffects[identifier] == 0) {
+		LOG_ERROR("Tried to free the memory of a sound effect that doesn't exist: ", identifier);
+		myEffects.erase(identifier);
+		return 1;
+	}
+	Mix_FreeChunk(myEffects[identifier]);
 	myEffects.erase(identifier);
+	return 0;
 }
 
 // Unload all sound effects, properly freeing the memory and clearing the myEffects map
@@ -104,9 +110,15 @@ int SoundManager::loadMusic(std::string identifier, std::string filepath)
 }
 
 // Unload a single music track by identifier, properly freeing its memory if the track exists
-void SoundManager::unloadMusic(std::string identifier) {
-	if (myMusics[identifier] != 0) { Mix_FreeMusic(myMusics[identifier]); }
+int SoundManager::unloadMusic(std::string identifier) {
+	if (myMusics[identifier] == 0) {
+		LOG_ERROR("Tried to free the memory of music that doesn't exist: ", identifier);
+		myMusics.erase(identifier);
+		return 1;
+	}
+	Mix_FreeMusic(myMusics[identifier]); 
 	myMusics.erase(identifier);
+	return 0;
 }
 
 // Unload all music tracks, properly freeing the memory and clearing the myMusics map

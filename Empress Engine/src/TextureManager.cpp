@@ -29,14 +29,14 @@ int TextureManager::loadTexture(std::string identifier, std::string path) {;
     uint64_t timestamp = getFileTimestamp(path.c_str());
     LoadedTexture newtexture = { width, height, channels, data, timestamp, path };
     if (myTextures.find(identifier) != myTextures.end()) {
-        freeTexture(identifier);
+        unloadTexture(identifier);
     }
     myTextures[identifier] = newtexture;
     return 0;
 }
 
 // Free the memory of a texture of a given identifier, and remove it from the loaded texture list
-int TextureManager::freeTexture(std::string identifier) {
+int TextureManager::unloadTexture(std::string identifier) {
     if (myTextures.find(identifier) == myTextures.end()) {
         LOG_ERROR("Tried to free the memory of a texture that doesn't exist: ", identifier);
         return 1;
@@ -45,6 +45,15 @@ int TextureManager::freeTexture(std::string identifier) {
     myTextures.erase(identifier);
     stbi_image_free(ptr);
     return 0;
+}
+
+// Free the memory of all loaded textures, and clear the loaded texture list
+void TextureManager::unloadAllTextures() {
+    for (auto it = myTextures.begin(); it != myTextures.end(); ++it) {
+        char* ptr = it->second.data;
+        stbi_image_free(ptr);
+    }
+    myTextures.clear();
 }
 
 // Get texture by identifier (GLuint used by OpenGL)

@@ -5,9 +5,6 @@ GameObject::GameObject() {
 	visible = true;
 	solid = false;
 	alpha = 1.0;
-
-	LOG("This: ", this);
-
 	sprite = new SpriteComponent(this);
 	transform = new TransformComponent(this);
 }

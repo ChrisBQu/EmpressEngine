@@ -95,14 +95,16 @@ void Scene::update() {
 }
 
 void Scene::render() {
-	for (GameObject* each_object : myObjects) {
-		each_object->render();
-	}
 	for (TileLayer &each_layer : tileLayers) {
 		if (each_layer.active) {
 			each_layer.render(frameCount);
 		}
 	}
+
+	for (GameObject* each_object : myObjects) {
+		each_object->render();
+	}
+
 }
 
 void Scene::deleteObjects() {

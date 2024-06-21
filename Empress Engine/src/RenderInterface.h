@@ -10,17 +10,15 @@
 
 #include <GL/glew.h>
 
+constexpr int RENDERING_DEPTH_LAYERS = 400;
+
 struct RenderTransform {
 	glm::ivec2 atlasOffset;
 	glm::ivec2 spriteSize;
 	glm::vec2 pos;
 	glm::vec2 size;
-	float depth;
 	float rotation;
 	float alpha;
-
-	// To handle alignment in the GPU
-	float alignment_padding;
 };
 
 struct TextRenderItem {
@@ -33,8 +31,8 @@ struct TextRenderItem {
 
 struct RenderData {
 	std::vector<TextRenderItem> textItems;
-	std::map<std::string, std::vector<RenderTransform>> transforms;
-	std::map<std::string, std::vector<RenderTransform>> uitransforms;
+	std::map<std::string, std::vector<RenderTransform>> transforms[RENDERING_DEPTH_LAYERS + 1];
+	std::map<std::string, std::vector<RenderTransform>> uitransforms[RENDERING_DEPTH_LAYERS + 1];
 };
 
 void drawQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 scale, int depth = 0, float rotation = 0.0f, float alpha = 1.0f);

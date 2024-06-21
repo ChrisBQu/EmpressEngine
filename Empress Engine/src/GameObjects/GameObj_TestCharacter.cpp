@@ -9,6 +9,7 @@ GameObject_Character::GameObject_Character() {
 	transform->scale = { 1.0, 1.0 };
 	transform->depth = 99;
 	transform->rotation = 0;
+	alpha = 0.5;
 	sprite->setAnimation("PINK_BLOB_WALK");
 }
 

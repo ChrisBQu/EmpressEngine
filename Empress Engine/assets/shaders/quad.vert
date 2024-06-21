@@ -5,10 +5,8 @@ struct Transform {
     ivec2 spriteSize;       // Size: 8 
     vec2 pos;               // Size: 8
     vec2 size;              // Size: 8 
-    float depth;            // Size: 4
     float rotation;         // Size: 4
     float alpha;            // Size: 4
-    float padding;          // Size: 4
 };
 
 // Input
@@ -68,7 +66,7 @@ void main() {
     vec2 vertexPos = (rotationMatrix * vec4(vertices[gl_VertexID], 0.0, 1.0)).xy + transform.pos;
 
     // Normalize to screen coordinates
-    gl_Position = orthoProjection * vec4(vertexPos, 1.0 - transform.depth, 1.0);
+    gl_Position = orthoProjection * vec4(vertexPos, 1.0, 1.0);
 
     textureCoordsOut = textureCoords[gl_VertexID];
     alphaOut = transform.alpha;

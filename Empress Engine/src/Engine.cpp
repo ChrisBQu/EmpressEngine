@@ -133,7 +133,7 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
 
     sm.loadSoundEffect("effect0", "assets/sounds/effect.wav");
     sm.loadMusic("song0", "assets/sounds/song.wav");
-    sm.playMusic("song0");
+    //sm.playMusic("song0");
   
     return EngineErrorCode::SUCCESS;
 }

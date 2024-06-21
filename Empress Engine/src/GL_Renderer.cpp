@@ -6,6 +6,7 @@
 #include "Utility.h"
 #include "Logger.h"
 
+#include <algorithm>
 #include <glm/gtc/type_ptr.hpp>
 
 glm::mat4 makeOrthographicProjectionMatrix(float left, float right, float top, float bottom) {
@@ -151,9 +152,6 @@ void GL_Renderer::drawText(std::string shader_identifier, std::string font_ident
     }
 }
 
-
-
-
 void GL_Renderer::render() {
     if (HOT_TEXTURE_SWAPPING_ENABLED) { textureManager.hotReload(); }
     if (HOT_SHADER_SWAPPING_ENABLED) { shaderManager.hotReload(); }
@@ -162,7 +160,7 @@ void GL_Renderer::render() {
     glBindVertexArray(glcontext.VAO);
     glBindFramebuffer(GL_FRAMEBUFFER, glcontext.FBO);
     glClearColor(SCREEN_CLEAR_COLOR[0], SCREEN_CLEAR_COLOR[1], SCREEN_CLEAR_COLOR[2], SCREEN_CLEAR_COLOR[3]);
-    glClearDepth(1.0f); // Depth clear value should be 1.0f for the farthest depth
+    glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glViewport(0, 0, gameConfig.screenWidth, gameConfig.screenHeight);
     glUseProgram(shaderManager.getShaderProgram("DEFAULT_QUAD"));
@@ -177,34 +175,41 @@ void GL_Renderer::render() {
     );
     glm::mat4 screenProjection = glm::ortho(0.0f, (float)gameConfig.screenWidth, (float)gameConfig.screenHeight, 0.0f);
 
-
     // Render the sprites to the FBO
     glBindFramebuffer(GL_FRAMEBUFFER, glcontext.FBO);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     GLuint orthoProjectionMatrixID = glGetUniformLocation(shaderManager.getShaderProgram("DEFAULT_QUAD"), "orthoProjection");
     glUniformMatrix4fv(orthoProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(orthoProjection));
-    for (const auto& it : renderData.transforms) {
-        swapTexture(it.first.c_str());
-        if (it.second.size() > 0) {
-            glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderTransform) * it.second.size(), &it.second[0], GL_DYNAMIC_DRAW);
-            glDrawArraysInstanced(GL_TRIANGLES, 0, 6, it.second.size());
+    for (unsigned int i = 0; i < (RENDERING_DEPTH_LAYERS + 1); i++) {
+        for (const auto& it : renderData.transforms[i]) {
+            swapTexture(it.first.c_str());
+            if (it.second.size() > 0) {
+                glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderTransform) * it.second.size(), &it.second[0], GL_DYNAMIC_DRAW);
+                glDrawArraysInstanced(GL_TRIANGLES, 0, 6, it.second.size());
+            }
         }
+        renderData.transforms[i].clear();
     }
-    renderData.transforms.clear();
 
     // Render the UI sprites to the FBO
     glUseProgram(shaderManager.getShaderProgram("UI_QUAD"));
     glUniformMatrix4fv(orthoProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(screenProjection));
-    for (const auto& it : renderData.uitransforms) {
-        swapTexture(it.first.c_str());
-        if (it.second.size() > 0) {
-            glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderTransform) * it.second.size(), &it.second[0], GL_DYNAMIC_DRAW);
-            glDrawArraysInstanced(GL_TRIANGLES, 0, 6, it.second.size());
+    for (unsigned int i = 0; i < (RENDERING_DEPTH_LAYERS + 1); i++) {
+        for (const auto& it : renderData.uitransforms[i]) {
+            swapTexture(it.first.c_str());
+            if (it.second.size() > 0) {
+                glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderTransform) * it.second.size(), &it.second[0], GL_DYNAMIC_DRAW);
+                glDrawArraysInstanced(GL_TRIANGLES, 0, 6, it.second.size());
+            }
         }
+        renderData.uitransforms[i].clear();
     }
-    renderData.uitransforms.clear();
     
     // Draw text
     GLuint textOrthoHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "projection");

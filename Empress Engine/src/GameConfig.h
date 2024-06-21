@@ -7,6 +7,10 @@ inline constexpr int DEFAULT_SCREEN_WIDTH = 1280;
 inline constexpr int DEFAULT_SCREEN_HEIGHT = 720;
 inline constexpr int TARGET_FPS = 60;
 
+inline constexpr int SOUND_FREQUENCY = 44100;
+inline constexpr int SOUND_HARDWARE_CHANNELS = 2;
+inline constexpr int SOUND_SAMPLE_SIZE = 4096;
+
 inline constexpr float SCREEN_CLEAR_COLOR[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 inline constexpr const char* ANIMATION_MANIFEST_FILEPATH = "assets/animation_manifest.json";

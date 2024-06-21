@@ -7,10 +7,15 @@
 #include "Scene.h"
 #include "SpriteAnimation.h"
 
+
 #include "GameObjects/GameObj_TestCharacter.h"
 #include "GameObjects/GameObj_TestHUD.h"
+#include "Sound.h"
 
+#include <SDL_mixer.h>
 #include <iostream>
+
+SoundManager sm;
 
 std::vector<unsigned int> someTiles;
 std::vector<unsigned int> randX;
@@ -41,7 +46,7 @@ Engine::Engine() {
 }
 
 EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int height, bool fullscreen, int fps) {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_AUDIO) != 0) {
         LOG_ERROR("Failed to initialize SDL: \n", SDL_GetError());
         return EngineErrorCode::SDL_UNINITIATED;
     }
@@ -94,6 +99,11 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
         return EngineErrorCode::NULL_GL_RENDERER;
     }
 
+    if (Mix_OpenAudio(SOUND_FREQUENCY, MIX_DEFAULT_FORMAT, SOUND_HARDWARE_CHANNELS, SOUND_SAMPLE_SIZE) != 0) {
+        LOG_ERROR("Error initializing SDL_Mixer: ", Mix_GetError());
+        return EngineErrorCode::MIXER_ERROR;
+    }
+
     myController.findController();
     myController.initDefaultKeyBindings();
 
@@ -114,6 +124,9 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
 
     myScene.setCamera({ 0,0 }, { 320, 180 });
 
+    sm.loadSoundEffect("effect0", "assets/sounds/effect.wav");
+    sm.playSoundEffect("effect0", 4);
+  
     return EngineErrorCode::SUCCESS;
 }
 
@@ -150,6 +163,8 @@ void Engine::handleInput() {
 
 
 void Engine::update() {
+
+    sm.setSoundEffectVolume(4, sm.getSoundEffectVolume(4) - 1);
 
     myScene.update();
 
@@ -198,6 +213,7 @@ void Engine::run() {
     }
 
     SDL_DestroyWindow(myWindow);
+    Mix_Quit();
     SDL_Quit();
 }
 

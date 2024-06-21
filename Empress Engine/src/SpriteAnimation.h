@@ -12,7 +12,7 @@ struct SpriteAnimationData {
 	glm::ivec2 atlasSize;
 	unsigned int currentFrame;
 	unsigned int frameCount;
-	unsigned int ticksOnFrame;
+	unsigned int ticksOnFrame{};
 	std::vector<unsigned int> frameTimes;
 	unsigned int framesPerRow;
 };

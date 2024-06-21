@@ -9,18 +9,30 @@
 class SoundManager {
 public:
 	SoundManager();
-	void playSoundEffect(std::string identifier, int channel);
+	~SoundManager();
+
+	// Sound Effects
+	int playSoundEffect(std::string identifier, int channel);
 	int getSoundEffectVolume(int channel);
 	void setSoundEffectVolume(int channel, int volume);
 	int loadSoundEffect(std::string identifier, std::string filepath);
 	void unloadSoundEffect(std::string identifier);
 	void unloadAllSoundEffects();
+
+	// Music
+	void playMusic(std::string identifier, bool loop = true);
+	void stopMusic();
+	void pauseMusic();
+	void resumeMusic();
+	int getMusicVolume();
+	void setMusicVolume(int volume);
+	int loadMusic(std::string identifier, std::string filepath);
+	void unloadMusic(std::string identifier);
+	void unloadAllMusic();
+
 private:
 	std::map<std::string, Mix_Chunk*> myEffects;
-
+	std::map<std::string, Mix_Music*> myMusics;
 };
-
-void loadSound();
-void playSound();
 
 #endif // SOUND_H

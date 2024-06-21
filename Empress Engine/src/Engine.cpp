@@ -125,13 +125,11 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     myScene.setCamera({ 0,0 }, { 320, 180 });
 
     sm.loadSoundEffect("effect0", "assets/sounds/effect.wav");
-    sm.playSoundEffect("effect0", 4);
+    sm.loadMusic("song0", "assets/sounds/song.wav");
+    sm.playMusic("song0");
   
     return EngineErrorCode::SUCCESS;
 }
-
-float xxx = 160;
-float yyy = 200;
 
 void Engine::handleInput() {
 
@@ -158,6 +156,14 @@ void Engine::handleInput() {
     }
 
     myScene.handleInput(myController);
+
+    if (myController.getPressed(SDL_CONTROLLER_BUTTON_A)) {
+        sm.pauseMusic();
+    }
+
+    if (myController.getPressed(SDL_CONTROLLER_BUTTON_B)) {
+        sm.resumeMusic();
+    }
 
 }
 

@@ -81,7 +81,7 @@
     <ClInclude Include="src\SpriteAnimation.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Sprite.h">
+    <ClInclude Include="src\SpriteComponent.h">
       <Filter>Header Files\Game Object System</Filter>
     </ClInclude>
     <ClInclude Include="src\Tileset.h">
@@ -90,7 +90,7 @@
     <ClInclude Include="src\FontManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\TransformStruct.h">
+    <ClInclude Include="src\TransformComponent.h">
       <Filter>Header Files\Game Object System</Filter>
     </ClInclude>
     <ClInclude Include="src\Scene.h">
@@ -155,9 +155,6 @@
     <ClCompile Include="src\Scene.cpp">
       <Filter>Source Files\Game Object System</Filter>
     </ClCompile>
-    <ClCompile Include="src\Sprite.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="src\GameObjects\GameObj_TestHUD.cpp">
       <Filter>Source Files\Game Object System\Game Objects</Filter>
     </ClCompile>
@@ -169,6 +166,12 @@
     </ClCompile>
     <ClCompile Include="src\Tileset.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TransformComponent.cpp">
+      <Filter>Source Files\Game Object System</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpriteComponent.cpp">
+      <Filter>Source Files\Game Object System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

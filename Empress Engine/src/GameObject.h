@@ -1,8 +1,8 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
 
-#include "Sprite.h"
-#include "TransformStruct.h"
+#include "SpriteComponent.h"
+#include "TransformComponent.h"
 
 #include <vector>
 
@@ -55,10 +55,12 @@ public:
 
 	// Variables
 	bool visible;
+	bool solid;
+	float alpha;
    
 	// Components
-	TransformStruct transform;
-	Sprite sprite;
+	TransformComponent *transform;
+	SpriteComponent *sprite;
 };
 
 #endif // GAME_OBJECT_H

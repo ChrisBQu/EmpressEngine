@@ -3,7 +3,6 @@
 #include "Logger.h"
 #include "RenderInterface.h"
 #include "Scene.h"
-#include "Sprite.h"
 #include "Utility.h"
 #include <cmath>
 

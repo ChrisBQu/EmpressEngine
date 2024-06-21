@@ -213,7 +213,7 @@ void Engine::run() {
         render();
 
         Uint32 frameTime = SDL_GetTicks() - frameStartTime;
-        const int frameDelay = 1000 / gameConfig.FPS;
+        const Uint32 frameDelay = 1000 / gameConfig.FPS;
         if (frameTime < frameDelay) { SDL_Delay(frameDelay - frameTime); }
         fpsframeCount++;
         Uint32 elapsedTime = SDL_GetTicks() - fpsStartTime;

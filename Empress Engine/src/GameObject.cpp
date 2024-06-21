@@ -3,22 +3,27 @@
 
 GameObject::GameObject() {
 	visible = true;
-	transform.pos = { 0, 0 };
-	transform.scale = { 1.0, 1.0 };
-	transform.depth = 0;
-	transform.rotation = 0;
-	transform.alpha = 1.0;
+	solid = false;
+	alpha = 1.0;
+
+	LOG("This: ", this);
+
+	sprite = new SpriteComponent(this);
+	transform = new TransformComponent(this);
 }
 
-GameObject::~GameObject() { }
+GameObject::~GameObject() { 
+	delete sprite;
+	delete transform;
+}
 
 void GameObject::update() {
 }
 
 void GameObject::render() {
-	sprite.tickAnimation();
+	sprite->tickAnimation();
 	if (visible) {
-		sprite.render(transform);
+		sprite->render();
 	}
 }
 

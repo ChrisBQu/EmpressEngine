@@ -36,11 +36,11 @@
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\ShaderManager.h" />
     <ClInclude Include="src\Sound.h" />
-    <ClInclude Include="src\Sprite.h" />
+    <ClInclude Include="src\SpriteComponent.h" />
     <ClInclude Include="src\SpriteAnimation.h" />
     <ClInclude Include="src\TextureManager.h" />
     <ClInclude Include="src\Tileset.h" />
-    <ClInclude Include="src\TransformStruct.h" />
+    <ClInclude Include="src\TransformComponent.h" />
     <ClInclude Include="src\Utility.h" />
   </ItemGroup>
   <ItemGroup>
@@ -59,10 +59,11 @@
     <ClCompile Include="src\ShaderManager.cpp" />
     <ClCompile Include="src\Sound.cpp" />
     <ClCompile Include="src\Source.cpp" />
-    <ClCompile Include="src\Sprite.cpp" />
+    <ClCompile Include="src\SpriteComponent.cpp" />
     <ClCompile Include="src\SpriteAnimation.cpp" />
     <ClCompile Include="src\TextureManager.cpp" />
     <ClCompile Include="src\Tileset.cpp" />
+    <ClCompile Include="src\TransformComponent.cpp" />
     <ClCompile Include="src\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>

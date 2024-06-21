@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-
+// Struct contains metadata relating to the tileset's texture
 struct TilesetData {
 	std::string atlasIdentifier;
 	glm::ivec2 atlasSize;
@@ -15,12 +15,23 @@ struct TilesetData {
 	std::map<unsigned int, std::pair<unsigned int, unsigned int>> animatedTileMap;
 };
 
+// Struct contains data for the layout of tiles on the screen
 struct TilesetLayerData {
 	int depth;
 	unsigned int tilesPerRow;
 	glm::vec2 pos;
 	std::vector<unsigned int> tileData;
-	TilesetData tilesetData;
+};
+
+class TileLayer {
+public:
+	TileLayer();
+	TileLayer(TilesetData tsd, TilesetLayerData tld);
+	void render(int framecount);
+
+	bool active;
+	TilesetData myTSD;
+	TilesetLayerData myTLD;
 };
 
 #endif // TILESET_H

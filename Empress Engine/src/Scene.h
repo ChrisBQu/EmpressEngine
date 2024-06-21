@@ -12,15 +12,10 @@
 
 constexpr int NUMBER_OF_TILE_LAYERS = 4;
 
-struct TileLayer {
-	bool active;
-	TilesetLayerData data;
-};
-
 class Scene {
 public:
 	Scene();
-	void setTileLayer(int layer, TilesetLayerData tld);
+	void setTileLayer(int layer, TileLayer tl);
 	void toggleTileLayer(int layer, bool toggle);
 
 	void addObject(GameObject* g);

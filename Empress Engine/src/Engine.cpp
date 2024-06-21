@@ -20,6 +20,7 @@ SoundManager sm;
 std::vector<unsigned int> someTiles;
 std::vector<unsigned int> randX;
 std::vector<unsigned int> randY;
+
 TilesetData tsd = {
     "tex2", {16, 16}, 2,
     {
@@ -117,8 +118,14 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     myScene.addObject(myObj);
     myScene.addObject(myHUD);
 
-    TilesetLayerData tld = { 100, 100, {0, 0}, someTiles, tsd };
-    myScene.setTileLayer(0, tld);
+
+
+    TilesetLayerData tld = { 100, 100, {0, 0}, someTiles };
+    
+    TileLayer TL(tsd, tld);
+
+
+    myScene.setTileLayer(0, TL);
     myScene.toggleTileLayer(0, true);
     loadScene(&myScene);
 

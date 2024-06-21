@@ -62,6 +62,7 @@
     <ClCompile Include="src\Sprite.cpp" />
     <ClCompile Include="src\SpriteAnimation.cpp" />
     <ClCompile Include="src\TextureManager.cpp" />
+    <ClCompile Include="src\Tileset.cpp" />
     <ClCompile Include="src\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>

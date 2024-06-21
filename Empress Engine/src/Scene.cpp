@@ -9,16 +9,6 @@ Scene* getLoadedScene() { return CurrentlyLoadedScene; }
 // Constructor
 Scene::Scene() { 
 	frameCount = 0;
-	for (unsigned int i = 0; i < NUMBER_OF_TILE_LAYERS; i++) {
-		tileLayers[i].active = false;
-		tileLayers[i].data.tilesPerRow = 1;
-		tileLayers[i].data.tilesetData = {
-		"_null_", { 16, 16 }, 1,
-		{
-			{0, {0, 1}},
-		}
-	};
-	}
 }
 
 void Scene::addObject(GameObject *g) {
@@ -34,8 +24,8 @@ OrthographicCamera Scene::getCamera() {
 	return myCamera;
 }
 
-void Scene::setTileLayer(int layer, TilesetLayerData tld) {
-	tileLayers[layer].data = tld;
+void Scene::setTileLayer(int layer, TileLayer tl) {
+	tileLayers[layer] = tl;
 }
 
 void Scene::toggleTileLayer(int layer, bool toggle) {
@@ -43,11 +33,11 @@ void Scene::toggleTileLayer(int layer, bool toggle) {
 }
 
 glm::vec2 Scene::getTileLayerPosition(int layer) {
-	return tileLayers[layer].data.pos;
+	return tileLayers[layer].myTLD.pos;
 }
 
 void Scene::setTileLayerPosition(int layer, glm::vec2 pos) {
-	tileLayers[layer].data.pos = pos;
+	tileLayers[layer].myTLD.pos = pos;
 }
 
 void Scene::handleInput(Controller c) {
@@ -110,7 +100,7 @@ void Scene::render() {
 	}
 	for (TileLayer &each_layer : tileLayers) {
 		if (each_layer.active) {
-			drawTileset(each_layer.data.tilesetData, each_layer.data.tileData, each_layer.data.pos, each_layer.data.tilesPerRow, frameCount, each_layer.data.depth);
+			each_layer.render(frameCount);
 		}
 	}
 }

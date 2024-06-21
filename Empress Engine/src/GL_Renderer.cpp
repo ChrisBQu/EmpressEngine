@@ -184,11 +184,16 @@ void GL_Renderer::render() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    std::string last_texture = "";
+
     GLuint orthoProjectionMatrixID = glGetUniformLocation(shaderManager.getShaderProgram("DEFAULT_QUAD"), "orthoProjection");
     glUniformMatrix4fv(orthoProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(orthoProjection));
     for (unsigned int i = 0; i < (RENDERING_DEPTH_LAYERS + 1); i++) {
         for (const auto& it : renderData.transforms[i]) {
-            swapTexture(it.first.c_str());
+            if (it.first != last_texture) {
+                last_texture = it.first;
+                swapTexture(it.first.c_str());
+            }
             if (it.second.size() > 0) {
                 glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderTransform) * it.second.size(), &it.second[0], GL_DYNAMIC_DRAW);
                 glDrawArraysInstanced(GL_TRIANGLES, 0, 6, it.second.size());
@@ -202,7 +207,10 @@ void GL_Renderer::render() {
     glUniformMatrix4fv(orthoProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(screenProjection));
     for (unsigned int i = 0; i < (RENDERING_DEPTH_LAYERS + 1); i++) {
         for (const auto& it : renderData.uitransforms[i]) {
-            swapTexture(it.first.c_str());
+            if (it.first != last_texture) {
+                last_texture = it.first;
+                swapTexture(it.first.c_str());
+            }
             if (it.second.size() > 0) {
                 glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderTransform) * it.second.size(), &it.second[0], GL_DYNAMIC_DRAW);
                 glDrawArraysInstanced(GL_TRIANGLES, 0, 6, it.second.size());

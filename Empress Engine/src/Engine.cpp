@@ -10,6 +10,8 @@
 
 #include "GameObjects/GameObj_TestCharacter.h"
 #include "GameObjects/GameObj_TestHUD.h"
+#include "GameObjects/GameObj_TestWall.h"
+
 #include "Sound.h"
 
 #include <SDL_mixer.h>
@@ -113,14 +115,21 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
 
     GameObject_Character *myObj = new GameObject_Character();
-    GameObject_HUD* myHUD = new GameObject_HUD();
-
-    GameObject_Character* myObj2 = new GameObject_Character();
-    myObj2->transform->size = { 16, 16 };
+    GameObject_HUD *myHUD = new GameObject_HUD();
+    GameObject_Wall *myWall = new GameObject_Wall();
 
     myScene.addObject(myObj);
-    myScene.addObject(myObj2);
+    myScene.addObject(myWall);
     myScene.addObject(myHUD);
+
+    for (int i = 0; i < 500; i++) {
+        int x = rand() % 500;
+        int y = rand() % 500;
+        GameObject_Character* newchar = new GameObject_Character();
+        newchar->transform->pos = { x, y };
+        myScene.addObject(newchar);
+    }
+
 
 
 

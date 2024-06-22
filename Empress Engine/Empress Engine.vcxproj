@@ -29,6 +29,7 @@
     <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\GameObjects\GameObj_TestCharacter.h" />
     <ClInclude Include="src\GameObjects\GameObj_TestHUD.h" />
+    <ClInclude Include="src\GameObjects\GameObj_TestWall.h" />
     <ClInclude Include="src\Geometry.h" />
     <ClInclude Include="src\Logger.h" />
     <ClInclude Include="src\GL_Renderer.h" />
@@ -53,6 +54,7 @@
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\GameObjects\GameObj_TestCharacter.cpp" />
     <ClCompile Include="src\GameObjects\GameObj_TestHUD.cpp" />
+    <ClCompile Include="src\GameObjects\GameObj_Wall.cpp" />
     <ClCompile Include="src\Geometry.cpp" />
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\GL_Renderer.cpp" />

@@ -28,7 +28,8 @@ void SpriteComponent::render() {
 		int atlasCol = animation.currentFrame % animation.framesPerRow;
 		int atlasX = animation.atlasOffset[0] + (animation.atlasSize[0] * atlasCol);
 		int atlasY = animation.atlasOffset[1] + (animation.atlasSize[1] * atlasRow);
-		drawQuad(animation.atlasIdentifier, { atlasX, atlasY }, animation.atlasSize, parent->transform->pos, parent->transform->size, parent->transform->depth, parent->transform->rotation, parent->alpha);
+		glm::vec2 renderSize = { parent->transform->size[0] * parent->scale[0], parent->transform->size[1] * parent->scale[1] };
+		drawQuad(animation.atlasIdentifier, { atlasX, atlasY }, animation.atlasSize, parent->transform->pos, renderSize, parent->transform->depth, parent->transform->rotation, parent->alpha);
 	}
 }
 

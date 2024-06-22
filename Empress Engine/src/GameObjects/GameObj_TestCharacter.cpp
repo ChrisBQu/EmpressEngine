@@ -5,11 +5,21 @@
 // Constructor
 GameObject_Character::GameObject_Character() {
 	visible = true;
+	solid = true;
+
 	transform->pos = { 0, 0 };
 	transform->size = { 32, 32 };
 	transform->depth = 99;
 	transform->rotation = 0;
 	sprite->setAnimation("PINK_BLOB_WALK");
+
+	GeometryShape mask;
+	mask.shapetype = GeometryType::RECTANGLE;
+	mask.shape.rectangle.pos = { -16, -16 };
+	mask.shape.rectangle.size = { 32, 32 };
+	std::vector<GeometryShape> gs = { mask };
+
+	collider->setCollisionShapes(gs);
 }
 
 GameObject_Character::~GameObject_Character() { }

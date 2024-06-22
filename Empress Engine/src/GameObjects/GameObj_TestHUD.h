@@ -5,16 +5,10 @@
 
 class GameObject_HUD : public GameObject {
 public:
-
 	GameObject_HUD();
 	~GameObject_HUD();
-	void update() override;
-	void render() override;
-
-
-private:
-	int x;
-	int y;
+	void onUpdate() override;
+	void onRender() override;
 };
 
 #endif // GAME_OBJ_TEST_HUD_H

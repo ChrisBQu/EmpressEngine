@@ -11,9 +11,12 @@ class GameObject;
 class ColliderComponent {
 public:
 	ColliderComponent(GameObject* p);
-	void update();
+	GeometryRectangle getAABB();
+	void setCollisionShapes(std::vector<GeometryShape> shapes);
+	void calibrate();
 private:
 	GeometryRectangle aabb;
+	GeometryRectangle orig_aabb;
 	std::vector<GeometryShape> collisionShapes;
 	GameObject* parent;
 };

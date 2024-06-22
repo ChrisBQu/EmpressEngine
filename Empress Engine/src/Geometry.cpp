@@ -2,8 +2,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 #include <map>
-#include <tuple>
 
 // Helper function to calculate the distance from a point to a line segment
 float pointLineDistance(GeometryPoint p, GeometryPoint a, GeometryPoint b) {
@@ -501,6 +501,7 @@ std::vector<GeometryPoint> intersectsTriangleRay(GeometryTriangle tri, GeometryR
     return intersections;
 }
 
+// Return a vector of points of intersection between two shapes
 std::vector<GeometryPoint> geometryGetIntersections(GeometryShape first, GeometryShape second) {
     std::vector<GeometryPoint> intersections;
     if (first.shapetype == GeometryType::TRIANGLE) {
@@ -539,6 +540,7 @@ std::vector<GeometryPoint> geometryGetIntersections(GeometryShape first, Geometr
     return intersections;
 }
 
+// Return true or false for whether one shape contains another
 bool geometryShapeContains(GeometryShape first, GeometryShape second) {
     std::vector<GeometryPoint> intersections;
     if (first.shapetype == GeometryType::RECTANGLE) {
@@ -563,4 +565,65 @@ bool geometryShapeContains(GeometryShape first, GeometryShape second) {
         if (second.shapetype == GeometryType::TRIANGLE) { return triangleContainsTriangle(first.shape.triangle, second.shape.triangle); }
     }
     return false;
+}
+
+// Generate the bounding box for a vector of shapes
+GeometryRectangle getBoundingRectangle(const std::vector<GeometryShape>& shapes) {
+
+    if (shapes.size() == 0) { return { {0,0}, {0, 0} }; }
+
+    float minX = std::numeric_limits<float>::max();
+    float minY = std::numeric_limits<float>::max();
+    float maxX = std::numeric_limits<float>::min();
+    float maxY = std::numeric_limits<float>::min();
+
+    for (const auto& shape : shapes) {
+        switch (shape.shapetype) {
+        case GeometryType::POINT: {
+            minX = std::min(minX, shape.shape.point.x);
+            minY = std::min(minY, shape.shape.point.y);
+            maxX = std::max(maxX, shape.shape.point.x);
+            maxY = std::max(maxY, shape.shape.point.y);
+            break;
+        }
+        case GeometryType::LINE_SEGMENT: {
+            minX = std::min({ minX, shape.shape.line.start.x, shape.shape.line.end.x });
+            minY = std::min({ minY, shape.shape.line.start.y, shape.shape.line.end.y });
+            maxX = std::max({ maxX, shape.shape.line.start.x, shape.shape.line.end.x });
+            maxY = std::max({ maxY, shape.shape.line.start.y, shape.shape.line.end.y });
+            break;
+        }
+        case GeometryType::CIRCLE: {
+            minX = std::min(minX, shape.shape.circle.pos.x - shape.shape.circle.radius);
+            minY = std::min(minY, shape.shape.circle.pos.y - shape.shape.circle.radius);
+            maxX = std::max(maxX, shape.shape.circle.pos.x + shape.shape.circle.radius);
+            maxY = std::max(maxY, shape.shape.circle.pos.y + shape.shape.circle.radius);
+            break;
+        }
+        case GeometryType::RECTANGLE: {
+            minX = std::min(minX, shape.shape.rectangle.pos.x);
+            minY = std::min(minY, shape.shape.rectangle.pos.y);
+            maxX = std::max(maxX, shape.shape.rectangle.pos.x + shape.shape.rectangle.size.x);
+            maxY = std::max(maxY, shape.shape.rectangle.pos.y + shape.shape.rectangle.size.y);
+            break;
+        }
+        case GeometryType::TRIANGLE: {
+            minX = std::min({ minX, shape.shape.triangle.a.x, shape.shape.triangle.b.x, shape.shape.triangle.c.x });
+            minY = std::min({ minY, shape.shape.triangle.a.y, shape.shape.triangle.b.y, shape.shape.triangle.c.y });
+            maxX = std::max({ maxX, shape.shape.triangle.a.x, shape.shape.triangle.b.x, shape.shape.triangle.c.x });
+            maxY = std::max({ maxY, shape.shape.triangle.a.y, shape.shape.triangle.b.y, shape.shape.triangle.c.y });
+            break;
+        }
+        default:
+            break;
+        }
+    }
+
+    GeometryRectangle boundingRect;
+    boundingRect.pos.x = minX;
+    boundingRect.pos.y = minY;
+    boundingRect.size.x = maxX - minX;
+    boundingRect.size.y = maxY - minY;
+
+    return boundingRect;
 }

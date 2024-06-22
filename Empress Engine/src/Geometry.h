@@ -54,5 +54,6 @@ struct GeometryShape {
 
 std::vector<GeometryPoint> geometryGetIntersections(GeometryShape first, GeometryShape second);
 bool geometryShapeContains(GeometryShape first, GeometryShape second);
+GeometryRectangle getBoundingRectangle(const std::vector<GeometryShape>& shapes);
 
 #endif // GEOMETRY_H

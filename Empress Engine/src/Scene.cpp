@@ -2,6 +2,10 @@
 #include "Logger.h"
 #include "RenderInterface.h"
 
+#include <algorithm>
+#include <unordered_set>
+
+
 Scene *CurrentlyLoadedScene;
 void loadScene(Scene* s) { CurrentlyLoadedScene = s; }
 Scene* getLoadedScene() { return CurrentlyLoadedScene; }
@@ -91,6 +95,7 @@ void Scene::update() {
 	for (GameObject* each_object : myObjects) {
 		each_object->update();
 	}
+	checkCollisions();
 	frameCount++;
 }
 
@@ -112,4 +117,57 @@ void Scene::deleteObjects() {
 		delete each;
 	}
 	myObjects.clear();
+}
+
+bool compareGameObjectByMinX(const GameObject* a, const GameObject* b) {
+	return a->collider->getAABB().pos.x < b->collider->getAABB().pos.x;
+}
+
+bool compareGameObjectByMinY(const GameObject* a, const GameObject* b) {
+	return a->collider->getAABB().pos.y < b->collider->getAABB().pos.y;
+}
+
+void sweepAndPrune(std::vector<GameObject*>& objects) {
+	auto pair_hash = [](const std::pair<uint64_t, uint64_t>& pair) {
+		return std::hash<uint64_t>()(pair.first) ^ std::hash<uint64_t>()(pair.second);
+		};
+
+	std::unordered_set<std::pair<uint64_t, uint64_t>, decltype(pair_hash)> potentialPairsX(0, pair_hash);
+
+	// Sweep and Prune on the X-Axis
+	std::sort(objects.begin(), objects.end(), compareGameObjectByMinX);
+	for (size_t i = 0; i < objects.size(); i++) {
+		for (size_t j = i + 1; j < objects.size(); j++) {
+			if (objects[j]->collider->getAABB().pos.x > objects[i]->collider->getAABB().pos.x + objects[i]->collider->getAABB().size.x) {
+				break;
+			}
+			potentialPairsX.emplace(objects[i]->id, objects[j]->id);
+		}
+	}
+
+	// Sweep and Prune on the Y-Axis
+	std::sort(objects.begin(), objects.end(), compareGameObjectByMinY);
+	std::unordered_set<std::pair<uint64_t, uint64_t>, decltype(pair_hash)> potentialPairs(0, pair_hash);
+	for (size_t i = 0; i < objects.size(); i++) {
+		for (size_t j = i + 1; j < objects.size(); j++) {
+			if (objects[j]->collider->getAABB().pos.y > objects[i]->collider->getAABB().pos.y + objects[i]->collider->getAABB().size.y) {
+				break;
+			}
+			auto pair = std::make_pair(objects[i]->id, objects[j]->id);
+			if (potentialPairsX.find(pair) != potentialPairsX.end() || potentialPairsX.find(std::make_pair(objects[j]->id, objects[i]->id)) != potentialPairsX.end()) {
+				if (objects[i]->solid && objects[j]->solid) {
+					potentialPairs.emplace(pair);
+				}
+			}
+		}
+	}
+
+	for (const auto& pair : potentialPairs) {
+		//LOG("COLLISION: (", pair.first, ") and (", pair.second, ")");
+	}
+}
+
+
+void Scene::checkCollisions() {
+	sweepAndPrune(myObjects);
 }

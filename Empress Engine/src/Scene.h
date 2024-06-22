@@ -34,6 +34,7 @@ private:
 	OrthographicCamera myCamera;
 
 	void handleInput(Controller c);
+	void checkCollisions();
 	void update();
 	void render();
 

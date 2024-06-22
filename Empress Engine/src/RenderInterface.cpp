@@ -10,7 +10,7 @@ RenderData renderData;
 
 void drawQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 size, int depth, float rotation, float alpha) {
     RenderTransform transform;
-    transform.pos = pos;// pos - glm::vec2(tex_size) / 2.0f;
+    transform.pos =  pos - glm::vec2(tex_size) / 2.0f;
     transform.size = size;
     transform.atlasOffset = tex_pos;
     transform.spriteSize = tex_size;

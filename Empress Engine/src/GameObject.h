@@ -11,8 +11,11 @@ class GameObject {
 public:
 	GameObject();
 	virtual ~GameObject();
-	virtual void update();
-	virtual void render();
+
+	void update();
+	void render();
+	virtual void onUpdate();
+	virtual void onRender();
 
 	virtual void trigger_onPressedUp();
 	virtual void trigger_onPressedDown();
@@ -53,9 +56,9 @@ public:
 	virtual void trigger_onReleasedStart();
 	virtual void trigger_onReleasedBack();
 
-
 	// Variables
 	uint32_t id;
+	glm::vec2 scale;
 	bool visible;
 	bool solid;
 	float alpha;

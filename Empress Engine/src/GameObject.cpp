@@ -5,9 +5,10 @@ uint64_t objectCount = 1;
 
 GameObject::GameObject() {
 	id = objectCount++;
-	visible = true;
+	visible = false;
 	solid = false;
 	alpha = 1.0;
+	scale = { 1.0, 1.0 };
 	sprite = new SpriteComponent(this);
 	transform = new TransformComponent(this);
 	collider = new ColliderComponent(this);
@@ -20,15 +21,20 @@ GameObject::~GameObject() {
 }
 
 void GameObject::update() {
-	collider->update();
+	if (solid) { collider->calibrate(); }
+	onUpdate();
 }
 
 void GameObject::render() {
 	sprite->tickAnimation();
 	if (visible) {
 		sprite->render();
+		onRender();
 	}
 }
+
+void GameObject::onUpdate() { }
+void GameObject::onRender() { }
 
 void GameObject::trigger_onPressedUp() { }
 void GameObject::trigger_onPressedDown() { }

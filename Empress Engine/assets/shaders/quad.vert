@@ -26,16 +26,14 @@ void main() {
 
     Transform transform = transforms[gl_InstanceID];
 
-    vec2 halfSize = 0.5 * transform.size;
-
     // Define vertices relative to the origin (0,0)
     vec2 vertices[6] = {
-        vec2(-halfSize.x, -halfSize.y),
-        vec2(-halfSize.x,  halfSize.y),
-        vec2( halfSize.x, -halfSize.y),
-        vec2( halfSize.x, -halfSize.y),
-        vec2(-halfSize.x,  halfSize.y),
-        vec2( halfSize.x,  halfSize.y)
+        vec2(0.0, 0.0),
+        vec2(0.0, transform.size.y),
+        vec2(transform.size.x, 0.0),
+        vec2(transform.size.x, 0.0),
+        vec2(0.0, transform.size.y),
+        vec2(transform.size.x, transform.size.y)
     };
 
     float left = transform.atlasOffset.x;

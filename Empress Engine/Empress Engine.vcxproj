@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="src\3rdParty\json.hpp" />
     <ClInclude Include="src\3rdParty\stb_image.h" />
+    <ClInclude Include="src\ColliderComponent.h" />
     <ClInclude Include="src\Controller.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\FontManager.h" />
@@ -44,6 +45,7 @@
     <ClInclude Include="src\Utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ColliderComponent.cpp" />
     <ClCompile Include="src\Controller.cpp" />
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\FontManager.cpp" />

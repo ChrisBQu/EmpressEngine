@@ -115,7 +115,11 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     GameObject_Character *myObj = new GameObject_Character();
     GameObject_HUD* myHUD = new GameObject_HUD();
 
+    GameObject_Character* myObj2 = new GameObject_Character();
+    myObj2->transform->size = { 16, 16 };
+
     myScene.addObject(myObj);
+    myScene.addObject(myObj2);
     myScene.addObject(myHUD);
 
 

@@ -56,7 +56,7 @@ void TileLayer::render(int framecount) {
             // Check if the tile is within the camera view
             if (tileRight > cameraLeft && tileLeft < cameraRight + myTSD.atlasSize.x && tileTop > cameraBottom && tileBottom < cameraTop + myTSD.atlasSize.y) {
                 // Draw the tile
-                drawQuad(myTSD.atlasIdentifier, { myTSD.atlasSize.x * tex_col, myTSD.atlasSize.y * tex_row }, myTSD.atlasSize, { pos_x, pos_y }, { 1.0f, 1.0f }, myTLD.depth, 0.0f, 1.0f);
+                drawQuad(myTSD.atlasIdentifier, { myTSD.atlasSize.x * tex_col, myTSD.atlasSize.y * tex_row }, myTSD.atlasSize, { pos_x, pos_y }, { myTSD.atlasSize.x, myTSD.atlasSize.y }, myTLD.depth, 0.0f, 1.0f);
             }
         }
     }

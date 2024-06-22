@@ -1,5 +1,5 @@
-#include "GameObject.h"
 #include "SpriteComponent.h"
+#include "GameObject.h"
 #include "Logger.h"
 #include "RenderInterface.h"
 
@@ -28,7 +28,7 @@ void SpriteComponent::render() {
 		int atlasCol = animation.currentFrame % animation.framesPerRow;
 		int atlasX = animation.atlasOffset[0] + (animation.atlasSize[0] * atlasCol);
 		int atlasY = animation.atlasOffset[1] + (animation.atlasSize[1] * atlasRow);
-		drawQuad(animation.atlasIdentifier, { atlasX, atlasY }, animation.atlasSize, parent->transform->pos, parent->transform->scale, parent->transform->depth, parent->transform->rotation, parent->alpha);
+		drawQuad(animation.atlasIdentifier, { atlasX, atlasY }, animation.atlasSize, parent->transform->pos, parent->transform->size, parent->transform->depth, parent->transform->rotation, parent->alpha);
 	}
 }
 

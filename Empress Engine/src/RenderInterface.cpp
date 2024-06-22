@@ -8,10 +8,10 @@
 
 RenderData renderData;
 
-void drawQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 scale, int depth, float rotation, float alpha) {
+void drawQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 size, int depth, float rotation, float alpha) {
     RenderTransform transform;
-    transform.pos = pos - glm::vec2(tex_size) / 2.0f;
-    transform.size = glm::vec2(tex_size[0] * scale.x, tex_size[1] * scale.y);
+    transform.pos = pos;// pos - glm::vec2(tex_size) / 2.0f;
+    transform.size = size;
     transform.atlasOffset = tex_pos;
     transform.spriteSize = tex_size;
     transform.rotation = rotation;
@@ -19,13 +19,13 @@ void drawQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size,
     renderData.transforms[RENDERING_DEPTH_LAYERS-(depth+(RENDERING_DEPTH_LAYERS/2))][tex_identifier].push_back(transform);
 }
 
-void drawUIQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 scale, int depth, float rotation, float alpha) {
+void drawUIQuad(std::string tex_identifier, glm::vec2 tex_pos, glm::vec2 tex_size, glm::vec2 pos, glm::vec2 size, int depth, float rotation, float alpha) {
     float xs = (float)gameConfig.screenWidth / (float)DEFAULT_SCREEN_WIDTH;
     float ys = (float)gameConfig.screenHeight / (float)DEFAULT_SCREEN_HEIGHT;
     RenderTransform transform;
     transform.pos = pos;
     transform.pos = { transform.pos[0] * xs, transform.pos[1] * ys };
-    transform.size = glm::vec2(tex_size[0] * scale.x * xs, tex_size[1] * scale.y * ys);
+    transform.size = size;
     transform.atlasOffset = tex_pos;
     transform.spriteSize = tex_size;
     transform.rotation = rotation;

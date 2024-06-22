@@ -1,20 +1,26 @@
 #include "GameObject.h"
 #include "Logger.h"
 
+uint64_t objectCount = 1;
+
 GameObject::GameObject() {
+	id = objectCount++;
 	visible = true;
 	solid = false;
 	alpha = 1.0;
 	sprite = new SpriteComponent(this);
 	transform = new TransformComponent(this);
+	collider = new ColliderComponent(this);
 }
 
 GameObject::~GameObject() { 
 	delete sprite;
 	delete transform;
+	delete collider;
 }
 
 void GameObject::update() {
+	collider->update();
 }
 
 void GameObject::render() {

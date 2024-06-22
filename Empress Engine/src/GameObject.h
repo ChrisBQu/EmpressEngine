@@ -1,6 +1,7 @@
 #ifndef GAME_OBJECT_H
 #define GAME_OBJECT_H
 
+#include "ColliderComponent.h"
 #include "SpriteComponent.h"
 #include "TransformComponent.h"
 
@@ -54,6 +55,7 @@ public:
 
 
 	// Variables
+	uint32_t id;
 	bool visible;
 	bool solid;
 	float alpha;
@@ -61,6 +63,7 @@ public:
 	// Components
 	TransformComponent *transform;
 	SpriteComponent *sprite;
+	ColliderComponent *collider;
 };
 
 #endif // GAME_OBJECT_H

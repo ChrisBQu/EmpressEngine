@@ -12,6 +12,7 @@ class ColliderComponent {
 public:
 	ColliderComponent(GameObject* p);
 	GeometryRectangle getAABB();
+	bool collidesWith(ColliderComponent* other);
 	void setCollisionShapes(std::vector<GeometryShape> shapes);
 	void calibrate();
 private:

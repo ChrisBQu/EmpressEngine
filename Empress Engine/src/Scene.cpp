@@ -3,7 +3,11 @@
 #include "RenderInterface.h"
 
 #include <algorithm>
-#include <unordered_set>
+#include <limits>
+#include <memory>
+#include <set>
+#include <tuple>
+#include <vector>
 
 
 Scene *CurrentlyLoadedScene;
@@ -119,55 +123,189 @@ void Scene::deleteObjects() {
 	myObjects.clear();
 }
 
-bool compareGameObjectByMinX(const GameObject* a, const GameObject* b) {
-	return a->collider->getAABB().pos.x < b->collider->getAABB().pos.x;
-}
 
-bool compareGameObjectByMinY(const GameObject* a, const GameObject* b) {
-	return a->collider->getAABB().pos.y < b->collider->getAABB().pos.y;
-}
 
-void sweepAndPrune(std::vector<GameObject*>& objects) {
-	auto pair_hash = [](const std::pair<uint64_t, uint64_t>& pair) {
-		return std::hash<uint64_t>()(pair.first) ^ std::hash<uint64_t>()(pair.second);
-		};
 
-	std::unordered_set<std::pair<uint64_t, uint64_t>, decltype(pair_hash)> potentialPairsX(0, pair_hash);
 
-	// Sweep and Prune on the X-Axis
-	std::sort(objects.begin(), objects.end(), compareGameObjectByMinX);
-	for (size_t i = 0; i < objects.size(); i++) {
-		for (size_t j = i + 1; j < objects.size(); j++) {
-			if (objects[j]->collider->getAABB().pos.x > objects[i]->collider->getAABB().pos.x + objects[i]->collider->getAABB().size.x) {
-				break;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Quadtree {
+	static const int MAX_OBJECTS = 5;
+	static const int MAX_LEVELS = 5;
+
+	int level;
+	std::vector<GameObject*> objects;
+	GeometryRectangle bounds;
+	std::vector<std::unique_ptr<Quadtree>> nodes;
+
+public:
+	Quadtree(int pLevel, GeometryRectangle pBounds) : level(pLevel), bounds(pBounds) {}
+
+	void clear() {
+		objects.clear();
+		for (auto& node : nodes) {
+			if (node) {
+				node->clear();
+				node.reset();
 			}
-			potentialPairsX.emplace(objects[i]->id, objects[j]->id);
 		}
 	}
 
-	// Sweep and Prune on the Y-Axis
-	std::sort(objects.begin(), objects.end(), compareGameObjectByMinY);
-	std::unordered_set<std::pair<uint64_t, uint64_t>, decltype(pair_hash)> potentialPairs(0, pair_hash);
-	for (size_t i = 0; i < objects.size(); i++) {
-		for (size_t j = i + 1; j < objects.size(); j++) {
-			if (objects[j]->collider->getAABB().pos.y > objects[i]->collider->getAABB().pos.y + objects[i]->collider->getAABB().size.y) {
-				break;
+	void split() {
+		float subWidth = bounds.size.x / 2.0f;
+		float subHeight = bounds.size.y / 2.0f;
+		float x = bounds.pos.x;
+		float y = bounds.pos.y;
+
+		nodes.emplace_back(std::make_unique<Quadtree>(level + 1, GeometryRectangle{ {x + subWidth, y}, {subWidth, subHeight} }));
+		nodes.emplace_back(std::make_unique<Quadtree>(level + 1, GeometryRectangle{ {x, y}, {subWidth, subHeight} }));
+		nodes.emplace_back(std::make_unique<Quadtree>(level + 1, GeometryRectangle{ {x, y + subHeight}, {subWidth, subHeight} }));
+		nodes.emplace_back(std::make_unique<Quadtree>(level + 1, GeometryRectangle{ {x + subWidth, y + subHeight}, {subWidth, subHeight} }));
+	}
+
+	int getIndex(GameObject* obj) const {
+		int index = -1;
+		float verticalMidpoint = bounds.pos.x + bounds.size.x / 2.0f;
+		float horizontalMidpoint = bounds.pos.y + bounds.size.y / 2.0f;
+
+		GeometryRectangle aabb = obj->collider->getAABB();
+
+		bool topQuadrant = (aabb.pos.y < horizontalMidpoint && aabb.pos.y + aabb.size.y < horizontalMidpoint);
+		bool bottomQuadrant = (aabb.pos.y > horizontalMidpoint);
+
+		if (aabb.pos.x < verticalMidpoint && aabb.pos.x + aabb.size.x < verticalMidpoint) {
+			if (topQuadrant) {
+				index = 1;
 			}
-			auto pair = std::make_pair(objects[i]->id, objects[j]->id);
-			if (potentialPairsX.find(pair) != potentialPairsX.end() || potentialPairsX.find(std::make_pair(objects[j]->id, objects[i]->id)) != potentialPairsX.end()) {
-				if (objects[i]->solid && objects[j]->solid) {
-					potentialPairs.emplace(pair);
+			else if (bottomQuadrant) {
+				index = 2;
+			}
+		}
+		else if (aabb.pos.x > verticalMidpoint) {
+			if (topQuadrant) {
+				index = 0;
+			}
+			else if (bottomQuadrant) {
+				index = 3;
+			}
+		}
+
+		return index;
+	}
+
+	void insert(GameObject* obj) {
+		if (!nodes.empty()) {
+			int index = getIndex(obj);
+
+			if (index != -1) {
+				nodes[index]->insert(obj);
+				return;
+			}
+		}
+
+		objects.push_back(obj);
+
+		if (objects.size() > MAX_OBJECTS && level < MAX_LEVELS) {
+			if (nodes.empty()) {
+				split();
+			}
+
+			auto it = objects.begin();
+			while (it != objects.end()) {
+				int index = getIndex(*it);
+				if (index != -1) {
+					nodes[index]->insert(*it);
+					it = objects.erase(it);
+				}
+				else {
+					++it;
 				}
 			}
 		}
 	}
 
-	for (const auto& pair : potentialPairs) {
-		//LOG("COLLISION: (", pair.first, ") and (", pair.second, ")");
+	void retrieve(std::vector<GameObject*>& returnObjects, GameObject* obj) const {
+		int index = getIndex(obj);
+		if (index != -1 && !nodes.empty()) {
+			nodes[index]->retrieve(returnObjects, obj);
+		}
+
+		returnObjects.insert(returnObjects.end(), objects.begin(), objects.end());
 	}
-}
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 void Scene::checkCollisions() {
-	sweepAndPrune(myObjects);
+	float x_min = std::numeric_limits<float>::max();
+	float x_max = std::numeric_limits<float>::min();
+	float y_min = std::numeric_limits<float>::max();
+	float y_max = std::numeric_limits<float>::min();
+
+	for (auto& each_object : myObjects) {
+		GeometryRectangle aabb = each_object->collider->getAABB();
+		x_min = std::min(x_min, aabb.pos.x);
+		y_min = std::min(y_min, aabb.pos.y);
+		x_max = std::max(x_max, aabb.pos.x + aabb.size.x);
+		y_max = std::max(y_max, aabb.pos.y + aabb.size.y);
+	}
+
+	GeometryRectangle sceneBounds = { {x_min, y_min}, {x_max - x_min, y_max - y_min} };
+	Quadtree quadtree(0, sceneBounds);
+
+	for (auto& each_object : myObjects) {
+		quadtree.insert(each_object);
+	}
+
+	for (auto& each_object : myObjects) {
+		std::vector<GameObject*> possibleCollisions;
+		quadtree.retrieve(possibleCollisions, each_object);
+
+		for (auto& other_object : possibleCollisions) {
+			if (each_object->id != other_object->id && each_object->collider->collidesWith(other_object->collider)) {
+				// LOG("Collision occurred");
+			}
+		}
+	}
 }

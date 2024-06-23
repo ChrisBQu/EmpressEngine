@@ -58,7 +58,7 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     for (int i = 0; i < 1000000; i++) {
         someTiles.push_back(rand()%4);
     }
-    for (int i = 0; i < 500; i++) {
+    for (int i = 0; i < 1000; i++) {
         randX.push_back(rand() % 1280);
         randY.push_back(rand() % 720);
     }
@@ -122,14 +122,17 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     myScene.addObject(myWall);
     myScene.addObject(myHUD);
 
-    for (int i = 0; i < 500; i++) {
-        int x = rand() % 500;
-        int y = rand() % 500;
-        GameObject_Character* newchar = new GameObject_Character();
-        newchar->transform->pos = { x, y };
-        myScene.addObject(newchar);
+    
+    for (int i = 0; i < 15; i++) {
+        for (int j = 0; j < 15; j++) {
+            int x = i * 50;
+            int y = j * 50;
+            GameObject_Character* newchar = new GameObject_Character();
+            newchar->transform->pos = { x, y };
+            myScene.addObject(newchar);
+        }
     }
-
+    
 
 
 

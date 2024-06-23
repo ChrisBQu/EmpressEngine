@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Logger.h"
 #include "RenderInterface.h"
+#include "Scene.h"
 
 // Constructor
 SpriteComponent::SpriteComponent(GameObject *p) {
@@ -23,13 +24,27 @@ void SpriteComponent::setStaticSprite(std::string atlasIdentifier, glm::ivec2 at
 
 // Draw the sprite to the screen using its internal animation data, and a Transformation T
 void SpriteComponent::render() {
-	if (animation.framesPerRow > 0) {
-		int atlasRow = animation.currentFrame / animation.framesPerRow;
-		int atlasCol = animation.currentFrame % animation.framesPerRow;
-		int atlasX = animation.atlasOffset[0] + (animation.atlasSize[0] * atlasCol);
-		int atlasY = animation.atlasOffset[1] + (animation.atlasSize[1] * atlasRow);
-		glm::vec2 renderSize = { parent->transform->size[0] * parent->scale[0], parent->transform->size[1] * parent->scale[1] };
-		drawQuad(animation.atlasIdentifier, { atlasX, atlasY }, animation.atlasSize, parent->transform->pos, renderSize, parent->transform->depth, parent->transform->rotation, parent->alpha);
+	OrthographicCamera cam = getLoadedScene()->getCamera();
+	float cameraLeft = cam.pos.x - cam.dimensions.x / 2.0f;
+	float cameraRight = cam.pos.x + cam.dimensions.x / 2.0f;
+	float cameraBottom = cam.pos.y - cam.dimensions.y / 2.0f;
+	float cameraTop = cam.pos.y + cam.dimensions.y / 2.0f;
+
+	float spriteLeft = parent->transform->pos.x - animation.atlasSize.x / 2.0f;
+	float spriteRight = parent->transform->pos.x + animation.atlasSize.x / 2.0f;
+	float spriteBottom = parent->transform->pos.y - animation.atlasSize.y / 2.0f;
+	float spriteTop = parent->transform->pos.y + animation.atlasSize.y / 2.0f;
+
+	// Check if the tile is within the camera view
+	if (spriteRight > cameraLeft && spriteLeft < cameraRight + animation.atlasSize.x && spriteTop > cameraBottom && spriteBottom < cameraTop + animation.atlasSize.y) {
+		if (animation.framesPerRow > 0) {
+			int atlasRow = animation.currentFrame / animation.framesPerRow;
+			int atlasCol = animation.currentFrame % animation.framesPerRow;
+			int atlasX = animation.atlasOffset[0] + (animation.atlasSize[0] * atlasCol);
+			int atlasY = animation.atlasOffset[1] + (animation.atlasSize[1] * atlasRow);
+			glm::vec2 renderSize = { parent->transform->size[0] * parent->scale[0], parent->transform->size[1] * parent->scale[1] };
+			drawQuad(animation.atlasIdentifier, { atlasX, atlasY }, animation.atlasSize, parent->transform->pos, renderSize, parent->transform->depth, parent->transform->rotation, parent->alpha);
+		}
 	}
 }
 

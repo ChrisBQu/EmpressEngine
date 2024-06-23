@@ -10,6 +10,16 @@ GeometryRectangle ColliderComponent::getAABB() {
 	return aabb;
 }
 
+bool ColliderComponent::collidesWith(ColliderComponent* other)
+{
+	for (GeometryShape my_shape : collisionShapes) {
+		for (GeometryShape other_shape : other->collisionShapes) {
+			if (geometryGetIntersections(my_shape, other_shape).size() > 0) { return true; }
+		}
+	}
+	return false;
+}
+
 void ColliderComponent::setCollisionShapes(std::vector<GeometryShape> shapes) {
 	collisionShapes.clear();
 	collisionShapes = shapes;

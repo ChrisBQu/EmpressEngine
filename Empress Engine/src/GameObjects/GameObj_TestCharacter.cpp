@@ -7,7 +7,7 @@ GameObject_Character::GameObject_Character() {
 	visible = true;
 	solid = true;
 
-	transform->pos = { 0, 0 };
+	//transform->pos = { 0, 0 };
 	transform->size = { 32, 32 };
 	transform->depth = 99;
 	transform->rotation = 0;

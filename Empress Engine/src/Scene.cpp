@@ -3,28 +3,23 @@
 #include "RenderInterface.h"
 
 #include <algorithm>
-#include <limits>
-#include <memory>
-#include <set>
-#include <tuple>
 #include <vector>
-
-#include <mutex>
-#include <thread>
-#include <future>
-
 
 Scene *CurrentlyLoadedScene;
 void loadScene(Scene* s) { CurrentlyLoadedScene = s; }
 Scene* getLoadedScene() { return CurrentlyLoadedScene; }
 
 // Constructor
-Scene::Scene() { 
+Scene::Scene() {
 	frameCount = 0;
 }
 
 void Scene::addObject(GameObject *g) {
-	myObjects.push_back(g);
+	if (g->is_static) {
+		myStaticObjects.push_back(g);
+		return;
+	}
+	myDynamicObjects.push_back(g);
 }
 
 void Scene::setCamera(glm::vec2 position, glm::vec2 dimensions) {
@@ -54,7 +49,7 @@ void Scene::setTileLayerPosition(int layer, glm::vec2 pos) {
 
 void Scene::handleInput(Controller c) {
 
-	for (GameObject* each : myObjects) {
+	for (GameObject* each : myDynamicObjects) {
 		// Buttons pressed
 		if (c.getPressed(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_A)) { each->trigger_onPressedA(); }
 		if (c.getPressed(SDL_GameControllerButton::SDL_CONTROLLER_BUTTON_B)) { each->trigger_onPressedB(); }
@@ -100,10 +95,12 @@ void Scene::handleInput(Controller c) {
 }
 
 void Scene::update() {
-	for (GameObject* each_object : myObjects) {
+	for (GameObject* each_object : myDynamicObjects) {
 		each_object->update();
 	}
-	checkCollisions();
+	for (GameObject* each_object : myStaticObjects) {
+		each_object->update();
+	}
 	frameCount++;
 }
 
@@ -114,158 +111,39 @@ void Scene::render() {
 		}
 	}
 
-	for (GameObject* each_object : myObjects) {
+	for (GameObject* each_object : myStaticObjects) {
+		each_object->render();
+	}
+
+	for (GameObject* each_object : myDynamicObjects) {
 		each_object->render();
 	}
 
 }
 
 void Scene::deleteObjects() {
-	for (GameObject* each : myObjects) {
+	for (GameObject* each : myDynamicObjects) {
 		delete each;
 	}
-	myObjects.clear();
+	myDynamicObjects.clear();
+	for (GameObject* each : myStaticObjects) {
+		delete each;
+	}
+	myStaticObjects.clear();
 }
 
+std::vector<GameObject*> Scene::queryCollisions(GameObject* requester) {
 
+	std::vector<GameObject*> ret_vect;
 
-
-class Quadtree {
-	static const int MAX_OBJECTS = 4;
-	static const int MAX_LEVELS = 5;
-
-	int level;
-	std::vector<GameObject*> objects;
-	GeometryRectangle bounds;
-	std::vector<std::unique_ptr<Quadtree>> nodes;
-
-public:
-	Quadtree(int pLevel, GeometryRectangle pBounds)
-		: level(pLevel), bounds(pBounds) {}
-
-	void clear() {
-		objects.clear();
-		for (auto& node : nodes) {
-			if (node) {
-				node->clear();
-				node.reset();
-			}
-		}
-		nodes.clear();
-	}
-
-	void split() {
-		float subWidth = bounds.size.x / 2.0f;
-		float subHeight = bounds.size.y / 2.0f;
-		float x = bounds.pos.x;
-		float y = bounds.pos.y;
-
-		nodes.emplace_back(std::make_unique<Quadtree>(level + 1, GeometryRectangle{ {x + subWidth, y}, {subWidth, subHeight} }));
-		nodes.emplace_back(std::make_unique<Quadtree>(level + 1, GeometryRectangle{ {x, y}, {subWidth, subHeight} }));
-		nodes.emplace_back(std::make_unique<Quadtree>(level + 1, GeometryRectangle{ {x, y + subHeight}, {subWidth, subHeight} }));
-		nodes.emplace_back(std::make_unique<Quadtree>(level + 1, GeometryRectangle{ {x + subWidth, y + subHeight}, {subWidth, subHeight} }));
-	}
-
-	int getIndex(const GeometryRectangle& aabb) const {
-		int index = -1;
-		float verticalMidpoint = bounds.pos.x + bounds.size.x / 2.0f;
-		float horizontalMidpoint = bounds.pos.y + bounds.size.y / 2.0f;
-
-		bool topQuadrant = (aabb.pos.y < horizontalMidpoint && aabb.pos.y + aabb.size.y < horizontalMidpoint);
-		bool bottomQuadrant = (aabb.pos.y > horizontalMidpoint);
-
-		if (aabb.pos.x < verticalMidpoint && aabb.pos.x + aabb.size.x < verticalMidpoint) {
-			if (topQuadrant) {
-				index = 1;
-			}
-			else if (bottomQuadrant) {
-				index = 2;
-			}
-		}
-		else if (aabb.pos.x > verticalMidpoint) {
-			if (topQuadrant) {
-				index = 0;
-			}
-			else if (bottomQuadrant) {
-				index = 3;
-			}
-		}
-
-		return index;
-	}
-
-	void insert(GameObject* obj) {
-		if (!nodes.empty()) {
-			int index = getIndex(obj->collider->getAABB());
-
-			if (index != -1) {
-				nodes[index]->insert(obj);
-				return;
-			}
-		}
-
-		objects.push_back(obj);
-
-		if (objects.size() > MAX_OBJECTS && level < MAX_LEVELS) {
-			if (nodes.empty()) {
-				split();
-			}
-
-			auto it = objects.begin();
-			while (it != objects.end()) {
-				int index = getIndex((*it)->collider->getAABB());
-				if (index != -1) {
-					nodes[index]->insert(*it);
-					it = objects.erase(it);
-				}
-				else {
-					++it;
-				}
+	for (GameObject* each_object : myDynamicObjects) {
+		if (requester->id != each_object->id) {
+			if (requester->collider->collidesWith(each_object->collider)) {
+				ret_vect.push_back(each_object);
 			}
 		}
 	}
 
-	void retrieve(std::vector<GameObject*>& returnObjects, const GeometryRectangle& aabb) const {
-		int index = getIndex(aabb);
-		if (index != -1 && !nodes.empty()) {
-			nodes[index]->retrieve(returnObjects, aabb);
-		}
+	return ret_vect;
 
-		returnObjects.insert(returnObjects.end(), objects.begin(), objects.end());
-	}
-};
-
-void Scene::checkCollisions() {
-	float x_min = std::numeric_limits<float>::max();
-	float x_max = std::numeric_limits<float>::min();
-	float y_min = std::numeric_limits<float>::max();
-	float y_max = std::numeric_limits<float>::min();
-
-	for (auto& each_object : myObjects) {
-		GeometryRectangle aabb = each_object->collider->getAABB();
-		x_min = std::min(x_min, aabb.pos.x);
-		y_min = std::min(y_min, aabb.pos.y);
-		x_max = std::max(x_max, aabb.pos.x + aabb.size.x);
-		y_max = std::max(y_max, aabb.pos.y + aabb.size.y);
-	}
-
-	GeometryRectangle sceneBounds = { {x_min, y_min}, {x_max - x_min, y_max - y_min} };
-	Quadtree quadtree(0, sceneBounds);
-
-	for (auto& each_object : myObjects) {
-		quadtree.insert(each_object);
-	}
-
-	for (auto& each_object : myObjects) {
-		std::vector<GameObject*> possibleCollisions;
-		quadtree.retrieve(possibleCollisions, each_object->collider->getAABB());
-
-		for (auto& other_object : possibleCollisions) {
-			if (each_object->id != other_object->id && each_object->collider->collidesWith(other_object->collider)) {
-				LOG("---");
-				LOG(each_object->collider->getAABB().pos.x, ", ", each_object->collider->getAABB().pos.y, " --- ", each_object->collider->getAABB().size.x, ", ", each_object->collider->getAABB().size.y);
-				LOG(other_object->collider->getAABB().pos.x, ", ", other_object->collider->getAABB().pos.y, " --- ", other_object->collider->getAABB().size.x, ", ", other_object->collider->getAABB().size.y);
-			}
-		}
-	}
 }

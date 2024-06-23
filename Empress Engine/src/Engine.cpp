@@ -123,18 +123,16 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     myScene.addObject(myHUD);
 
     
-    for (int i = 0; i < 16; i++) {
-        for (int j = 0; j < 16; j++) {
+    for (int i = 0; i < 50; i++) {
+        for (int j = 0; j < 50; j++) {
             int x = i * 50;
-            int y = 400 + j * 50;
-            GameObject_Character* newchar = new GameObject_Character();
+            int y = j * 50;
+            GameObject_Wall* newchar = new GameObject_Wall();
             newchar->transform->pos = { x, y };
             myScene.addObject(newchar);
         }
     }
     
-
-
 
     TilesetLayerData tld = { 100, 100, {0, 0}, someTiles };
     

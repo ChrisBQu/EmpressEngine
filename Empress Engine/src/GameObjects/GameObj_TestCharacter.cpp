@@ -18,6 +18,13 @@ GameObject_Character::GameObject_Character() {
 GameObject_Character::~GameObject_Character() { }
 
 
+void GameObject_Character::onUpdate() {
+	queryCollisions();
+	if (myCollisions.size() > 0) {
+		LOG("HONK");
+	}
+}
+
 void GameObject_Character::trigger_onPressedLeft() {
 	sprite->setAnimation("PINK_BLOB_WALK");
 	transform->size = { -32, 32 };

@@ -1,5 +1,6 @@
 #include "GameObject.h"
 #include "Logger.h"
+#include "Scene.h"
 
 uint64_t objectCount = 1;
 
@@ -7,6 +8,7 @@ GameObject::GameObject() {
 	id = objectCount++;
 	visible = false;
 	solid = false;
+	is_static = false;
 	alpha = 1.0;
 	scale = { 1.0, 1.0 };
 	sprite = new SpriteComponent(this);
@@ -18,6 +20,10 @@ GameObject::~GameObject() {
 	delete sprite;
 	delete transform;
 	delete collider;
+}
+
+void GameObject::queryCollisions() {
+	myCollisions = getLoadedScene()->queryCollisions(this);
 }
 
 void GameObject::update() {

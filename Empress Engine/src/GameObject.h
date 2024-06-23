@@ -12,6 +12,8 @@ public:
 	GameObject();
 	virtual ~GameObject();
 
+	void queryCollisions();
+
 	void update();
 	void render();
 	virtual void onUpdate();
@@ -59,10 +61,16 @@ public:
 	// Variables
 	uint32_t id;
 	glm::vec2 scale;
+
 	bool visible;
 	bool solid;
+
+	bool is_static;
+
 	float alpha;
-   
+
+	std::vector<GameObject*> myCollisions;
+
 	// Components
 	TransformComponent *transform;
 	SpriteComponent *sprite;

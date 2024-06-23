@@ -6,7 +6,7 @@
 GameObject_Wall::GameObject_Wall() {
 	visible = true;
 	solid = true;
-	is_static = true;
+	is_static = false;
 
 	transform->pos = { 100, 0 };
 	transform->size = { 16, 16 };

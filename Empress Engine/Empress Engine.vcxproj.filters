@@ -114,6 +114,9 @@
     <ClInclude Include="src\Controller.h">
       <Filter>Resource Files\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="src\QuadTree.h">
+      <Filter>Header Files\Game Object System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine.cpp">
@@ -184,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="src\GameObjects\GameObj_Wall.cpp">
       <Filter>Source Files\Game Object System\Game Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\QuadTree.cpp">
+      <Filter>Source Files\Game Object System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

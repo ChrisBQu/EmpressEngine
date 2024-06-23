@@ -5,6 +5,7 @@
 #include "Controller.h"
 #include "Engine.h"
 #include "OrthographicCamera.h"
+#include "QuadTree.h"
 #include "Tileset.h"
 
 #include <vector>
@@ -21,6 +22,8 @@ public:
 	void addObject(GameObject* g);
 	void deleteObjects();
 
+	std::vector<GameObject*> queryCollisions(GameObject* requester);
+
 	void setCamera(glm::vec2 position, glm::vec2 dimensions);
 	OrthographicCamera getCamera();
 
@@ -34,13 +37,13 @@ private:
 	OrthographicCamera myCamera;
 
 	void handleInput(Controller c);
-	void checkCollisions();
 	void update();
 	void render();
 
 	unsigned int frameCount;
 	TileLayer tileLayers[NUMBER_OF_TILE_LAYERS];
-	std::vector<GameObject*> myObjects;
+	std::vector<GameObject*> myDynamicObjects;
+	std::vector<GameObject*> myStaticObjects;
 };
 
 void loadScene(Scene* s);

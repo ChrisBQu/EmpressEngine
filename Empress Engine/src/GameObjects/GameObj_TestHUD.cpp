@@ -6,7 +6,6 @@
 GameObject_HUD::GameObject_HUD() { 
 	visible = true;
 	solid = false;
-	LOG(id);
 }
 
 GameObject_HUD::~GameObject_HUD() { }

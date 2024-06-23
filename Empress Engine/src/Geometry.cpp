@@ -627,3 +627,46 @@ GeometryRectangle getBoundingRectangle(const std::vector<GeometryShape>& shapes)
 
     return boundingRect;
 }
+
+// Return a new shape that is a shape translated by a given amount
+GeometryShape translateShape(GeometryShape& shape, float translateX, float translateY) {
+    GeometryShape translatedShape = shape;
+
+    switch (shape.shapetype) {
+    case GeometryType::POINT: {
+        translatedShape.shape.point.x += translateX;
+        translatedShape.shape.point.y += translateY;
+        break;
+    }
+    case GeometryType::LINE_SEGMENT: {
+        translatedShape.shape.line.start.x += translateX;
+        translatedShape.shape.line.start.y += translateY;
+        translatedShape.shape.line.end.x += translateX;
+        translatedShape.shape.line.end.y += translateY;
+        break;
+    }
+    case GeometryType::CIRCLE: {
+        translatedShape.shape.circle.pos.x += translateX;
+        translatedShape.shape.circle.pos.y += translateY;
+        break;
+    }
+    case GeometryType::RECTANGLE: {
+        translatedShape.shape.rectangle.pos.x += translateX;
+        translatedShape.shape.rectangle.pos.y += translateY;
+        break;
+    }
+    case GeometryType::TRIANGLE: {
+        translatedShape.shape.triangle.a.x += translateX;
+        translatedShape.shape.triangle.a.y += translateY;
+        translatedShape.shape.triangle.b.x += translateX;
+        translatedShape.shape.triangle.b.y += translateY;
+        translatedShape.shape.triangle.c.x += translateX;
+        translatedShape.shape.triangle.c.y += translateY;
+        break;
+    }
+    default:
+        break;
+    }
+
+    return translatedShape;
+}

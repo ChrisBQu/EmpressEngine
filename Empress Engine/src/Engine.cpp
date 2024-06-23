@@ -123,10 +123,10 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     myScene.addObject(myHUD);
 
     
-    for (int i = 0; i < 15; i++) {
-        for (int j = 0; j < 15; j++) {
+    for (int i = 0; i < 16; i++) {
+        for (int j = 0; j < 16; j++) {
             int x = i * 50;
-            int y = j * 50;
+            int y = 400 + j * 50;
             GameObject_Character* newchar = new GameObject_Character();
             newchar->transform->pos = { x, y };
             myScene.addObject(newchar);

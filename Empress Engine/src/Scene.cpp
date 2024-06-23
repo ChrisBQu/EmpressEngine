@@ -9,6 +9,10 @@
 #include <tuple>
 #include <vector>
 
+#include <mutex>
+#include <thread>
+#include <future>
+
 
 Scene *CurrentlyLoadedScene;
 void loadScene(Scene* s) { CurrentlyLoadedScene = s; }
@@ -126,37 +130,8 @@ void Scene::deleteObjects() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class Quadtree {
-	static const int MAX_OBJECTS = 5;
+	static const int MAX_OBJECTS = 4;
 	static const int MAX_LEVELS = 5;
 
 	int level;
@@ -165,7 +140,8 @@ class Quadtree {
 	std::vector<std::unique_ptr<Quadtree>> nodes;
 
 public:
-	Quadtree(int pLevel, GeometryRectangle pBounds) : level(pLevel), bounds(pBounds) {}
+	Quadtree(int pLevel, GeometryRectangle pBounds)
+		: level(pLevel), bounds(pBounds) {}
 
 	void clear() {
 		objects.clear();
@@ -175,6 +151,7 @@ public:
 				node.reset();
 			}
 		}
+		nodes.clear();
 	}
 
 	void split() {
@@ -189,12 +166,10 @@ public:
 		nodes.emplace_back(std::make_unique<Quadtree>(level + 1, GeometryRectangle{ {x + subWidth, y + subHeight}, {subWidth, subHeight} }));
 	}
 
-	int getIndex(GameObject* obj) const {
+	int getIndex(const GeometryRectangle& aabb) const {
 		int index = -1;
 		float verticalMidpoint = bounds.pos.x + bounds.size.x / 2.0f;
 		float horizontalMidpoint = bounds.pos.y + bounds.size.y / 2.0f;
-
-		GeometryRectangle aabb = obj->collider->getAABB();
 
 		bool topQuadrant = (aabb.pos.y < horizontalMidpoint && aabb.pos.y + aabb.size.y < horizontalMidpoint);
 		bool bottomQuadrant = (aabb.pos.y > horizontalMidpoint);
@@ -221,7 +196,7 @@ public:
 
 	void insert(GameObject* obj) {
 		if (!nodes.empty()) {
-			int index = getIndex(obj);
+			int index = getIndex(obj->collider->getAABB());
 
 			if (index != -1) {
 				nodes[index]->insert(obj);
@@ -238,7 +213,7 @@ public:
 
 			auto it = objects.begin();
 			while (it != objects.end()) {
-				int index = getIndex(*it);
+				int index = getIndex((*it)->collider->getAABB());
 				if (index != -1) {
 					nodes[index]->insert(*it);
 					it = objects.erase(it);
@@ -250,32 +225,15 @@ public:
 		}
 	}
 
-	void retrieve(std::vector<GameObject*>& returnObjects, GameObject* obj) const {
-		int index = getIndex(obj);
+	void retrieve(std::vector<GameObject*>& returnObjects, const GeometryRectangle& aabb) const {
+		int index = getIndex(aabb);
 		if (index != -1 && !nodes.empty()) {
-			nodes[index]->retrieve(returnObjects, obj);
+			nodes[index]->retrieve(returnObjects, aabb);
 		}
 
 		returnObjects.insert(returnObjects.end(), objects.begin(), objects.end());
 	}
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void Scene::checkCollisions() {
 	float x_min = std::numeric_limits<float>::max();
@@ -300,11 +258,13 @@ void Scene::checkCollisions() {
 
 	for (auto& each_object : myObjects) {
 		std::vector<GameObject*> possibleCollisions;
-		quadtree.retrieve(possibleCollisions, each_object);
+		quadtree.retrieve(possibleCollisions, each_object->collider->getAABB());
 
 		for (auto& other_object : possibleCollisions) {
 			if (each_object->id != other_object->id && each_object->collider->collidesWith(other_object->collider)) {
-				// LOG("Collision occurred");
+				LOG("---");
+				LOG(each_object->collider->getAABB().pos.x, ", ", each_object->collider->getAABB().pos.y, " --- ", each_object->collider->getAABB().size.x, ", ", each_object->collider->getAABB().size.y);
+				LOG(other_object->collider->getAABB().pos.x, ", ", other_object->collider->getAABB().pos.y, " --- ", other_object->collider->getAABB().size.x, ", ", other_object->collider->getAABB().size.y);
 			}
 		}
 	}

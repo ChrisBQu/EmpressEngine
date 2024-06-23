@@ -13,12 +13,11 @@ public:
 	ColliderComponent(GameObject* p);
 	GeometryRectangle getAABB();
 	bool collidesWith(ColliderComponent* other);
-	void setCollisionShapes(std::vector<GeometryShape> shapes);
+	void setRect(GeometryRectangle rect);
 	void calibrate();
 private:
 	GeometryRectangle aabb;
 	GeometryRectangle orig_aabb;
-	std::vector<GeometryShape> collisionShapes;
 	GameObject* parent;
 };
 

@@ -1,5 +1,7 @@
 #include "ColliderComponent.h"
 #include "GameObject.h"
+#include "Geometry.h"
+
 #include "Logger.h"
 
 ColliderComponent::ColliderComponent(GameObject* p) {
@@ -12,18 +14,19 @@ GeometryRectangle ColliderComponent::getAABB() {
 
 bool ColliderComponent::collidesWith(ColliderComponent* other)
 {
-	for (GeometryShape my_shape : collisionShapes) {
-		for (GeometryShape other_shape : other->collisionShapes) {
-			if (geometryGetIntersections(my_shape, other_shape).size() > 0) { return true; }
-		}
-	}
-	return false;
+	GeometryShape first;
+	first.shapetype = GeometryType::RECTANGLE;
+	first.shape.rectangle = aabb;
+
+	GeometryShape second;
+	second.shapetype = GeometryType::RECTANGLE;
+	second.shape.rectangle = other->aabb;
+
+	return (geometryGetIntersections(first, second).size() > 0);
 }
 
-void ColliderComponent::setCollisionShapes(std::vector<GeometryShape> shapes) {
-	collisionShapes.clear();
-	collisionShapes = shapes;
-	orig_aabb = getBoundingRectangle(collisionShapes);
+void ColliderComponent::setRect(GeometryRectangle rect) {
+	orig_aabb = rect;
 }
 
 void ColliderComponent::calibrate() {

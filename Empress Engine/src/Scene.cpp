@@ -147,3 +147,37 @@ std::vector<GameObject*> Scene::queryCollisions(GameObject* requester) {
 	return ret_vect;
 
 }
+
+bool Scene::getPlaceFree(GeometryPoint p) {
+	GeometryShape pt;
+	pt.shapetype = GeometryType::POINT;
+	pt.shape.point = p;
+	for (GameObject* each_static_object : myStaticObjects) {
+		GeometryShape rect;
+		rect.shapetype = GeometryType::RECTANGLE;
+		rect.shape.rectangle = each_static_object->collider->getAABB();
+		if (geometryShapeContains(rect, pt)) { return false; }
+	}
+	return true;
+}
+
+float Scene::fireRay(GeometryRay r) {
+	GeometryShape ray;
+	ray.shapetype = GeometryType::RAY;
+	ray.shape.ray = r;
+
+	float distance = 99999;
+
+	for (GameObject* each_static_object : myStaticObjects) {
+		GeometryShape rect;
+		rect.shapetype = GeometryType::RECTANGLE;
+		rect.shape.rectangle = each_static_object->collider->getAABB();
+		std::vector<GeometryPoint> gps = geometryGetIntersections(ray, rect);
+		for (GeometryPoint& ep : gps) {
+			float new_distance = distanceBetweenPoints(ep, r.start);
+			if (distance > new_distance) { distance = new_distance; }
+		}
+	}
+
+	return distance;
+}

@@ -670,3 +670,9 @@ GeometryShape translateShape(GeometryShape& shape, float translateX, float trans
 
     return translatedShape;
 }
+
+float distanceBetweenPoints(const GeometryPoint point1, const GeometryPoint point2) {
+    float dx = point2.x - point1.x;
+    float dy = point2.y - point1.y;
+    return std::sqrt(dx * dx + dy * dy);
+}

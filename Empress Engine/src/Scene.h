@@ -23,6 +23,8 @@ public:
 	void deleteObjects();
 
 	std::vector<GameObject*> queryCollisions(GameObject* requester);
+	bool getPlaceFree(GeometryPoint p);
+	float fireRay(GeometryRay r);
 
 	void setCamera(glm::vec2 position, glm::vec2 dimensions);
 	OrthographicCamera getCamera();

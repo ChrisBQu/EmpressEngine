@@ -26,7 +26,7 @@ void GameObject_Character::onUpdate() {
 	}
 
 	float terminal_yspeed = 3.5;
-	float y_acceleration = 0.25;
+	float y_acceleration = 0.75;
 	GeometryPoint anchor = { transform->pos.x, transform->pos.y + transform->size.y / 2.0f - 1 };
 
 	if (getLoadedScene()->getPlaceFree(anchor)) { yspeed += y_acceleration; }
@@ -38,7 +38,7 @@ void GameObject_Character::onUpdate() {
 }
 
 void GameObject_Character::trigger_onPressedA() {
-	yspeed -= 8;
+	yspeed -= 12;
 }
 
 void GameObject_Character::trigger_onPressedLeft() {

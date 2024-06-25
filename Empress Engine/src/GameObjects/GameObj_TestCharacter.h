@@ -10,12 +10,17 @@ public:
 
 	void onUpdate();
 
+	void trigger_onPressedA();
 	void trigger_onPressedLeft();
 	void trigger_onPressedRight();
 	void trigger_onHeldRight();
 	void trigger_onHeldLeft();
 	void trigger_onReleasedLeft();
 	void trigger_onReleasedRight();
+
+
+	float xspeed = 0.0;
+	float yspeed = 0.0;
 
 
 };

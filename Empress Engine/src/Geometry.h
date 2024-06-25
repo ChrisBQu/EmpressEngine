@@ -56,5 +56,7 @@ std::vector<GeometryPoint> geometryGetIntersections(GeometryShape first, Geometr
 bool geometryShapeContains(GeometryShape first, GeometryShape second);
 GeometryRectangle getBoundingRectangle(const std::vector<GeometryShape>& shapes);
 GeometryShape translateShape(GeometryShape& shape, float x, float y);
+float distanceBetweenPoints(const GeometryPoint point1, const GeometryPoint point2);
+
 
 #endif // GEOMETRY_H

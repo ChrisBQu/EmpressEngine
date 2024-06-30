@@ -23,6 +23,7 @@ inline constexpr bool HOT_SHADER_SWAPPING_ENABLED = true;
 inline constexpr bool PRINT_FPS_TO_CONSOLE = true;
 
 inline constexpr bool DRAW_BOUNDING_BOXES = true;
+inline constexpr int LINE_SEGMENTS_TO_APPROXIMATE_CIRCLE = 16;
 
 struct GameConfiguration {
 	int screenWidth;

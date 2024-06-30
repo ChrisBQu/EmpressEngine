@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "GameConfig.h"
 #include "Logger.h"
 #include "Scene.h"
 
@@ -36,6 +37,9 @@ void GameObject::render() {
 	if (visible) {
 		sprite->render();
 		onRender();
+	}
+	if (DRAW_BOUNDING_BOXES) {
+
 	}
 }
 

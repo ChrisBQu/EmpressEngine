@@ -217,18 +217,14 @@ void GL_Renderer::render() {
     glUseProgram(shaderManager.getShaderProgram("LINE_SHADER"));
     GLint projectionMatrixUniform = glGetUniformLocation(shaderManager.getShaderProgram("LINE_SHADER"), "projectionMatrix");
     glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, glm::value_ptr(screenProjection));
-
-    // Bind the buffer and upload data for all items
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, glcontext.transformSBOID);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, renderData.primitiveQuadItems.size() * sizeof(PrimitiveQuadRenderItem), renderData.primitiveQuadItems.data(), GL_DYNAMIC_DRAW);
-
-    // Draw all instances in one call
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 6, renderData.primitiveQuadItems.size());
-
-    // Clear the data after drawing
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, glcontext.transformSBOID);
+    for (PrimitiveQuadRenderItem item : renderData.primitiveQuadItems ) {
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, glcontext.transformSBOID);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(PrimitiveQuadRenderItem), &renderData.primitiveQuadItems[0], GL_DYNAMIC_DRAW);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 6, renderData.primitiveQuadItems.size());
+        }
     renderData.primitiveQuadItems.clear();
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-
 
     // Render the UI sprites to the FBO
     glUseProgram(shaderManager.getShaderProgram("UI_QUAD"));

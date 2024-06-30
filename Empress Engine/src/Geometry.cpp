@@ -1,9 +1,15 @@
 #include "Geometry.h"
+#include "GameConfig.h"
+#include "Logger.h"
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
 #include <map>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 // Helper function to calculate the distance from a point to a line segment
 float pointLineDistance(GeometryPoint p, GeometryPoint a, GeometryPoint b) {
@@ -38,14 +44,14 @@ bool almostEqual(float a, float b, float epsilon = 1e-5) {
 }
 
 // Helper contains function: Circle - Point
-bool circleContainsPoint(GeometryCircle circle, GeometryPoint point) {
+bool circleContainsPoint(const GeometryCircle& circle, const GeometryPoint& point) {
     float dx = point.x - circle.pos.x;
     float dy = point.y - circle.pos.y;
     return ((dx * dx + dy * dy) <= (circle.radius * circle.radius));
 }
 
 // Helper contains function: Circle - Circle
-bool circleContainsCircle(GeometryCircle circle1, GeometryCircle circle2) {
+bool circleContainsCircle(const GeometryCircle& circle1, const GeometryCircle& circle2) {
     float dx = circle2.pos.x - circle1.pos.x;
     float dy = circle2.pos.y - circle1.pos.y;
     float distance = std::sqrt(dx * dx + dy * dy);
@@ -53,12 +59,12 @@ bool circleContainsCircle(GeometryCircle circle1, GeometryCircle circle2) {
 }
 
 // Helper contains function: Circle - Line
-bool circleContainsLine(GeometryCircle circle, GeometryLineSegment line) {
+bool circleContainsLine(const GeometryCircle& circle, const GeometryLineSegment& line) {
     return (circleContainsPoint(circle, line.start) && circleContainsPoint(circle, line.end));
 }
 
 // Helper contains function: Circle - Rectangle
-bool circleContainsRectangle(GeometryCircle circle, GeometryRectangle rect) {
+bool circleContainsRectangle(const GeometryCircle& circle, const GeometryRectangle& rect) {
     GeometryPoint topLeft = { rect.pos.x, rect.pos.y };
     GeometryPoint topRight = { rect.pos.x + rect.size.x, rect.pos.y };
     GeometryPoint bottomLeft = { rect.pos.x, rect.pos.y + rect.size.y };
@@ -66,8 +72,8 @@ bool circleContainsRectangle(GeometryCircle circle, GeometryRectangle rect) {
     return (circleContainsPoint(circle, topLeft) && circleContainsPoint(circle, topRight) && circleContainsPoint(circle, bottomLeft) && circleContainsPoint(circle, bottomRight));
 }
 
-// Helper coontains function: Circle - Triangle
-bool circleContainsTriangle(GeometryCircle circle, GeometryTriangle tri) {
+// Helper contains function: Circle - Triangle
+bool circleContainsTriangle(const GeometryCircle& circle, const GeometryTriangle& tri) {
     return (circleContainsPoint(circle, tri.a) && circleContainsPoint(circle, tri.b) && circleContainsPoint(circle, tri.c));
 }
 
@@ -77,21 +83,22 @@ bool rectangleContainsPoint(GeometryRectangle rect, GeometryPoint point) {
 }
 
 // Helper contains function: Rectangle - Circle
-bool rectangleContainsCircle(GeometryRectangle rect, GeometryCircle circle) {
+bool rectangleContainsCircle(const GeometryRectangle& rect, const GeometryCircle& circle) {
     GeometryPoint left = { circle.pos.x - circle.radius, circle.pos.y };
     GeometryPoint right = { circle.pos.x + circle.radius, circle.pos.y };
     GeometryPoint top = { circle.pos.x, circle.pos.y - circle.radius };
     GeometryPoint bottom = { circle.pos.x, circle.pos.y + circle.radius };
-    return (rectangleContainsPoint(rect, left) && rectangleContainsPoint(rect, right) && rectangleContainsPoint(rect, top) && rectangleContainsPoint(rect, bottom));
+    return (rectangleContainsPoint(rect, left) && rectangleContainsPoint(rect, right) &&
+        rectangleContainsPoint(rect, top) && rectangleContainsPoint(rect, bottom));
 }
 
 // Helper contains function: Rectangle - Line
-bool rectangleContainsLine(GeometryRectangle rect, GeometryLineSegment line) {
+bool rectangleContainsLine(const GeometryRectangle& rect, const GeometryLineSegment& line) {
     return (rectangleContainsPoint(rect, line.start) && rectangleContainsPoint(rect, line.end));
 }
 
 // Helper contains function: Rectangle - Rectangle
-bool rectangleContainsRectangle(GeometryRectangle rect1, GeometryRectangle rect2) {
+bool rectangleContainsRectangle(const GeometryRectangle& rect1, const GeometryRectangle& rect2) {
     GeometryPoint topLeft = { rect2.pos.x, rect2.pos.y };
     GeometryPoint topRight = { rect2.pos.x + rect2.size.x, rect2.pos.y };
     GeometryPoint bottomLeft = { rect2.pos.x, rect2.pos.y + rect2.size.y };
@@ -100,15 +107,15 @@ bool rectangleContainsRectangle(GeometryRectangle rect1, GeometryRectangle rect2
 }
 
 // Helper contains function: Rectangle - Triangle
-bool rectangleContainsTriangle(GeometryRectangle rect, GeometryTriangle tri) {
+bool rectangleContainsTriangle(const GeometryRectangle& rect, const GeometryTriangle& tri) {
     return (rectangleContainsPoint(rect, tri.a) && rectangleContainsPoint(rect, tri.b) && rectangleContainsPoint(rect, tri.c));
 }
 
 // Helper contains function: Triangle - Point
-bool triangleContainsPoint(GeometryTriangle tri, GeometryPoint point) {
+bool triangleContainsPoint(const GeometryTriangle& tri, const GeometryPoint& point) {
     float d1, d2, d3;
     bool has_neg, has_pos;
-    auto sign = [](GeometryPoint p1, GeometryPoint p2, GeometryPoint p3) {
+    auto sign = [](const GeometryPoint& p1, const GeometryPoint& p2, const GeometryPoint& p3) {
         return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
         };
     d1 = sign(point, tri.a, tri.b);
@@ -120,12 +127,12 @@ bool triangleContainsPoint(GeometryTriangle tri, GeometryPoint point) {
 }
 
 // Helper contains function: Triangle - Line
-bool triangleContainsLine(GeometryTriangle tri, GeometryLineSegment line) {
+bool triangleContainsLine(const GeometryTriangle& tri, const GeometryLineSegment& line) {
     return (triangleContainsPoint(tri, line.start) && triangleContainsPoint(tri, line.end));
 }
 
 // Helper contains function: Triangle - Circle
-bool triangleContainsCircle(GeometryTriangle tri, GeometryCircle circle) {
+bool triangleContainsCircle(const GeometryTriangle& tri, const GeometryCircle& circle) {
     if (!triangleContainsPoint(tri, circle.pos)) { return false; }
     if (pointLineDistance(circle.pos, tri.a, tri.b) < circle.radius) return false;
     if (pointLineDistance(circle.pos, tri.b, tri.c) < circle.radius) return false;
@@ -134,16 +141,17 @@ bool triangleContainsCircle(GeometryTriangle tri, GeometryCircle circle) {
 }
 
 // Helper contains function: Triangle - Rectangle
-bool triangleContainsRectangle(GeometryTriangle tri, GeometryRectangle rect) {
+bool triangleContainsRectangle(const GeometryTriangle& tri, const GeometryRectangle& rect) {
     GeometryPoint topLeft = { rect.pos.x, rect.pos.y };
     GeometryPoint topRight = { rect.pos.x + rect.size.x, rect.pos.y };
     GeometryPoint bottomLeft = { rect.pos.x, rect.pos.y + rect.size.y };
     GeometryPoint bottomRight = { rect.pos.x + rect.size.x, rect.pos.y + rect.size.y };
-    return (triangleContainsPoint(tri, topLeft) && triangleContainsPoint(tri, topRight) && triangleContainsPoint(tri, bottomLeft) && triangleContainsPoint(tri, bottomRight));
+    return (triangleContainsPoint(tri, topLeft) && triangleContainsPoint(tri, topRight) &&
+        triangleContainsPoint(tri, bottomLeft) && triangleContainsPoint(tri, bottomRight));
 }
 
 // Helper contains function: Triangle - Triangle
-bool triangleContainsTriangle(GeometryTriangle tri1, GeometryTriangle tri2) {
+bool triangleContainsTriangle(const GeometryTriangle& tri1, const GeometryTriangle& tri2) {
     return triangleContainsPoint(tri1, tri2.a) &&
         triangleContainsPoint(tri1, tri2.b) &&
         triangleContainsPoint(tri1, tri2.c);
@@ -502,116 +510,128 @@ std::vector<GeometryPoint> intersectsTriangleRay(GeometryTriangle tri, GeometryR
 }
 
 // Return a vector of points of intersection between two shapes
-std::vector<GeometryPoint> geometryGetIntersections(GeometryShape first, GeometryShape second) {
+std::vector<GeometryPoint> geometryGetIntersections(GeometryShape &first, GeometryShape &second) {
     std::vector<GeometryPoint> intersections;
-    if (first.shapetype == GeometryType::TRIANGLE) {
-        if (second.shapetype == GeometryType::TRIANGLE) { intersections = intersectsTriangles(first.shape.triangle, second.shape.triangle); }
-        else if (second.shapetype == GeometryType::POINT) { intersections = intersectsTrianglePoint(first.shape.triangle, second.shape.point); }
-        else if (second.shapetype == GeometryType::LINE_SEGMENT) { intersections = intersectsTriangleLine(first.shape.triangle, second.shape.line); }
-        else if (second.shapetype == GeometryType::RECTANGLE) { intersections = intersectsTriangleRectangle(first.shape.triangle, second.shape.rectangle); }
-        else if (second.shapetype == GeometryType::CIRCLE) { intersections = intersectsTriangleCircle(first.shape.triangle, second.shape.circle); }
-        else if (second.shapetype == GeometryType::RAY) { intersections = intersectsTriangleRay(first.shape.triangle, second.shape.ray); }
+    if (first.getType() == GeometryType::TRIANGLE) {
+        const auto& triangle = dynamic_cast<const GeometryTriangle&>(first);
+        if (second.getType() == GeometryType::TRIANGLE) { intersections = intersectsTriangles(triangle, dynamic_cast<const GeometryTriangle&>(second)); }
+        else if (second.getType() == GeometryType::POINT) { intersections = intersectsTrianglePoint(triangle, dynamic_cast<const GeometryPoint&>(second)); }
+        else if (second.getType() == GeometryType::LINE_SEGMENT) { intersections = intersectsTriangleLine(triangle, dynamic_cast<const GeometryLineSegment&>(second)); }
+        else if (second.getType() == GeometryType::RECTANGLE) { intersections = intersectsTriangleRectangle(triangle, dynamic_cast<const GeometryRectangle&>(second)); }
+        else if (second.getType() == GeometryType::CIRCLE) { intersections = intersectsTriangleCircle(triangle, dynamic_cast<const GeometryCircle&>(second)); }
+        else if (second.getType() == GeometryType::RAY) { intersections = intersectsTriangleRay(triangle, dynamic_cast<const GeometryRay&>(second)); }
     }
-    else if (first.shapetype == GeometryType::RAY) {
-        if (second.shapetype == GeometryType::RAY) { intersections = intersectsRays(first.shape.ray, second.shape.ray); }
-        else if (second.shapetype == GeometryType::POINT) { intersections = intersectsRayPoint(first.shape.ray, second.shape.point); }
-        else if (second.shapetype == GeometryType::LINE_SEGMENT) { intersections = intersectsRayLine(first.shape.ray, second.shape.line); }
-        else if (second.shapetype == GeometryType::RECTANGLE) { intersections = intersectsRayRectangle(first.shape.ray, second.shape.rectangle); }
-        else if (second.shapetype == GeometryType::CIRCLE) { intersections = intersectsRayCircle(first.shape.ray, second.shape.circle); }
+    else if (first.getType() == GeometryType::RAY) {
+        const auto& ray = dynamic_cast<const GeometryRay&>(first);
+        if (second.getType() == GeometryType::RAY) { intersections = intersectsRays(ray, dynamic_cast<const GeometryRay&>(second)); }
+        else if (second.getType() == GeometryType::POINT) { intersections = intersectsRayPoint(ray, dynamic_cast<const GeometryPoint&>(second)); }
+        else if (second.getType() == GeometryType::LINE_SEGMENT) { intersections = intersectsRayLine(ray, dynamic_cast<const GeometryLineSegment&>(second)); }
+        else if (second.getType() == GeometryType::RECTANGLE) { intersections = intersectsRayRectangle(ray, dynamic_cast<const GeometryRectangle&>(second)); }
+        else if (second.getType() == GeometryType::CIRCLE) { intersections = intersectsRayCircle(ray, dynamic_cast<const GeometryCircle&>(second)); }
     }
-    else if (first.shapetype == GeometryType::POINT) {
-        if (second.shapetype == GeometryType::POINT) { intersections = intersectsPoints(first.shape.point, second.shape.point); }
-        else if (second.shapetype == GeometryType::LINE_SEGMENT) { intersections = intersectsPointLine(first.shape.point, second.shape.line); }
-        else if (second.shapetype == GeometryType::RECTANGLE) { intersections = intersectsPointRectangle(first.shape.point, second.shape.rectangle); }
-        else if (second.shapetype == GeometryType::CIRCLE) { intersections = intersectsPointCircle(first.shape.point, second.shape.circle); }
+    else if (first.getType() == GeometryType::POINT) {
+        const auto& point = dynamic_cast<const GeometryPoint&>(first);
+        if (second.getType() == GeometryType::POINT) { intersections = intersectsPoints(point, dynamic_cast<const GeometryPoint&>(second)); }
+        else if (second.getType() == GeometryType::LINE_SEGMENT) { intersections = intersectsPointLine(point, dynamic_cast<const GeometryLineSegment&>(second)); }
+        else if (second.getType() == GeometryType::RECTANGLE) { intersections = intersectsPointRectangle(point, dynamic_cast<const GeometryRectangle&>(second)); }
+        else if (second.getType() == GeometryType::CIRCLE) { intersections = intersectsPointCircle(point, dynamic_cast<const GeometryCircle&>(second)); }
     }
-    else if (first.shapetype == GeometryType::LINE_SEGMENT) {
-        if (second.shapetype == GeometryType::LINE_SEGMENT) { intersections = intersectsLines(first.shape.line, second.shape.line); }
-        else if (second.shapetype == GeometryType::RECTANGLE) { intersections = intersectsLineRectangle(first.shape.line, second.shape.rectangle); }
-        else if (second.shapetype == GeometryType::CIRCLE) { intersections = intersectsLineCircle(first.shape.line, second.shape.circle); }
+    else if (first.getType() == GeometryType::LINE_SEGMENT) {
+        const auto& line = dynamic_cast<const GeometryLineSegment&>(first);
+        if (second.getType() == GeometryType::LINE_SEGMENT) { intersections = intersectsLines(line, dynamic_cast<const GeometryLineSegment&>(second)); }
+        else if (second.getType() == GeometryType::RECTANGLE) { intersections = intersectsLineRectangle(line, dynamic_cast<const GeometryRectangle&>(second)); }
+        else if (second.getType() == GeometryType::CIRCLE) { intersections = intersectsLineCircle(line, dynamic_cast<const GeometryCircle&>(second)); }
     }
-    else if (first.shapetype == GeometryType::CIRCLE) {
-        if (second.shapetype == GeometryType::RECTANGLE) { intersections = intersectsCircleRectangle(first.shape.circle, second.shape.rectangle); }
-        else if (second.shapetype == GeometryType::CIRCLE) { intersections = intersectsCircles(first.shape.circle, second.shape.circle); }
+    else if (first.getType() == GeometryType::CIRCLE) {
+        const auto& circle = dynamic_cast<const GeometryCircle&>(first);
+        if (second.getType() == GeometryType::RECTANGLE) { intersections = intersectsCircleRectangle(circle, dynamic_cast<const GeometryRectangle&>(second)); }
+        else if (second.getType() == GeometryType::CIRCLE) { intersections = intersectsCircles(circle, dynamic_cast<const GeometryCircle&>(second)); }
     }
-    else if (first.shapetype == GeometryType::RECTANGLE) {
-        if (second.shapetype == GeometryType::RECTANGLE) { intersections = intersectsRectangles(first.shape.rectangle, second.shape.rectangle); }
+    else if (first.getType() == GeometryType::RECTANGLE) {
+        const auto& rect = dynamic_cast<const GeometryRectangle&>(first);
+        if (second.getType() == GeometryType::RECTANGLE) { intersections = intersectsRectangles(rect, dynamic_cast<const GeometryRectangle&>(second)); }
     }
     return intersections;
 }
 
 // Return true or false for whether one shape contains another
-bool geometryShapeContains(GeometryShape first, GeometryShape second) {
-    std::vector<GeometryPoint> intersections;
-    if (first.shapetype == GeometryType::RECTANGLE) {
-        if (second.shapetype == GeometryType::POINT) { return rectangleContainsPoint(first.shape.rectangle, second.shape.point); }
-        if (second.shapetype == GeometryType::LINE_SEGMENT) { return rectangleContainsLine(first.shape.rectangle, second.shape.line); }
-        if (second.shapetype == GeometryType::RECTANGLE) { return rectangleContainsRectangle(first.shape.rectangle, second.shape.rectangle); }
-        if (second.shapetype == GeometryType::CIRCLE) { return rectangleContainsCircle(first.shape.rectangle, second.shape.circle); }
-        if (second.shapetype == GeometryType::TRIANGLE) { return rectangleContainsTriangle(first.shape.rectangle, second.shape.triangle); }
+bool geometryShapeContains(GeometryShape &first, GeometryShape &second) {
+    if (first.getType() == GeometryType::RECTANGLE) {
+        const auto& rect = dynamic_cast<const GeometryRectangle&>(first);
+        if (second.getType() == GeometryType::POINT) { return rectangleContainsPoint(rect, dynamic_cast<const GeometryPoint&>(second)); }
+        if (second.getType() == GeometryType::LINE_SEGMENT) { return rectangleContainsLine(rect, dynamic_cast<const GeometryLineSegment&>(second)); }
+        if (second.getType() == GeometryType::RECTANGLE) { return rectangleContainsRectangle(rect, dynamic_cast<const GeometryRectangle&>(second)); }
+        if (second.getType() == GeometryType::CIRCLE) { return rectangleContainsCircle(rect, dynamic_cast<const GeometryCircle&>(second)); }
+        if (second.getType() == GeometryType::TRIANGLE) { return rectangleContainsTriangle(rect, dynamic_cast<const GeometryTriangle&>(second)); }
     }
-    if (first.shapetype == GeometryType::CIRCLE) {
-        if (second.shapetype == GeometryType::POINT) { return circleContainsPoint(first.shape.circle, second.shape.point); }
-        if (second.shapetype == GeometryType::LINE_SEGMENT) { return circleContainsLine(first.shape.circle, second.shape.line); }
-        if (second.shapetype == GeometryType::RECTANGLE) { return circleContainsRectangle(first.shape.circle, second.shape.rectangle); }
-        if (second.shapetype == GeometryType::CIRCLE) { return circleContainsCircle(first.shape.circle, second.shape.circle); }
-        if (second.shapetype == GeometryType::TRIANGLE) { return circleContainsTriangle (first.shape.circle, second.shape.triangle); }
+    if (first.getType() == GeometryType::CIRCLE) {
+        const auto& circle = dynamic_cast<const GeometryCircle&>(first);
+        if (second.getType() == GeometryType::POINT) { return circleContainsPoint(circle, dynamic_cast<const GeometryPoint&>(second)); }
+        if (second.getType() == GeometryType::LINE_SEGMENT) { return circleContainsLine(circle, dynamic_cast<const GeometryLineSegment&>(second)); }
+        if (second.getType() == GeometryType::RECTANGLE) { return circleContainsRectangle(circle, dynamic_cast<const GeometryRectangle&>(second)); }
+        if (second.getType() == GeometryType::CIRCLE) { return circleContainsCircle(circle, dynamic_cast<const GeometryCircle&>(second)); }
+        if (second.getType() == GeometryType::TRIANGLE) { return circleContainsTriangle(circle, dynamic_cast<const GeometryTriangle&>(second)); }
     }
-    if (first.shapetype == GeometryType::TRIANGLE) {
-        if (second.shapetype == GeometryType::POINT) { return triangleContainsPoint(first.shape.triangle, second.shape.point); }
-        if (second.shapetype == GeometryType::LINE_SEGMENT) { return triangleContainsLine(first.shape.triangle, second.shape.line); }
-        if (second.shapetype == GeometryType::RECTANGLE) { return triangleContainsRectangle(first.shape.triangle, second.shape.rectangle); }
-        if (second.shapetype == GeometryType::CIRCLE) { return triangleContainsCircle(first.shape.triangle, second.shape.circle); }
-        if (second.shapetype == GeometryType::TRIANGLE) { return triangleContainsTriangle(first.shape.triangle, second.shape.triangle); }
+    if (first.getType() == GeometryType::TRIANGLE) {
+        const auto& triangle = dynamic_cast<const GeometryTriangle&>(first);
+        if (second.getType() == GeometryType::POINT) { return triangleContainsPoint(triangle, dynamic_cast<const GeometryPoint&>(second)); }
+        if (second.getType() == GeometryType::LINE_SEGMENT) { return triangleContainsLine(triangle, dynamic_cast<const GeometryLineSegment&>(second)); }
+        if (second.getType() == GeometryType::RECTANGLE) { return triangleContainsRectangle(triangle, dynamic_cast<const GeometryRectangle&>(second)); }
+        if (second.getType() == GeometryType::CIRCLE) { return triangleContainsCircle(triangle, dynamic_cast<const GeometryCircle&>(second)); }
+        if (second.getType() == GeometryType::TRIANGLE) { return triangleContainsTriangle(triangle, dynamic_cast<const GeometryTriangle&>(second)); }
     }
     return false;
 }
 
 // Generate the bounding box for a vector of shapes
-GeometryRectangle getBoundingRectangle(const std::vector<GeometryShape>& shapes) {
-
-    if (shapes.size() == 0) { return { {0,0}, {0, 0} }; }
+GeometryRectangle getBoundingRectangle(const std::vector<GeometryShape*>& shapes) {
+    if (shapes.empty()) { return { {0, 0}, {0, 0} }; }
 
     float minX = std::numeric_limits<float>::max();
     float minY = std::numeric_limits<float>::max();
-    float maxX = std::numeric_limits<float>::min();
-    float maxY = std::numeric_limits<float>::min();
+    float maxX = std::numeric_limits<float>::lowest();
+    float maxY = std::numeric_limits<float>::lowest();
 
     for (const auto& shape : shapes) {
-        switch (shape.shapetype) {
+        switch (shape->getType()) {
         case GeometryType::POINT: {
-            minX = std::min(minX, shape.shape.point.x);
-            minY = std::min(minY, shape.shape.point.y);
-            maxX = std::max(maxX, shape.shape.point.x);
-            maxY = std::max(maxY, shape.shape.point.y);
+            const auto& point = dynamic_cast<const GeometryPoint&>(*shape);
+            minX = std::min(minX, point.x);
+            minY = std::min(minY, point.y);
+            maxX = std::max(maxX, point.x);
+            maxY = std::max(maxY, point.y);
             break;
         }
         case GeometryType::LINE_SEGMENT: {
-            minX = std::min({ minX, shape.shape.line.start.x, shape.shape.line.end.x });
-            minY = std::min({ minY, shape.shape.line.start.y, shape.shape.line.end.y });
-            maxX = std::max({ maxX, shape.shape.line.start.x, shape.shape.line.end.x });
-            maxY = std::max({ maxY, shape.shape.line.start.y, shape.shape.line.end.y });
+            const auto& line = dynamic_cast<const GeometryLineSegment&>(*shape);
+            minX = std::min({ minX, line.start.x, line.end.x });
+            minY = std::min({ minY, line.start.y, line.end.y });
+            maxX = std::max({ maxX, line.start.x, line.end.x });
+            maxY = std::max({ maxY, line.start.y, line.end.y });
             break;
         }
         case GeometryType::CIRCLE: {
-            minX = std::min(minX, shape.shape.circle.pos.x - shape.shape.circle.radius);
-            minY = std::min(minY, shape.shape.circle.pos.y - shape.shape.circle.radius);
-            maxX = std::max(maxX, shape.shape.circle.pos.x + shape.shape.circle.radius);
-            maxY = std::max(maxY, shape.shape.circle.pos.y + shape.shape.circle.radius);
+            const auto& circle = dynamic_cast<const GeometryCircle&>(*shape);
+            minX = std::min(minX, circle.pos.x - circle.radius);
+            minY = std::min(minY, circle.pos.y - circle.radius);
+            maxX = std::max(maxX, circle.pos.x + circle.radius);
+            maxY = std::max(maxY, circle.pos.y + circle.radius);
             break;
         }
         case GeometryType::RECTANGLE: {
-            minX = std::min(minX, shape.shape.rectangle.pos.x);
-            minY = std::min(minY, shape.shape.rectangle.pos.y);
-            maxX = std::max(maxX, shape.shape.rectangle.pos.x + shape.shape.rectangle.size.x);
-            maxY = std::max(maxY, shape.shape.rectangle.pos.y + shape.shape.rectangle.size.y);
+            const auto& rect = dynamic_cast<const GeometryRectangle&>(*shape);
+            minX = std::min(minX, rect.pos.x);
+            minY = std::min(minY, rect.pos.y);
+            maxX = std::max(maxX, rect.pos.x + rect.size.x);
+            maxY = std::max(maxY, rect.pos.y + rect.size.y);
             break;
         }
         case GeometryType::TRIANGLE: {
-            minX = std::min({ minX, shape.shape.triangle.a.x, shape.shape.triangle.b.x, shape.shape.triangle.c.x });
-            minY = std::min({ minY, shape.shape.triangle.a.y, shape.shape.triangle.b.y, shape.shape.triangle.c.y });
-            maxX = std::max({ maxX, shape.shape.triangle.a.x, shape.shape.triangle.b.x, shape.shape.triangle.c.x });
-            maxY = std::max({ maxY, shape.shape.triangle.a.y, shape.shape.triangle.b.y, shape.shape.triangle.c.y });
+            const auto& tri = dynamic_cast<const GeometryTriangle&>(*shape);
+            minX = std::min({ minX, tri.a.x, tri.b.x, tri.c.x });
+            minY = std::min({ minY, tri.a.y, tri.b.y, tri.c.y });
+            maxX = std::max({ maxX, tri.a.x, tri.b.x, tri.c.x });
+            maxY = std::max({ maxY, tri.a.y, tri.b.y, tri.c.y });
             break;
         }
         default:
@@ -619,60 +639,71 @@ GeometryRectangle getBoundingRectangle(const std::vector<GeometryShape>& shapes)
         }
     }
 
-    GeometryRectangle boundingRect;
-    boundingRect.pos.x = minX;
-    boundingRect.pos.y = minY;
-    boundingRect.size.x = maxX - minX;
-    boundingRect.size.y = maxY - minY;
-
+    GeometryRectangle boundingRect{ {minX, minY}, {maxX - minX, maxY - minY} };
     return boundingRect;
 }
 
-// Return a new shape that is a shape translated by a given amount
-GeometryShape translateShape(GeometryShape& shape, float translateX, float translateY) {
-    GeometryShape translatedShape = shape;
-
-    switch (shape.shapetype) {
-    case GeometryType::POINT: {
-        translatedShape.shape.point.x += translateX;
-        translatedShape.shape.point.y += translateY;
-        break;
-    }
-    case GeometryType::LINE_SEGMENT: {
-        translatedShape.shape.line.start.x += translateX;
-        translatedShape.shape.line.start.y += translateY;
-        translatedShape.shape.line.end.x += translateX;
-        translatedShape.shape.line.end.y += translateY;
-        break;
-    }
-    case GeometryType::CIRCLE: {
-        translatedShape.shape.circle.pos.x += translateX;
-        translatedShape.shape.circle.pos.y += translateY;
-        break;
-    }
-    case GeometryType::RECTANGLE: {
-        translatedShape.shape.rectangle.pos.x += translateX;
-        translatedShape.shape.rectangle.pos.y += translateY;
-        break;
-    }
-    case GeometryType::TRIANGLE: {
-        translatedShape.shape.triangle.a.x += translateX;
-        translatedShape.shape.triangle.a.y += translateY;
-        translatedShape.shape.triangle.b.x += translateX;
-        translatedShape.shape.triangle.b.y += translateY;
-        translatedShape.shape.triangle.c.x += translateX;
-        translatedShape.shape.triangle.c.y += translateY;
-        break;
-    }
-    default:
-        break;
-    }
-
-    return translatedShape;
-}
 
 float distanceBetweenPoints(const GeometryPoint point1, const GeometryPoint point2) {
     float dx = point2.x - point1.x;
     float dy = point2.y - point1.y;
     return std::sqrt(dx * dx + dy * dy);
 }
+
+// Function to get line segments from a GeometryShape
+std::vector<GeometryLineSegment> getLineSegmentsOfShape(const GeometryShape& shape) {
+    std::vector<GeometryLineSegment> lineSegments;
+
+    switch (shape.getType()) {
+    case GeometryType::LINE_SEGMENT: {
+        const auto& line = dynamic_cast<const GeometryLineSegment&>(shape);
+        lineSegments.push_back(line);
+        break;
+    }
+    case GeometryType::RECTANGLE: {
+        const auto& rect = dynamic_cast<const GeometryRectangle&>(shape);
+        GeometryPoint topLeft{ rect.pos.x, rect.pos.y };
+        GeometryPoint topRight{ rect.pos.x + rect.size.x, rect.pos.y };
+        GeometryPoint bottomLeft{ rect.pos.x, rect.pos.y + rect.size.y };
+        GeometryPoint bottomRight{ rect.pos.x + rect.size.x, rect.pos.y + rect.size.y };
+        lineSegments.push_back({ topLeft, topRight });
+        lineSegments.push_back({ topRight, bottomRight });
+        lineSegments.push_back({ bottomRight, bottomLeft });
+        lineSegments.push_back({ bottomLeft, topLeft });
+        break;
+    }
+    case GeometryType::TRIANGLE: {
+        const auto& tri = dynamic_cast<const GeometryTriangle&>(shape);
+        lineSegments.push_back({ tri.a, tri.b });
+        lineSegments.push_back({ tri.b, tri.c });
+        lineSegments.push_back({ tri.c, tri.a });
+        break;
+    }
+    case GeometryType::CIRCLE: {
+        const auto& circle = dynamic_cast<const GeometryCircle&>(shape);
+        const int numSegments = LINE_SEGMENTS_TO_APPROXIMATE_CIRCLE;
+        const float angleIncrement = (float)(2.0f * M_PI / numSegments);
+        GeometryPoint prevPoint{
+            (float)(circle.pos.x + circle.radius * std::cos(0)),
+            (float)(circle.pos.y + circle.radius * std::sin(0))
+        };
+        for (int i = 1; i <= numSegments; ++i) {
+            float angle = i * angleIncrement;
+            GeometryPoint newPoint{
+                (float)(circle.pos.x + circle.radius * std::cos(angle)),
+                (float)(circle.pos.y + circle.radius * std::sin(angle))
+            };
+            lineSegments.push_back({ prevPoint, newPoint });
+            prevPoint = newPoint;
+        }
+        break;
+    }
+    default:
+        break;
+    }
+
+    return lineSegments;
+}
+
+// Convert a GeomePoint to a glm::vec2
+glm::vec2 pointToVec(const GeometryPoint& p) { return { p.x, p.y }; }

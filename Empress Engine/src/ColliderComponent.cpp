@@ -14,15 +14,7 @@ GeometryRectangle ColliderComponent::getAABB() {
 
 bool ColliderComponent::collidesWith(ColliderComponent* other)
 {
-	GeometryShape first;
-	first.shapetype = GeometryType::RECTANGLE;
-	first.shape.rectangle = aabb;
-
-	GeometryShape second;
-	second.shapetype = GeometryType::RECTANGLE;
-	second.shape.rectangle = other->aabb;
-
-	return (geometryGetIntersections(first, second).size() > 0);
+	return (geometryGetIntersections(this->aabb, other->aabb).size() > 0);
 }
 
 void ColliderComponent::setRect(GeometryRectangle rect) {

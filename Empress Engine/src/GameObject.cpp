@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "GameConfig.h"
 #include "Logger.h"
+#include "RenderInterface.h"
 #include "Scene.h"
 
 uint64_t objectCount = 1;
@@ -11,7 +12,6 @@ GameObject::GameObject() {
 	solid = false;
 	is_static = false;
 	alpha = 1.0;
-	scale = { 1.0, 1.0 };
 	sprite = new SpriteComponent(this);
 	transform = new TransformComponent(this);
 	collider = new ColliderComponent(this);
@@ -28,8 +28,8 @@ void GameObject::queryCollisions() {
 }
 
 void GameObject::update() {
-	if (solid) { collider->calibrate(); }
 	onUpdate();
+	if (solid) { collider->calibrate(); }
 }
 
 void GameObject::render() {
@@ -39,7 +39,10 @@ void GameObject::render() {
 		onRender();
 	}
 	if (DRAW_BOUNDING_BOXES) {
-
+		std::vector<GeometryLineSegment> lines = getLineSegmentsOfShape(collider->getAABB());
+		for (GeometryLineSegment each_line : lines) {
+			drawLine(pointToVec(each_line.start), pointToVec(each_line.end), 2, { 0.0, 1.0, 0.0, 1.0 });
+		}
 	}
 }
 

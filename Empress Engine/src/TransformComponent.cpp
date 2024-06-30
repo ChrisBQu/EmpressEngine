@@ -2,7 +2,7 @@
 
 // Constructor
 TransformComponent::TransformComponent(GameObject* p) {
-	size = { 1, 1 };
+	scale = { 1, 1 };
 	depth = 0;
 	rotation = 0;
 

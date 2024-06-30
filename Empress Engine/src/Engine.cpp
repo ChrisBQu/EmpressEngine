@@ -125,7 +125,7 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     
     for (int i = 0; i < 50; i++) {
             int xx = i * 16 - 256;
-            int yy = 64;
+            int yy = 32;
             GameObject_Wall* newchar = new GameObject_Wall();
             newchar->x = xx;
             newchar->y = yy;

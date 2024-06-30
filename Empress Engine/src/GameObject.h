@@ -60,7 +60,6 @@ public:
 
 	// Variables
 	uint32_t id;
-	glm::vec2 scale;
 
 	float x;
 	float y;

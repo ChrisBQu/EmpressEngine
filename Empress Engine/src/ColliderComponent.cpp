@@ -12,16 +12,25 @@ GeometryRectangle ColliderComponent::getAABB() {
 	return aabb;
 }
 
-bool ColliderComponent::collidesWith(ColliderComponent* other)
-{
-	return (geometryGetIntersections(this->aabb, other->aabb).size() > 0);
+bool ColliderComponent::collidesWith(ColliderComponent* other){
+	return (geometryGetIntersections(aabb, other->aabb).size() > 0);
 }
 
 void ColliderComponent::setRect(GeometryRectangle rect) {
 	orig_aabb = rect;
 }
-
 void ColliderComponent::calibrate() {
-	aabb.pos = { parent->x + orig_aabb.pos.x * parent->scale[0], parent->y + orig_aabb.pos.y * parent->scale[1]};
-	aabb.size = { orig_aabb.size.x * parent->scale[0], orig_aabb.size.y * parent->scale[1] };
+    float sx = parent->transform->scale[0];
+    float sy = parent->transform->scale[1];
+    float posX = parent->x - parent->sprite->getWidth()/2.0f*sx;
+    float posY = parent->y - parent->sprite->getHeight()/2.0*sy;
+    float width = orig_aabb.size.x * sx;
+    float height = orig_aabb.size.y * sy;
+    aabb.pos = { posX, posY };
+    aabb.size = { width, height };
 }
+
+
+
+
+

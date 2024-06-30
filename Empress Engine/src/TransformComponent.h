@@ -9,7 +9,7 @@ class GameObject;
 class TransformComponent {
 public:
 	TransformComponent(GameObject* p);
-	glm::vec2 size;
+	glm::vec2 scale;
 	int depth;
 	float rotation;
 private:

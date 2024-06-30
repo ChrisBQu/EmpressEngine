@@ -8,7 +8,8 @@ GameObject_Wall::GameObject_Wall() {
 	solid = true;
 	is_static = true;
 
-	transform->pos = { 100, 0 };
+	x = 100;
+	y = 0;
 	transform->size = { 16, 16 };
 	transform->depth = 99;
 	transform->rotation = 0;

@@ -8,7 +8,8 @@ GameObject_Character::GameObject_Character() {
 	visible = true;
 	solid = true;
 
-	transform->pos = { 0, -100 };
+	x = 0;
+	y = 0;
 	transform->size = { 32, 32 };
 	transform->depth = 99;
 	transform->rotation = 0;
@@ -25,16 +26,17 @@ void GameObject_Character::onUpdate() {
 		LOG("HONK");
 	}
 
+	
 	float terminal_yspeed = 3.5;
 	float y_acceleration = 0.25;
-	GeometryPoint anchor = { transform->pos.x, transform->pos.y + transform->size.y / 2.0f - 1 };
+	GeometryPoint anchor = { x, y + transform->size.y / 2.0f - 1 };
 
 	if (getLoadedScene()->getPlaceFree(anchor)) { yspeed += y_acceleration; }
 	if (yspeed > terminal_yspeed) { yspeed = terminal_yspeed; }
 	float d = getLoadedScene()->fireRay({ anchor, {0, 1} });
-	if (d > yspeed) { transform->pos.y += yspeed; }
-	else { transform->pos.y += d; }
-
+	if (d > yspeed) { y += yspeed; }
+	else { y += d; }
+	
 }
 
 void GameObject_Character::trigger_onPressedA() {
@@ -53,10 +55,10 @@ void GameObject_Character::trigger_onPressedRight() {
 }
 
 void GameObject_Character::trigger_onHeldLeft() {
-	transform->pos = { transform->pos[0] - 2, transform->pos[1] };
+	x -= 2;
 }
 void GameObject_Character::trigger_onHeldRight() { 
-	transform->pos = { transform->pos[0] + 2, transform->pos[1] };
+	x += 2;
 }
 
 void GameObject_Character::trigger_onReleasedLeft() { 

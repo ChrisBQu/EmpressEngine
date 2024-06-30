@@ -14,6 +14,9 @@
   "FONT_SHADER": {
     "vertexSource": "assets/shaders/simple_font.vert",
     "fragmentSource": "assets/shaders/simple_font.frag"
+  },
+  "LINE_SHADER": {
+    "vertexSource": "assets/shaders/line.vert",
+    "fragmentSource": "assets/shaders/line.frag"
   }
-
-}
+ }

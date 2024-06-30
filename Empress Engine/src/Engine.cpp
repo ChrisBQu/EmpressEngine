@@ -120,14 +120,15 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
 
     myScene.addObject(myObj);
     myScene.addObject(myWall);
-    //myScene.addObject(myHUD);
+    myScene.addObject(myHUD);
 
     
     for (int i = 0; i < 50; i++) {
-            int x = i * 16 - 256;
-            int y = 64;
+            int xx = i * 16 - 256;
+            int yy = 64;
             GameObject_Wall* newchar = new GameObject_Wall();
-            newchar->transform->pos = { x, y };
+            newchar->x = xx;
+            newchar->y = yy;
             myScene.addObject(newchar);
     }
     

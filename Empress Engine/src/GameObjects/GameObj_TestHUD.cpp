@@ -28,4 +28,6 @@ void GameObject_HUD::onRender() {
 
 	drawUIQuad("tex1", { 64, 0 }, { 16, 32 }, { (x + 16 + 256)*scale,y*scale }, { scale * 16, 32 * scale }, 30, 0.0, 1.0);
 
+	drawLine({50, 50 }, { 150, 550 }, 5, { 0.0, 0.0, 1.0, 1.0 });
+
 }

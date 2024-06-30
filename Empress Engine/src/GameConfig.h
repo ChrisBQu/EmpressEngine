@@ -22,6 +22,8 @@ inline constexpr bool HOT_SHADER_SWAPPING_ENABLED = true;
 
 inline constexpr bool PRINT_FPS_TO_CONSOLE = true;
 
+inline constexpr bool DRAW_BOUNDING_BOXES = true;
+
 struct GameConfiguration {
 	int screenWidth;
 	int screenHeight;

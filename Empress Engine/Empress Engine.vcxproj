@@ -77,6 +77,8 @@
     <None Include="assets\fonts\font_manifest.json" />
     <None Include="assets\shaders\font.frag" />
     <None Include="assets\shaders\font.vert" />
+    <None Include="assets\shaders\line.frag" />
+    <None Include="assets\shaders\line.vert" />
     <None Include="assets\shaders\screen_default.frag" />
     <None Include="assets\shaders\quad_default.frag" />
     <None Include="assets\shaders\quad.vert" />

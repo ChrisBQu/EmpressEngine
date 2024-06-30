@@ -56,9 +56,6 @@ int GL_Renderer::init() {
 
     glGenTextures(1, &glcontext.textureID);
 
-    glGenBuffers(1, &glcontext.transformSBOID);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, glcontext.transformSBOID);
-
     glGenFramebuffers(1, &glcontext.FBO);
     glBindFramebuffer(GL_FRAMEBUFFER, glcontext.FBO);
 
@@ -85,6 +82,15 @@ int GL_Renderer::init() {
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    glGenBuffers(1, &glcontext.transformSBOID);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, glcontext.transformSBOID);
+
+    glGenBuffers(1, &glcontext.uitransformSBOID);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, glcontext.uitransformSBOID);
+
+    glGenBuffers(1, &glcontext.primitiveQuadSSBO);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, glcontext.primitiveQuadSSBO);
 
     return 0;
 }
@@ -156,9 +162,11 @@ void GL_Renderer::render() {
     if (HOT_TEXTURE_SWAPPING_ENABLED) { textureManager.hotReload(); }
     if (HOT_SHADER_SWAPPING_ENABLED) { shaderManager.hotReload(); }
 
+
     // Prepare for rendering to FBO
     glBindVertexArray(glcontext.VAO);
     glBindFramebuffer(GL_FRAMEBUFFER, glcontext.FBO);
+
     glClearColor(SCREEN_CLEAR_COLOR[0], SCREEN_CLEAR_COLOR[1], SCREEN_CLEAR_COLOR[2], SCREEN_CLEAR_COLOR[3]);
     glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -187,6 +195,7 @@ void GL_Renderer::render() {
 
     GLuint orthoProjectionMatrixID = glGetUniformLocation(shaderManager.getShaderProgram("DEFAULT_QUAD"), "orthoProjection");
     glUniformMatrix4fv(orthoProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(orthoProjection));
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, glcontext.transformSBOID);
     for (unsigned int i = 0; i < (RENDERING_DEPTH_LAYERS + 1); i++) {
         for (const auto& it : renderData.transforms[i]) {
             if (it.first != last_texture) {
@@ -194,16 +203,33 @@ void GL_Renderer::render() {
                 swapTexture(it.first.c_str());
             }
             if (it.second.size() > 0) {
+                glBindBuffer(GL_SHADER_STORAGE_BUFFER, glcontext.transformSBOID);
                 glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderTransform) * it.second.size(), &it.second[0], GL_DYNAMIC_DRAW);
                 glDrawArraysInstanced(GL_TRIANGLES, 0, 6, it.second.size());
             }
         }
         renderData.transforms[i].clear();
     }
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+
+    // Draw Primitive Quads in Screen Space
+    glUseProgram(shaderManager.getShaderProgram("LINE_SHADER"));
+    GLint projectionMatrixUniform = glGetUniformLocation(shaderManager.getShaderProgram("LINE_SHADER"), "projectionMatrix");
+    glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, glm::value_ptr(screenProjection));
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, glcontext.transformSBOID);
+    for (PrimitiveQuadRenderItem item : renderData.primitiveQuadItems ) {
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, glcontext.transformSBOID);
+        glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(PrimitiveQuadRenderItem), &renderData.primitiveQuadItems[0], GL_DYNAMIC_DRAW);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 6, renderData.primitiveQuadItems.size());
+        }
+    renderData.primitiveQuadItems.clear();
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
     // Render the UI sprites to the FBO
     glUseProgram(shaderManager.getShaderProgram("UI_QUAD"));
     glUniformMatrix4fv(orthoProjectionMatrixID, 1, GL_FALSE, glm::value_ptr(screenProjection));
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, glcontext.uitransformSBOID);
     for (unsigned int i = 0; i < (RENDERING_DEPTH_LAYERS + 1); i++) {
         for (const auto& it : renderData.uitransforms[i]) {
             if (it.first != last_texture) {
@@ -211,14 +237,19 @@ void GL_Renderer::render() {
                 swapTexture(it.first.c_str());
             }
             if (it.second.size() > 0) {
+                glBindBuffer(GL_SHADER_STORAGE_BUFFER, glcontext.uitransformSBOID);
                 glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(RenderTransform) * it.second.size(), &it.second[0], GL_DYNAMIC_DRAW);
                 glDrawArraysInstanced(GL_TRIANGLES, 0, 6, it.second.size());
             }
         }
         renderData.uitransforms[i].clear();
     }
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+
     
     // Draw text
+
     GLuint textOrthoHandle = glGetUniformLocation(shaderManager.getShaderProgram("FONT_SHADER"), "projection");
     glUniformMatrix4fv(textOrthoHandle, 1, GL_FALSE, glm::value_ptr(screenProjection));
     glDisable(GL_DEPTH_TEST);
@@ -228,6 +259,8 @@ void GL_Renderer::render() {
         drawText("FONT_SHADER", each_text.fontIdentifier, each_text.text, each_text.pos, each_text.scale, each_text.color);
     }
     renderData.textItems.clear();
+
+
 
     // Post-Processing Steps
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

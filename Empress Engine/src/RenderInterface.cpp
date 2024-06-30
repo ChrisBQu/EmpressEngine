@@ -42,3 +42,17 @@ void drawText(std::string text, std::string font_identifier, glm::vec2 pos, glm:
     tri.text = text;
     renderData.textItems.push_back(tri);
 }
+
+void drawLine(glm::vec2 start, glm::vec2 end, float thickness, glm::vec4 color) {
+    glm::vec2 direction = end - start;
+    glm::vec2 normal = glm::vec2(-direction.y, direction.x);
+    normal = glm::normalize(normal);
+    float halfThickness = thickness / 2.0f;
+    PrimitiveQuadRenderItem pqri;
+    pqri.point1 = start + normal * halfThickness;   // Top-left
+    pqri.point2 = end + normal * halfThickness;     // Top-right
+    pqri.point3 = end - normal * halfThickness;     // Bottom-right
+    pqri.point4 = start - normal * halfThickness;   // Bottom-left
+    pqri.color = color;
+    renderData.primitiveQuadItems.push_back(pqri);
+}

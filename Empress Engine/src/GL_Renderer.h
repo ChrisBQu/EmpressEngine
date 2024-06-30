@@ -16,10 +16,12 @@ struct GL_Context {
     GLuint FBO;
     GLuint textureID;
     GLuint transformSBOID;
+    GLuint uitransformSBOID;
     GLuint postProcessingTextureBuffer;
     GLuint postProcessingDepthBuffer;
     GLuint textVAO;
     GLuint textVBO;
+    GLuint primitiveQuadSSBO;
 };
 
 class GL_Renderer {
@@ -31,6 +33,7 @@ public:
     void resize(int width, int height);
 private:
     void drawText(std::string shader_identifier, std::string font_identifier, std::string text, glm::vec2 pos, glm::vec2 scale, glm::vec4 color);
+    void drawLines();
     FontManager fontManager;
     ShaderManager shaderManager;
     TextureManager textureManager;

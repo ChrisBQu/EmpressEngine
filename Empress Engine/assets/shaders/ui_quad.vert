@@ -11,7 +11,7 @@ struct Transform {
 
 // Input
 
-layout(std430, binding = 0) buffer TransformSBO {
+layout(std430, binding = 1) buffer TransformSBO {
     Transform transforms[];
 };
 

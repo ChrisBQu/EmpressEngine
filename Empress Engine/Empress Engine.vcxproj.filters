@@ -111,10 +111,10 @@
     <ClInclude Include="src\GameObjects\GameObj_TestWall.h">
       <Filter>Header Files\Game Object System\Game Objects</Filter>
     </ClInclude>
-    <ClInclude Include="src\Controller.h">
-      <Filter>Resource Files\Shaders</Filter>
-    </ClInclude>
     <ClInclude Include="src\QuadTree.h">
+      <Filter>Header Files\Game Object System</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Controller.h">
       <Filter>Header Files\Game Object System</Filter>
     </ClInclude>
   </ItemGroup>
@@ -227,6 +227,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="assets\shaders\ui_quad.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\line.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="assets\shaders\line.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

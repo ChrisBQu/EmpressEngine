@@ -16,9 +16,9 @@ constexpr int NUMBER_OF_TILE_LAYERS = 4;
 class Scene {
 public:
 	Scene();
-	void setTileLayer(int layer, TileLayer tl);
-	void toggleTileLayer(int layer, bool toggle);
+	~Scene();
 
+	void addStaticObject(GameObject* g);
 	void addObject(GameObject* g);
 	void deleteObjects();
 
@@ -29,6 +29,9 @@ public:
 	void setCamera(glm::vec2 position, glm::vec2 dimensions);
 	OrthographicCamera getCamera();
 
+
+	void setTileLayer(int layer, TileLayer tl);
+	void toggleTileLayer(int layer, bool toggle);
 	glm::vec2 getTileLayerPosition(int layer);
 	void setTileLayerPosition(int layer, glm::vec2 pos);
 

@@ -8,12 +8,12 @@ GameObject_Character::GameObject_Character() {
 	visible = true;
 	solid = true;
 
-	x = 0;
-	y = -32;
 	transform->depth = 99;
 	transform->rotation = 0;
 	sprite->setAnimation("PINK_BLOB_WALK");
-	collider->setRect({{0, 0}, { 32, 32 }});
+
+	GeometryCircle circ = { {16, 16}, 16 };
+	collider->setShape(circ);
 
 	transform->scale = { 0.5, 0.5 };
 
@@ -23,13 +23,13 @@ GameObject_Character::~GameObject_Character() { }
 
 
 void GameObject_Character::onUpdate() {
+
 	queryCollisions();
 	if (myCollisions.size() > 0) {
 		LOG("HONK");
 	}
 
-
-	float terminal_yspeed = 3.5;
+	float terminal_yspeed = 3;
 	float y_acceleration = 0.25;
 	GeometryPoint anchor1 = { collider->getAABB().pos.x, collider->getAABB().pos.y + collider->getAABB().size.y };
 	GeometryPoint anchor2 = { collider->getAABB().pos.x + collider->getAABB().size.x, collider->getAABB().pos.y + collider->getAABB().size.y };
@@ -46,7 +46,9 @@ void GameObject_Character::onUpdate() {
 }
 
 void GameObject_Character::trigger_onPressedA() {
-	yspeed -= 8;
+	GeometryPoint anchor1 = { collider->getAABB().pos.x, collider->getAABB().pos.y + collider->getAABB().size.y };
+	GeometryPoint anchor2 = { collider->getAABB().pos.x + collider->getAABB().size.x, collider->getAABB().pos.y + collider->getAABB().size.y };
+	if (!getLoadedScene()->getPlaceFree(anchor1) || !getLoadedScene()->getPlaceFree(anchor2)) { yspeed -= 8; }
 }
 
 void GameObject_Character::trigger_onPressedLeft() {

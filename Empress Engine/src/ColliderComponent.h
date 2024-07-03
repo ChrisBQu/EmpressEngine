@@ -11,13 +11,18 @@ class GameObject;
 class ColliderComponent {
 public:
 	ColliderComponent(GameObject* p);
+	~ColliderComponent();
 	GeometryRectangle getAABB();
+	GeometryShape* getShape();
+	bool collidesWithAABB(ColliderComponent* other);
 	bool collidesWith(ColliderComponent* other);
-	void setRect(GeometryRectangle rect);
+	void setShape(GeometryShape &s);
 	void calibrate();
 private:
 	GeometryRectangle aabb;
 	GeometryRectangle orig_aabb;
+	GeometryShape *shape;
+	GeometryShape *orig_shape;
 	GameObject* parent;
 };
 

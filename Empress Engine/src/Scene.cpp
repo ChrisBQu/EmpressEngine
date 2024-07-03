@@ -14,12 +14,17 @@ Scene::Scene() {
 	frameCount = 0;
 }
 
+// Destructor
+Scene::~Scene() {
+	deleteObjects();
+}
+
 void Scene::addObject(GameObject *g) {
-	if (g->is_static) {
-		myStaticObjects.push_back(g);
-		return;
-	}
 	myDynamicObjects.push_back(g);
+}
+
+void Scene::addStaticObject(GameObject* g) {
+	myStaticObjects.push_back(g);
 }
 
 void Scene::setCamera(glm::vec2 position, glm::vec2 dimensions) {

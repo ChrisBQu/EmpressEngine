@@ -30,6 +30,7 @@
     <ClInclude Include="src\GameObjects\GameObj_TestCharacter.h" />
     <ClInclude Include="src\GameObjects\GameObj_TestHUD.h" />
     <ClInclude Include="src\GameObjects\GameObj_TestWall.h" />
+    <ClInclude Include="src\GameObjectTypes.h" />
     <ClInclude Include="src\Geometry.h" />
     <ClInclude Include="src\Logger.h" />
     <ClInclude Include="src\GL_Renderer.h" />
@@ -37,6 +38,7 @@
     <ClInclude Include="src\QuadTree.h" />
     <ClInclude Include="src\RenderInterface.h" />
     <ClInclude Include="src\Scene.h" />
+    <ClInclude Include="src\SceneBuilder.h" />
     <ClInclude Include="src\ShaderManager.h" />
     <ClInclude Include="src\Sound.h" />
     <ClInclude Include="src\SpriteComponent.h" />
@@ -56,12 +58,14 @@
     <ClCompile Include="src\GameObjects\GameObj_TestCharacter.cpp" />
     <ClCompile Include="src\GameObjects\GameObj_TestHUD.cpp" />
     <ClCompile Include="src\GameObjects\GameObj_Wall.cpp" />
+    <ClCompile Include="src\GameObjectTypes.cpp" />
     <ClCompile Include="src\Geometry.cpp" />
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\GL_Renderer.cpp" />
     <ClCompile Include="src\QuadTree.cpp" />
     <ClCompile Include="src\RenderInterface.cpp" />
     <ClCompile Include="src\Scene.cpp" />
+    <ClCompile Include="src\SceneBuilder.cpp" />
     <ClCompile Include="src\ShaderManager.cpp" />
     <ClCompile Include="src\Sound.cpp" />
     <ClCompile Include="src\Source.cpp" />
@@ -75,6 +79,7 @@
   <ItemGroup>
     <None Include="assets\animation_manifest.json" />
     <None Include="assets\fonts\font_manifest.json" />
+    <None Include="assets\scenes\scene0.json" />
     <None Include="assets\shaders\font.frag" />
     <None Include="assets\shaders\font.vert" />
     <None Include="assets\shaders\line.frag" />

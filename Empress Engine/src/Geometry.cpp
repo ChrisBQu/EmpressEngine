@@ -583,7 +583,62 @@ bool geometryShapeContains(GeometryShape &first, GeometryShape &second) {
     return false;
 }
 
-// Generate the bounding box for a vector of shapes
+// Helper function to calculate the bounding box for a single shape
+GeometryRectangle calculateBoundingBoxForShape(const GeometryShape* shape) {
+    float minX = std::numeric_limits<float>::max();
+    float minY = std::numeric_limits<float>::max();
+    float maxX = std::numeric_limits<float>::lowest();
+    float maxY = std::numeric_limits<float>::lowest();
+
+    switch (shape->getType()) {
+    case GeometryType::POINT: {
+        const auto& point = dynamic_cast<const GeometryPoint&>(*shape);
+        minX = std::min(minX, point.x);
+        minY = std::min(minY, point.y);
+        maxX = std::max(maxX, point.x);
+        maxY = std::max(maxY, point.y);
+        break;
+    }
+    case GeometryType::LINE_SEGMENT: {
+        const auto& line = dynamic_cast<const GeometryLineSegment&>(*shape);
+        minX = std::min({ minX, line.start.x, line.end.x });
+        minY = std::min({ minY, line.start.y, line.end.y });
+        maxX = std::max({ maxX, line.start.x, line.end.x });
+        maxY = std::max({ maxY, line.start.y, line.end.y });
+        break;
+    }
+    case GeometryType::CIRCLE: {
+        const auto& circle = dynamic_cast<const GeometryCircle&>(*shape);
+        minX = std::min(minX, circle.pos.x - circle.radius);
+        minY = std::min(minY, circle.pos.y - circle.radius);
+        maxX = std::max(maxX, circle.pos.x + circle.radius);
+        maxY = std::max(maxY, circle.pos.y + circle.radius);
+        break;
+    }
+    case GeometryType::RECTANGLE: {
+        const auto& rect = dynamic_cast<const GeometryRectangle&>(*shape);
+        minX = std::min(minX, rect.pos.x);
+        minY = std::min(minY, rect.pos.y);
+        maxX = std::max(maxX, rect.pos.x + rect.size.x);
+        maxY = std::max(maxY, rect.pos.y + rect.size.y);
+        break;
+    }
+    case GeometryType::TRIANGLE: {
+        const auto& tri = dynamic_cast<const GeometryTriangle&>(*shape);
+        minX = std::min({ minX, tri.a.x, tri.b.x, tri.c.x });
+        minY = std::min({ minY, tri.a.y, tri.b.y, tri.c.y });
+        maxX = std::max({ maxX, tri.a.x, tri.b.x, tri.c.x });
+        maxY = std::max({ maxY, tri.a.y, tri.b.y, tri.c.y });
+        break;
+    }
+    default:
+        break;
+    }
+
+    return { {minX, minY}, {maxX - minX, maxY - minY} };
+}
+
+// Function to generate the bounding box for a vector of shapes
 GeometryRectangle getBoundingRectangle(const std::vector<GeometryShape*>& shapes) {
     if (shapes.empty()) { return { {0, 0}, {0, 0} }; }
 
@@ -593,57 +648,24 @@ GeometryRectangle getBoundingRectangle(const std::vector<GeometryShape*>& shapes
     float maxY = std::numeric_limits<float>::lowest();
 
     for (const auto& shape : shapes) {
-        switch (shape->getType()) {
-        case GeometryType::POINT: {
-            const auto& point = dynamic_cast<const GeometryPoint&>(*shape);
-            minX = std::min(minX, point.x);
-            minY = std::min(minY, point.y);
-            maxX = std::max(maxX, point.x);
-            maxY = std::max(maxY, point.y);
-            break;
-        }
-        case GeometryType::LINE_SEGMENT: {
-            const auto& line = dynamic_cast<const GeometryLineSegment&>(*shape);
-            minX = std::min({ minX, line.start.x, line.end.x });
-            minY = std::min({ minY, line.start.y, line.end.y });
-            maxX = std::max({ maxX, line.start.x, line.end.x });
-            maxY = std::max({ maxY, line.start.y, line.end.y });
-            break;
-        }
-        case GeometryType::CIRCLE: {
-            const auto& circle = dynamic_cast<const GeometryCircle&>(*shape);
-            minX = std::min(minX, circle.pos.x - circle.radius);
-            minY = std::min(minY, circle.pos.y - circle.radius);
-            maxX = std::max(maxX, circle.pos.x + circle.radius);
-            maxY = std::max(maxY, circle.pos.y + circle.radius);
-            break;
-        }
-        case GeometryType::RECTANGLE: {
-            const auto& rect = dynamic_cast<const GeometryRectangle&>(*shape);
-            minX = std::min(minX, rect.pos.x);
-            minY = std::min(minY, rect.pos.y);
-            maxX = std::max(maxX, rect.pos.x + rect.size.x);
-            maxY = std::max(maxY, rect.pos.y + rect.size.y);
-            break;
-        }
-        case GeometryType::TRIANGLE: {
-            const auto& tri = dynamic_cast<const GeometryTriangle&>(*shape);
-            minX = std::min({ minX, tri.a.x, tri.b.x, tri.c.x });
-            minY = std::min({ minY, tri.a.y, tri.b.y, tri.c.y });
-            maxX = std::max({ maxX, tri.a.x, tri.b.x, tri.c.x });
-            maxY = std::max({ maxY, tri.a.y, tri.b.y, tri.c.y });
-            break;
-        }
-        default:
-            break;
-        }
+        GeometryRectangle boundingBox = calculateBoundingBoxForShape(shape);
+        minX = std::min(minX, boundingBox.pos.x);
+        minY = std::min(minY, boundingBox.pos.y);
+        maxX = std::max(maxX, boundingBox.pos.x + boundingBox.size.x);
+        maxY = std::max(maxY, boundingBox.pos.y + boundingBox.size.y);
     }
 
-    GeometryRectangle boundingRect{ {minX, minY}, {maxX - minX, maxY - minY} };
-    return boundingRect;
+    return { {minX, minY}, {maxX - minX, maxY - minY} };
 }
 
+// Function to generate the bounding box for a single shape
+GeometryRectangle getBoundingRectangle(const GeometryShape* shape) {
+    if (!shape) { return { {0, 0}, {0, 0} }; }
 
+    return calculateBoundingBoxForShape(shape);
+}
+
+// Function to get the distance between two GeometryPoint objects
 float distanceBetweenPoints(const GeometryPoint point1, const GeometryPoint point2) {
     float dx = point2.x - point1.x;
     float dy = point2.y - point1.y;

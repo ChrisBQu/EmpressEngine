@@ -37,6 +37,9 @@
     <Filter Include="Source Files\Game Object System\Game Objects">
       <UniqueIdentifier>{7eefdaa0-a5b9-4f7d-b961-5b7d2cc851bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Scenes">
+      <UniqueIdentifier>{311e317e-ed99-41f1-8a05-4109de801be8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine.h">
@@ -115,6 +118,12 @@
       <Filter>Header Files\Game Object System</Filter>
     </ClInclude>
     <ClInclude Include="src\Controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameObjectTypes.h">
+      <Filter>Header Files\Game Object System</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SceneBuilder.h">
       <Filter>Header Files\Game Object System</Filter>
     </ClInclude>
   </ItemGroup>
@@ -191,6 +200,12 @@
     <ClCompile Include="src\QuadTree.cpp">
       <Filter>Source Files\Game Object System</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameObjectTypes.cpp">
+      <Filter>Source Files\Game Object System</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneBuilder.cpp">
+      <Filter>Source Files\Game Object System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\animation_manifest.json">
@@ -234,6 +249,9 @@
     </None>
     <None Include="assets\shaders\line.vert">
       <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="assets\scenes\scene0.json">
+      <Filter>Resource Files\Scenes</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 #define GAME_OBJECT_H
 
 #include "ColliderComponent.h"
+#include "GameObjectTypes.h"
 #include "SpriteComponent.h"
 #include "TransformComponent.h"
 
@@ -60,15 +61,13 @@ public:
 
 	// Variables
 	uint32_t id;
+	GameObjectType type; 
 
 	float x;
 	float y;
 
 	bool visible;
 	bool solid;
-
-	bool is_static;
-
 	float alpha;
 
 	std::vector<GameObject*> myCollisions;
@@ -78,5 +77,7 @@ public:
 	SpriteComponent *sprite;
 	ColliderComponent *collider;
 };
+
+GameObject* generateGameObject(GameObjectType got, float x, float y);
 
 #endif // GAME_OBJECT_H

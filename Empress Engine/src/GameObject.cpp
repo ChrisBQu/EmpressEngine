@@ -10,7 +10,6 @@ GameObject::GameObject() {
 	id = objectCount++;
 	visible = false;
 	solid = false;
-	is_static = false;
 	alpha = 1.0;
 	sprite = new SpriteComponent(this);
 	transform = new TransformComponent(this);
@@ -43,6 +42,17 @@ void GameObject::render() {
 		for (GeometryLineSegment each_line : lines) {
 			drawLine(pointToVec(each_line.start), pointToVec(each_line.end), 2, { 0.0, 1.0, 0.0, 1.0 });
 		}
+
+
+		GeometryShape* shp = collider->getShape();
+		if (shp != nullptr) {
+			std::vector<GeometryLineSegment> lines = getLineSegmentsOfShape(*shp);
+			for (GeometryLineSegment each_line : lines) {
+				drawLine(pointToVec(each_line.start), pointToVec(each_line.end), 2, { 0.0, 0.0, 1.0, 1.0 });
+			}
+		}
+
+
 	}
 }
 

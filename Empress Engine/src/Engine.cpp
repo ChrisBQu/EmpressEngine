@@ -12,6 +12,7 @@
 #include "GameObjects/GameObj_TestHUD.h"
 #include "GameObjects/GameObj_TestWall.h"
 
+#include "SceneBuilder.h"
 #include "Sound.h"
 
 #include <SDL_mixer.h>
@@ -118,18 +119,20 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     GameObject_HUD *myHUD = new GameObject_HUD();
     GameObject_Wall *myWall = new GameObject_Wall();
 
+    myWall->y = -40;
+
     myScene.addObject(myObj);
-    myScene.addObject(myWall);
+    myScene.addStaticObject(myWall);
     myScene.addObject(myHUD);
 
     
     for (int i = 0; i < 50; i++) {
             int xx = i * 16 - 256;
-            int yy = 32;
+            int yy = 0;
             GameObject_Wall* newchar = new GameObject_Wall();
             newchar->x = xx;
             newchar->y = yy;
-            myScene.addObject(newchar);
+            myScene.addStaticObject(newchar);
     }
     
 
@@ -142,12 +145,8 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     myScene.toggleTileLayer(0, true);
     loadScene(&myScene);
 
-    myScene.setCamera({ 0,0 }, { 320, 180 });
+    buildSceneFromJSON("assets/scenes/scene0.json");
 
-    sm.loadSoundEffect("effect0", "assets/sounds/effect.wav");
-    sm.loadMusic("song0", "assets/sounds/song.wav");
-    //sm.playMusic("song0");
-  
     return EngineErrorCode::SUCCESS;
 }
 
@@ -190,9 +189,7 @@ void Engine::handleInput() {
 
 void Engine::update() {
 
-    sm.setSoundEffectVolume(4, sm.getSoundEffectVolume(4) - 1);
-
-    myScene.update();
+    getLoadedScene()->update();
 
     frameCount++;
 
@@ -201,15 +198,10 @@ void Engine::update() {
 
 void Engine::render() {
 
+    //drawText("This is a dialogue test.", "editundo", { 32, 64 - 7}, { 4.0 , 4.0 }, { 0,0,255,255 });
 
-    drawText("This is a dialogue test.", "editundo", { 32, 64 - 7}, { 4.0 , 4.0 }, { 0,0,255,255 });
-    //drawText("This is a dialogue test.", "editundo", { 32, 96 - 7}, { 1.0 , 1.0 }, { 0,0,255,255 });
-
-    myScene.render();
-
-
+    getLoadedScene()->render();
     myGLRenderer.render();
-
     SDL_GL_SwapWindow(myWindow);
 }
 

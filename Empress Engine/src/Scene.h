@@ -18,13 +18,14 @@ public:
 	Scene();
 	~Scene();
 
+	void addSolid(GeometryShape *s);
 	void addStaticObject(GameObject* g);
 	void addObject(GameObject* g);
 	void deleteObjects();
 
 	std::vector<GameObject*> queryCollisions(GameObject* requester);
-	bool getPlaceFree(GeometryPoint p);
 	float fireRay(GeometryRay r);
+	bool projectShapeFree(GeometryShape *s);
 
 	void setCamera(glm::vec2 position, glm::vec2 dimensions);
 	OrthographicCamera getCamera();
@@ -49,6 +50,7 @@ private:
 	TileLayer tileLayers[NUMBER_OF_TILE_LAYERS];
 	std::vector<GameObject*> myDynamicObjects;
 	std::vector<GameObject*> myStaticObjects;
+	std::vector<GeometryShape*> mySolids;
 };
 
 void loadScene(Scene* s);

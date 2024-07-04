@@ -8,12 +8,23 @@ GameObject_Character::GameObject_Character() {
 	visible = true;
 	solid = true;
 
+	x = -32;
+	y = 32;
 	transform->depth = 99;
 	transform->rotation = 0;
 	sprite->setAnimation("PINK_BLOB_WALK");
 
-	GeometryCircle circ = { {16, 16}, 16 };
-	collider->setShape(circ);
+	//GeometryCircle circ = { {32, 16}, 16 };
+	//collider->setShape(circ);
+
+	GeometryTriangle tri = { {0,0}, {32, 32}, {0, 32} };
+	collider->setShape(tri);
+
+	//GeometryRectangle rect = { {0,0}, {32, 32} };
+	//collider->setShape(rect);
+
+	//GeometryLineSegment line = { {0, 0}, {32, 32} };
+	//collider->setShape(line);
 
 	transform->scale = { 0.5, 0.5 };
 
@@ -29,6 +40,7 @@ void GameObject_Character::onUpdate() {
 		LOG("HONK");
 	}
 
+	/*
 	float terminal_yspeed = 3;
 	float y_acceleration = 0.25;
 	GeometryPoint anchor1 = { collider->getAABB().pos.x, collider->getAABB().pos.y + collider->getAABB().size.y };
@@ -42,13 +54,15 @@ void GameObject_Character::onUpdate() {
 	d = std::min(d, d2);
 	if (d > yspeed) { y += yspeed; }
 	else { y += d; }
+
+	*/
 	
 }
 
 void GameObject_Character::trigger_onPressedA() {
-	GeometryPoint anchor1 = { collider->getAABB().pos.x, collider->getAABB().pos.y + collider->getAABB().size.y };
-	GeometryPoint anchor2 = { collider->getAABB().pos.x + collider->getAABB().size.x, collider->getAABB().pos.y + collider->getAABB().size.y };
-	if (!getLoadedScene()->getPlaceFree(anchor1) || !getLoadedScene()->getPlaceFree(anchor2)) { yspeed -= 8; }
+	//GeometryPoint anchor1 = { collider->getAABB().pos.x, collider->getAABB().pos.y + collider->getAABB().size.y };
+	//GeometryPoint anchor2 = { collider->getAABB().pos.x + collider->getAABB().size.x, collider->getAABB().pos.y + collider->getAABB().size.y };
+	//if (!getLoadedScene()->getPlaceFree(anchor1) || !getLoadedScene()->getPlaceFree(anchor2)) { yspeed -= 8; }
 }
 
 void GameObject_Character::trigger_onPressedLeft() {
@@ -63,11 +77,18 @@ void GameObject_Character::trigger_onPressedRight() {
 }
 
 void GameObject_Character::trigger_onHeldLeft() {
-	x -= 2;
+	moveX(-3);
 }
 void GameObject_Character::trigger_onHeldRight() { 
-	x += 2;
+	moveX(3);
 }
+void GameObject_Character::trigger_onHeldUp() {
+	moveY(-3);
+}
+void GameObject_Character::trigger_onHeldDown() {
+	moveY(3);
+}
+
 
 void GameObject_Character::trigger_onReleasedLeft() { 
 	sprite->setAnimation("PINK_BLOB_STAND");

@@ -328,46 +328,72 @@ std::vector<GeometryPoint> intersectsLineRectangle(GeometryLineSegment line, Geo
 // Helper intersection function: Line - Circle
 std::vector<GeometryPoint> intersectsLineCircle(GeometryLineSegment line, GeometryCircle circle) {
     std::vector<GeometryPoint> intersections;
+
     float x1 = line.start.x - circle.pos.x;
     float y1 = line.start.y - circle.pos.y;
     float x2 = line.end.x - circle.pos.x;
     float y2 = line.end.y - circle.pos.y;
+
     float dx = x2 - x1;
     float dy = y2 - y1;
     float dr = std::sqrt(dx * dx + dy * dy);
     float D = x1 * y2 - x2 * y1;
     float discriminant = circle.radius * circle.radius * dr * dr - D * D;
-    if (discriminant < 0.0f) { return intersections; }
+
+    if (discriminant < 0.0f) {
+        return intersections; // No intersection
+    }
+
     float sqrtDiscriminant = std::sqrt(discriminant);
     float signDy = (dy < 0.0f) ? -1.0f : 1.0f;
+
     GeometryPoint intersection1, intersection2;
     intersection1.x = (D * dy + signDy * dx * sqrtDiscriminant) / (dr * dr) + circle.pos.x;
     intersection1.y = (-D * dx + std::abs(dy) * sqrtDiscriminant) / (dr * dr) + circle.pos.y;
     intersection2.x = (D * dy - signDy * dx * sqrtDiscriminant) / (dr * dr) + circle.pos.x;
     intersection2.y = (-D * dx - std::abs(dy) * sqrtDiscriminant) / (dr * dr) + circle.pos.y;
-    if (almostEqual(discriminant, 0.0f)) { intersections.push_back(intersection1); }
+
+    if (almostEqual(discriminant, 0.0f)) {
+        intersections.push_back(intersection1);
+    }
     else {
         intersections.push_back(intersection1);
         intersections.push_back(intersection2);
     }
+
     return intersections;
 }
 
 // Helper intersection function: Circle - Rectangle
 std::vector<GeometryPoint> intersectsCircleRectangle(GeometryCircle circle, GeometryRectangle rect) {
     std::vector<GeometryPoint> intersections;
+
     GeometryLineSegment top = { rect.pos, {rect.pos.x + rect.size.x, rect.pos.y} };
     GeometryLineSegment bottom = { {rect.pos.x, rect.pos.y + rect.size.y}, {rect.pos.x + rect.size.x, rect.pos.y + rect.size.y} };
     GeometryLineSegment left = { rect.pos, {rect.pos.x, rect.pos.y + rect.size.y} };
     GeometryLineSegment right = { {rect.pos.x + rect.size.x, rect.pos.y}, {rect.pos.x + rect.size.x, rect.pos.y + rect.size.y} };
-    std::vector<GeometryPoint> topIntersections = intersectsLineCircle(top, circle);
-    std::vector<GeometryPoint> bottomIntersections = intersectsLineCircle(bottom, circle);
-    std::vector<GeometryPoint> leftIntersections = intersectsLineCircle(left, circle);
-    std::vector<GeometryPoint> rightIntersections = intersectsLineCircle(right, circle);
+
+    auto filterIntersections = [](const GeometryLineSegment& line, const std::vector<GeometryPoint>& points) {
+        std::vector<GeometryPoint> validPoints;
+        for (const auto& point : points) {
+            if (point.x >= std::min(line.start.x, line.end.x) && point.x <= std::max(line.start.x, line.end.x) &&
+                point.y >= std::min(line.start.y, line.end.y) && point.y <= std::max(line.start.y, line.end.y)) {
+                validPoints.push_back(point);
+            }
+        }
+        return validPoints;
+        };
+
+    std::vector<GeometryPoint> topIntersections = filterIntersections(top, intersectsLineCircle(top, circle));
+    std::vector<GeometryPoint> bottomIntersections = filterIntersections(bottom, intersectsLineCircle(bottom, circle));
+    std::vector<GeometryPoint> leftIntersections = filterIntersections(left, intersectsLineCircle(left, circle));
+    std::vector<GeometryPoint> rightIntersections = filterIntersections(right, intersectsLineCircle(right, circle));
+
     intersections.insert(intersections.end(), topIntersections.begin(), topIntersections.end());
     intersections.insert(intersections.end(), bottomIntersections.begin(), bottomIntersections.end());
     intersections.insert(intersections.end(), leftIntersections.begin(), leftIntersections.end());
     intersections.insert(intersections.end(), rightIntersections.begin(), rightIntersections.end());
+
     return intersections;
 }
 
@@ -482,11 +508,15 @@ std::vector<GeometryPoint> intersectsTriangleCircle(GeometryTriangle tri, Geomet
 // Helper intersection function: Triangle - Rectangle
 std::vector<GeometryPoint> intersectsTriangleRectangle(GeometryTriangle tri, GeometryRectangle rect) {
     std::vector<GeometryPoint> intersections;
+    GeometryPoint topRight = { rect.pos.x + rect.size.x, rect.pos.y };
+    GeometryPoint bottomLeft = { rect.pos.x, rect.pos.y + rect.size.y };
+    GeometryPoint bottomRight = { rect.pos.x + rect.size.x, rect.pos.y + rect.size.y };
+
     GeometryLineSegment rectEdges[] = {
-        {rect.pos, {rect.pos.x + rect.size.x, rect.pos.y}},
-        {{rect.pos.x, rect.pos.y + rect.size.y}, {rect.pos.x + rect.size.x, rect.pos.y + rect.size.y}},
-        {rect.pos, {rect.pos.x, rect.pos.y + rect.size.y}},
-        {{rect.pos.x + rect.size.x, rect.pos.y}, {rect.pos.x + rect.size.x, rect.pos.y + rect.size.y}}
+        {rect.pos, topRight},
+        {bottomLeft, bottomRight},
+        {rect.pos, bottomLeft},
+        {topRight, bottomRight}
     };
     GeometryLineSegment triEdges[] = { {tri.a, tri.b}, {tri.b, tri.c}, {tri.c, tri.a} };
     for (auto& triEdge : triEdges) {
@@ -510,7 +540,7 @@ std::vector<GeometryPoint> intersectsTriangleRay(GeometryTriangle tri, GeometryR
 }
 
 // Return a vector of points of intersection between two shapes
-std::vector<GeometryPoint> geometryGetIntersections(GeometryShape &first, GeometryShape &second) {
+std::vector<GeometryPoint> geometryGetIntersections(GeometryShape& first, GeometryShape& second) {
     std::vector<GeometryPoint> intersections;
     if (first.getType() == GeometryType::TRIANGLE) {
         const auto& triangle = dynamic_cast<const GeometryTriangle&>(first);
@@ -524,6 +554,7 @@ std::vector<GeometryPoint> geometryGetIntersections(GeometryShape &first, Geomet
     else if (first.getType() == GeometryType::RAY) {
         const auto& ray = dynamic_cast<const GeometryRay&>(first);
         if (second.getType() == GeometryType::RAY) { intersections = intersectsRays(ray, dynamic_cast<const GeometryRay&>(second)); }
+        else if (second.getType() == GeometryType::TRIANGLE) { intersections = intersectsTriangleRay(dynamic_cast<const GeometryTriangle&>(second), ray); }
         else if (second.getType() == GeometryType::POINT) { intersections = intersectsRayPoint(ray, dynamic_cast<const GeometryPoint&>(second)); }
         else if (second.getType() == GeometryType::LINE_SEGMENT) { intersections = intersectsRayLine(ray, dynamic_cast<const GeometryLineSegment&>(second)); }
         else if (second.getType() == GeometryType::RECTANGLE) { intersections = intersectsRayRectangle(ray, dynamic_cast<const GeometryRectangle&>(second)); }
@@ -532,27 +563,44 @@ std::vector<GeometryPoint> geometryGetIntersections(GeometryShape &first, Geomet
     else if (first.getType() == GeometryType::POINT) {
         const auto& point = dynamic_cast<const GeometryPoint&>(first);
         if (second.getType() == GeometryType::POINT) { intersections = intersectsPoints(point, dynamic_cast<const GeometryPoint&>(second)); }
+        else if (second.getType() == GeometryType::TRIANGLE) { intersections = intersectsTrianglePoint(dynamic_cast<const GeometryTriangle&>(second), point); }
         else if (second.getType() == GeometryType::LINE_SEGMENT) { intersections = intersectsPointLine(point, dynamic_cast<const GeometryLineSegment&>(second)); }
         else if (second.getType() == GeometryType::RECTANGLE) { intersections = intersectsPointRectangle(point, dynamic_cast<const GeometryRectangle&>(second)); }
         else if (second.getType() == GeometryType::CIRCLE) { intersections = intersectsPointCircle(point, dynamic_cast<const GeometryCircle&>(second)); }
+        else if (second.getType() == GeometryType::RAY) { intersections = intersectsRayPoint(dynamic_cast<const GeometryRay&>(second), point); }
+
     }
     else if (first.getType() == GeometryType::LINE_SEGMENT) {
         const auto& line = dynamic_cast<const GeometryLineSegment&>(first);
         if (second.getType() == GeometryType::LINE_SEGMENT) { intersections = intersectsLines(line, dynamic_cast<const GeometryLineSegment&>(second)); }
+        else if (second.getType() == GeometryType::TRIANGLE) { intersections = intersectsTriangleLine(dynamic_cast<const GeometryTriangle&>(second), line); }
         else if (second.getType() == GeometryType::RECTANGLE) { intersections = intersectsLineRectangle(line, dynamic_cast<const GeometryRectangle&>(second)); }
         else if (second.getType() == GeometryType::CIRCLE) { intersections = intersectsLineCircle(line, dynamic_cast<const GeometryCircle&>(second)); }
+        else if (second.getType() == GeometryType::POINT) { intersections = intersectsPointLine(dynamic_cast<const GeometryPoint&>(second), line); }
+        else if (second.getType() == GeometryType::RAY) { intersections = intersectsRayLine(dynamic_cast<const GeometryRay&>(second), line); }
+
     }
     else if (first.getType() == GeometryType::CIRCLE) {
         const auto& circle = dynamic_cast<const GeometryCircle&>(first);
         if (second.getType() == GeometryType::RECTANGLE) { intersections = intersectsCircleRectangle(circle, dynamic_cast<const GeometryRectangle&>(second)); }
+        else if (second.getType() == GeometryType::TRIANGLE) { intersections = intersectsTriangleCircle(dynamic_cast<const GeometryTriangle&>(second), circle); }
         else if (second.getType() == GeometryType::CIRCLE) { intersections = intersectsCircles(circle, dynamic_cast<const GeometryCircle&>(second)); }
+        else if (second.getType() == GeometryType::POINT) { intersections = intersectsPointCircle(dynamic_cast<const GeometryPoint&>(second), circle); }
+        else if (second.getType() == GeometryType::LINE_SEGMENT) { intersections = intersectsLineCircle(dynamic_cast<const GeometryLineSegment&>(second), circle); }
+        else if (second.getType() == GeometryType::RAY) { intersections = intersectsRayCircle(dynamic_cast<const GeometryRay&>(second), circle); }
     }
     else if (first.getType() == GeometryType::RECTANGLE) {
         const auto& rect = dynamic_cast<const GeometryRectangle&>(first);
         if (second.getType() == GeometryType::RECTANGLE) { intersections = intersectsRectangles(rect, dynamic_cast<const GeometryRectangle&>(second)); }
+        else if (second.getType() == GeometryType::TRIANGLE) { intersections = intersectsTriangleRectangle(dynamic_cast<const GeometryTriangle&>(second), rect); }
+        else if (second.getType() == GeometryType::POINT) { intersections = intersectsPointRectangle(dynamic_cast<const GeometryPoint&>(second), rect); }
+        else if (second.getType() == GeometryType::LINE_SEGMENT) { intersections = intersectsLineRectangle(dynamic_cast<const GeometryLineSegment&>(second), rect); }
+        else if (second.getType() == GeometryType::CIRCLE) { intersections = intersectsCircleRectangle(dynamic_cast<const GeometryCircle&>(second), rect); }
+        else if (second.getType() == GeometryType::RAY) { intersections = intersectsRayRectangle(dynamic_cast<const GeometryRay&>(second), rect); }
     }
     return intersections;
 }
+
 
 // Return true or false for whether one shape contains another
 bool geometryShapeContains(GeometryShape &first, GeometryShape &second) {

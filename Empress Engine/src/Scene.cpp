@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "GameConfig.h"
 #include "Logger.h"
 #include "RenderInterface.h"
 
@@ -21,6 +22,10 @@ Scene::~Scene() {
 
 void Scene::addObject(GameObject *g) {
 	myDynamicObjects.push_back(g);
+}
+
+void Scene::addSolid(GeometryShape *s) {
+	mySolids.push_back(s);
 }
 
 void Scene::addStaticObject(GameObject* g) {
@@ -124,6 +129,15 @@ void Scene::render() {
 		each_object->render();
 	}
 
+	if (DRAW_BOUNDING_BOXES) {
+		for (GeometryShape *each_shape : mySolids) {
+			std::vector<GeometryLineSegment> lines = getLineSegmentsOfShape(*each_shape);
+			for (GeometryLineSegment each_line : lines) {
+				drawLine(pointToVec(each_line.start), pointToVec(each_line.end), 2, { 0.0, 1.0, 0.0, 1.0 });
+			}
+		}
+	}
+
 }
 
 void Scene::deleteObjects() {
@@ -135,6 +149,10 @@ void Scene::deleteObjects() {
 		delete each;
 	}
 	myStaticObjects.clear();
+	for (GeometryShape* each : mySolids) {
+		delete each;
+	}
+	mySolids.clear();
 }
 
 std::vector<GameObject*> Scene::queryCollisions(GameObject* requester) {
@@ -153,23 +171,23 @@ std::vector<GameObject*> Scene::queryCollisions(GameObject* requester) {
 
 }
 
-bool Scene::getPlaceFree(GeometryPoint p) {
-	for (GameObject* each_static_object : myStaticObjects) {
-		GeometryRectangle c = each_static_object->collider->getAABB();
-		if (geometryShapeContains(c, p)) { return false; }
-	}
-	return true;
-}
-
 float Scene::fireRay(GeometryRay r) {
 	float distance = 99999;
-	for (GameObject* each_static_object : myStaticObjects) {
-		GeometryRectangle c = each_static_object->collider->getAABB();
-		std::vector<GeometryPoint> gps = geometryGetIntersections(r, c);
+	for (GeometryShape *each_shape: mySolids) {
+		std::vector<GeometryPoint> gps = geometryGetIntersections(r, *each_shape);
 		for (GeometryPoint& ep : gps) {
 			float new_distance = distanceBetweenPoints(ep, r.start);
 			if (distance > new_distance) { distance = new_distance; }
 		}
 	}
 	return distance;
+}
+
+bool Scene::projectShapeFree(GeometryShape* s) {
+	for (GeometryShape* each_shape : mySolids) {
+		if (geometryGetIntersections(*each_shape, *s).size() > 0) {
+			return false;  // There is an intersection, so the shape is not free
+		}
+	}
+	return true;  // No intersections found, so the shape is free
 }

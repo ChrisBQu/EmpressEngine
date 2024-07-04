@@ -14,6 +14,7 @@ public:
     virtual ~GeometryShape() = default;
     virtual GeometryType getType() const = 0;
     virtual GeometryShape* clone() const = 0;
+    virtual void translate(float dx, float dy) = 0; // Add translate method
 };
 
 class GeometryPoint : public GeometryShape {
@@ -25,6 +26,7 @@ public:
 
     GeometryType getType() const override { return GeometryType::POINT; }
     GeometryShape* clone() const override { return new GeometryPoint(*this); }
+    void translate(float dx, float dy) override { x += dx; y += dy; } // Implement translate method
 };
 
 class GeometryLineSegment : public GeometryShape {
@@ -36,6 +38,7 @@ public:
 
     GeometryType getType() const override { return GeometryType::LINE_SEGMENT; }
     GeometryShape* clone() const override { return new GeometryLineSegment(*this); }
+    void translate(float dx, float dy) override { start.translate(dx, dy); end.translate(dx, dy); } // Implement translate method
 };
 
 class GeometryRay : public GeometryShape {
@@ -47,6 +50,7 @@ public:
 
     GeometryType getType() const override { return GeometryType::RAY; }
     GeometryShape* clone() const override { return new GeometryRay(*this); }
+    void translate(float dx, float dy) override { start.translate(dx, dy); direction.translate(dx, dy); } // Implement translate method
 };
 
 class GeometryCircle : public GeometryShape {
@@ -58,6 +62,7 @@ public:
 
     GeometryType getType() const override { return GeometryType::CIRCLE; }
     GeometryShape* clone() const override { return new GeometryCircle(*this); }
+    void translate(float dx, float dy) override { pos.translate(dx, dy); } // Implement translate method
 };
 
 class GeometryRectangle : public GeometryShape {
@@ -69,18 +74,19 @@ public:
 
     GeometryType getType() const override { return GeometryType::RECTANGLE; }
     GeometryShape* clone() const override { return new GeometryRectangle(*this); }
+    void translate(float dx, float dy) override { pos.translate(dx, dy); } // Implement translate method
 };
 
 class GeometryTriangle : public GeometryShape {
 public:
-    GeometryPoint a;
-    GeometryPoint b;
-    GeometryPoint c;
+    GeometryPoint a, b, c;
 
-    GeometryTriangle(const GeometryPoint& a = GeometryPoint(), const GeometryPoint& b = GeometryPoint(), const GeometryPoint& c = GeometryPoint()) : a(a), b(b), c(c) {}
+    GeometryTriangle(const GeometryPoint& a = GeometryPoint(), const GeometryPoint& b = GeometryPoint(), const GeometryPoint& c = GeometryPoint())
+        : a(a), b(b), c(c) {}
 
     GeometryType getType() const override { return GeometryType::TRIANGLE; }
     GeometryShape* clone() const override { return new GeometryTriangle(*this); }
+    void translate(float dx, float dy) override { a.translate(dx, dy); b.translate(dx, dy); c.translate(dx, dy); } // Implement translate method
 };
 
 std::vector<GeometryPoint> geometryGetIntersections(GeometryShape& first, GeometryShape& second);

@@ -57,7 +57,7 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
 
     // TESTING
     for (int i = 0; i < 1000000; i++) {
-        someTiles.push_back(rand()%4);
+        someTiles.push_back(rand() % 4);
     }
     for (int i = 0; i < 1000; i++) {
         randX.push_back(rand() % 1280);
@@ -115,37 +115,42 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
 
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
 
-    GameObject_Character *myObj = new GameObject_Character();
-    GameObject_HUD *myHUD = new GameObject_HUD();
-    GameObject_Wall *myWall = new GameObject_Wall();
+    GameObject_Character* myObj = new GameObject_Character();
+    GameObject_HUD* myHUD = new GameObject_HUD();
+    GameObject_Wall* myWall = new GameObject_Wall();
 
     myWall->y = -40;
 
     myScene.addObject(myObj);
     myScene.addStaticObject(myWall);
-    myScene.addObject(myHUD);
+    //myScene.addObject(myHUD);
 
-    
+
     for (int i = 0; i < 50; i++) {
-            int xx = i * 16 - 256;
-            int yy = 0;
-            GameObject_Wall* newchar = new GameObject_Wall();
-            newchar->x = xx;
-            newchar->y = yy;
-            myScene.addStaticObject(newchar);
+        int xx = i * 16 - 256;
+        int yy = 0;
+        GameObject_Wall* newchar = new GameObject_Wall();
+        newchar->x = xx;
+        newchar->y = yy;
+        myScene.addStaticObject(newchar);
     }
-    
+
 
     TilesetLayerData tld = { 100, 100, {0, 0}, someTiles };
-    
+
     TileLayer TL(tsd, tld);
 
 
     myScene.setTileLayer(0, TL);
     myScene.toggleTileLayer(0, true);
+    myScene.setCamera({ 0,0 }, { 320, 180 });
+
+    GeometryRectangle* r = new GeometryRectangle({{ 0,0 }, { 300, 100 } });
+    myScene.addSolid(r);
+    
     loadScene(&myScene);
 
-    buildSceneFromJSON("assets/scenes/scene0.json");
+   // buildSceneFromJSON("assets/scenes/scene0.json");
 
     return EngineErrorCode::SUCCESS;
 }

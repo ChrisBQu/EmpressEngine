@@ -40,6 +40,7 @@
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\SceneBuilder.h" />
     <ClInclude Include="src\ShaderManager.h" />
+    <ClInclude Include="src\SolidObject.h" />
     <ClInclude Include="src\Sound.h" />
     <ClInclude Include="src\SpriteComponent.h" />
     <ClInclude Include="src\SpriteAnimation.h" />

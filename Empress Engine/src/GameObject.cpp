@@ -4,6 +4,8 @@
 #include "RenderInterface.h"
 #include "Scene.h"
 
+#include <cmath>
+
 uint64_t objectCount = 1;
 
 GameObject::GameObject() {
@@ -42,7 +44,6 @@ void GameObject::render() {
 		for (GeometryLineSegment each_line : lines) {
 			drawLine(pointToVec(each_line.start), pointToVec(each_line.end), 2, { 0.0, 1.0, 0.0, 1.0 });
 		}
-
 
 		GeometryShape* shp = collider->getShape();
 		if (shp != nullptr) {
@@ -97,3 +98,59 @@ void GameObject::trigger_onReleasedL() { }
 void GameObject::trigger_onReleasedR() { }
 void GameObject::trigger_onReleasedStart() { }
 void GameObject::trigger_onReleasedBack() { }
+
+void GameObject::moveX(float amount) {
+	GeometryShape* projShape = nullptr;
+	float move = 0.0f;
+	int sign = (amount > 0) ? 1 : -1;
+
+	while (abs(move + sign) <= abs(amount)) {
+		projShape = collider->getShape()->clone();
+		projShape->translate(move + sign, 0);
+		bool projRes = getLoadedScene()->projectShapeFree(projShape);
+		if (!projRes) {
+			delete projShape;
+			x += move;
+			return;
+		}
+		move += sign;
+		delete projShape;
+	}
+
+	// Final check for the exact amount
+	projShape = collider->getShape()->clone();
+	projShape->translate(amount, 0);
+	bool projRes = getLoadedScene()->projectShapeFree(projShape);
+	delete projShape;
+	if (projRes) { x += amount; }
+	else { x += move; }
+}
+
+
+
+void GameObject::moveY(float amount) {
+	GeometryShape* projShape = nullptr;
+	float move = 0.0f;
+	int sign = (amount > 0) ? 1 : -1;
+
+	while (abs(move + sign) <= abs(amount)) {
+		projShape = collider->getShape()->clone();
+		projShape->translate(0, move + sign);
+		bool projRes = getLoadedScene()->projectShapeFree(projShape);
+		if (!projRes) {
+			delete projShape;
+			y += move;
+			return;
+		}
+		move += sign;
+		delete projShape;
+	}
+
+	// Final check for the exact amount
+	projShape = collider->getShape()->clone();
+	projShape->translate(0, amount);
+	bool projRes = getLoadedScene()->projectShapeFree(projShape);
+	delete projShape;
+	if (projRes) { y += amount; }
+	else { y += move; }
+}

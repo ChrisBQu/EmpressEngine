@@ -75,9 +75,6 @@
     <ClInclude Include="src\Geometry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameObject.h">
-      <Filter>Header Files\Game Object System</Filter>
-    </ClInclude>
     <ClInclude Include="src\SpriteAnimation.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
@@ -125,6 +122,12 @@
     </ClInclude>
     <ClInclude Include="src\SceneBuilder.h">
       <Filter>Header Files\Game Object System</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SolidObject.h">
+      <Filter>Header Files\Game Object System</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameObject.h">
+      <Filter>Header Files\Game Object System\Game Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

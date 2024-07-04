@@ -48,70 +48,93 @@ void ColliderComponent::setShape(GeometryShape &s) {
     orig_shape = s.clone();
 }
 
-// Call once per frame to adjust the collider's shape to match the parent's scale and position
 void ColliderComponent::calibrate() {
     float sx = parent->transform->scale[0];
     float sy = parent->transform->scale[1];
-    float posX = parent->x - parent->sprite->getWidth()/2.0f * sx;
-    float posY = parent->y - parent->sprite->getHeight()/2.0 * sy;
-    float width = orig_aabb.size.x * sx;
-    float height = orig_aabb.size.y * sy;
+    float halfWidth = parent->sprite->getWidth() / 2.0f;
+    float halfHeight = parent->sprite->getHeight() / 2.0f;
 
-    aabb.pos = { posX, posY };
+    float posX = parent->x;
+    float posY = parent->y;
+
+    float width = orig_aabb.size.x * abs(sx);
+    float height = orig_aabb.size.y * abs(sy);
+
+    aabb.pos = { posX - halfWidth * sx, posY - halfHeight * sy };
     aabb.size = { width, height };
 
     if (shape != nullptr) {
         if (shape->getType() == GeometryType::CIRCLE) {
             GeometryCircle* ptr = (GeometryCircle*)shape;
             GeometryCircle* orig = (GeometryCircle*)orig_shape;
-            ptr->pos.x = posX + orig->pos.x * sx;
-            ptr->pos.y = posY + orig->pos.y * sy;
+            ptr->pos.x = posX + (orig->pos.x - halfWidth) * sx;
+            ptr->pos.y = posY + (orig->pos.y - halfHeight) * sy;
             ptr->radius = abs(orig->radius * sx);
         }
-        
+
         else if (shape->getType() == GeometryType::TRIANGLE) {
             GeometryTriangle* ptr = (GeometryTriangle*)shape;
             GeometryTriangle* orig = (GeometryTriangle*)orig_shape;
-            ptr->a.x = posX + orig->a.x * sx;
-            ptr->a.y = posY + orig->a.y * sy;
-            ptr->b.x = posX + orig->b.x * sx;
-            ptr->b.y = posY + orig->b.y * sy;
-            ptr->c.x = posX + orig->c.x * sx;
-            ptr->c.y = posY + orig->c.y * sy;
+            ptr->a.x = posX + (orig->a.x - halfWidth) * sx;
+            ptr->a.y = posY + (orig->a.y - halfHeight) * sy;
+            ptr->b.x = posX + (orig->b.x - halfWidth) * sx;
+            ptr->b.y = posY + (orig->b.y - halfHeight) * sy;
+            ptr->c.x = posX + (orig->c.x - halfWidth) * sx;
+            ptr->c.y = posY + (orig->c.y - halfHeight) * sy;
+
+            // Ensure vertices are correctly oriented when scale is negative
+            if (sx < 0) {
+                std::swap(ptr->a.x, ptr->b.x);
+                std::swap(ptr->a.y, ptr->b.y);
+            }
+            if (sy < 0) {
+                std::swap(ptr->a.x, ptr->c.x);
+                std::swap(ptr->a.y, ptr->c.y);
+            }
         }
 
         else if (shape->getType() == GeometryType::RECTANGLE) {
+            float posX = parent->x - (halfWidth * (sx > 0 ? 1 : -1) * sx);
+            float posY = parent->y - (halfHeight * (sy > 0 ? 1 : -1) * sy);
+            float width = orig_aabb.size.x * abs(sx);
+            float height = orig_aabb.size.y * abs(sy);
+            aabb.pos = { posX, posY };
+            aabb.size = { width, height };
             GeometryRectangle* ptr = (GeometryRectangle*)shape;
             GeometryRectangle* orig = (GeometryRectangle*)orig_shape;
             ptr->pos.x = posX + orig->pos.x * sx;
             ptr->pos.y = posY + orig->pos.y * sy;
-            ptr->size.x = orig->size.x * sx;
-            ptr->size.y = orig->size.y * sy;
+            ptr->size.x = orig->size.x * abs(sx);
+            ptr->size.y = orig->size.y * abs(sy);
         }
+
 
         else if (shape->getType() == GeometryType::POINT) {
             GeometryPoint* ptr = (GeometryPoint*)shape;
             GeometryPoint* orig = (GeometryPoint*)orig_shape;
-            ptr->x = posX + orig->x * sy;
-            ptr->y = posY + orig->y * sy;
+            ptr->x = posX + (orig->x - halfWidth) * sx;
+            ptr->y = posY + (orig->y - halfHeight) * sy;
         }
 
         else if (shape->getType() == GeometryType::LINE_SEGMENT) {
             GeometryLineSegment* ptr = (GeometryLineSegment*)shape;
             GeometryLineSegment* orig = (GeometryLineSegment*)orig_shape;
-            ptr->start.x = posX + orig->start.x * sy;
-            ptr->start.y = posY + orig->start.y * sy;
-            ptr->end.x = posX + orig->end.x * sy;
-            ptr->end.y = posY + orig->end.y * sy;
+            ptr->start.x = posX + (orig->start.x - halfWidth) * sx;
+            ptr->start.y = posY + (orig->start.y - halfHeight) * sy;
+            ptr->end.x = posX + (orig->end.x - halfWidth) * sx;
+            ptr->end.y = posY + (orig->end.y - halfHeight) * sy;
+
+            // Ensure line segments are correctly oriented when scale is negative
+            if (sx < 0) {
+                std::swap(ptr->start.x, ptr->end.x);
+                std::swap(ptr->start.y, ptr->end.y);
+            }
+            if (sy < 0) {
+                std::swap(ptr->start.x, ptr->end.x);
+                std::swap(ptr->start.y, ptr->end.y);
+            }
         }
 
         aabb = getBoundingRectangle(shape);
-
     }
-
 }
-
-
-
-
-

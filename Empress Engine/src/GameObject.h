@@ -59,6 +59,10 @@ public:
 	virtual void trigger_onReleasedStart();
 	virtual void trigger_onReleasedBack();
 
+
+	void moveX(float amount);
+	void moveY(float amount);
+
 	// Variables
 	uint32_t id;
 	GameObjectType type; 

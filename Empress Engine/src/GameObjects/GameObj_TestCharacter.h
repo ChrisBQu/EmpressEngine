@@ -15,6 +15,8 @@ public:
 	void trigger_onPressedRight();
 	void trigger_onHeldRight();
 	void trigger_onHeldLeft();
+	void trigger_onHeldUp();
+	void trigger_onHeldDown();
 	void trigger_onReleasedLeft();
 	void trigger_onReleasedRight();
 

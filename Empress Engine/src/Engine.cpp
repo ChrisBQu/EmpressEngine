@@ -39,7 +39,6 @@ unsigned int tilesPerRow;
 glm::vec2 pos;
 std::vector<unsigned int> tileData;
 TilesetData tilesetData;
-Scene myScene;
 
 Engine::Engine() {
     frameCount = 0;
@@ -115,25 +114,8 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
 
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
 
-    GameObject_Character* myObj = new GameObject_Character();
-    GameObject_HUD* myHUD = new GameObject_HUD();
-    GameObject_Wall* myWall = new GameObject_Wall();
+    Scene* newscene = buildSceneFromJSON("assets/scenes/scene0.json");
 
-    myWall->y = -40;
-
-    myScene.addObject(myObj);
-    myScene.addStaticObject(myWall);
-    //myScene.addObject(myHUD);
-
-
-    for (int i = 0; i < 50; i++) {
-        int xx = i * 16 - 256;
-        int yy = 0;
-        GameObject_Wall* newchar = new GameObject_Wall();
-        newchar->x = xx;
-        newchar->y = yy;
-        myScene.addStaticObject(newchar);
-    }
 
 
     TilesetLayerData tld = { 100, 100, {0, 0}, someTiles };
@@ -141,16 +123,11 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     TileLayer TL(tsd, tld);
 
 
+    /*
     myScene.setTileLayer(0, TL);
     myScene.toggleTileLayer(0, true);
-    myScene.setCamera({ 0,0 }, { 320, 180 });
-
-    GeometryRectangle* r = new GeometryRectangle({{ 0,0 }, { 300, 100 } });
-    myScene.addSolid(r);
-    
-    loadScene(&myScene);
-
-   // buildSceneFromJSON("assets/scenes/scene0.json");
+    */
+    loadScene(newscene);
 
     return EngineErrorCode::SUCCESS;
 }
@@ -179,7 +156,7 @@ void Engine::handleInput() {
         }
     }
 
-    myScene.handleInput(myController);
+    getLoadedScene()->handleInput(myController);
 
     if (myController.getPressed(SDL_CONTROLLER_BUTTON_A)) {
         sm.pauseMusic();

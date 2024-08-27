@@ -111,9 +111,6 @@
     <ClInclude Include="src\GameObjects\GameObj_TestWall.h">
       <Filter>Header Files\Game Object System\Game Objects</Filter>
     </ClInclude>
-    <ClInclude Include="src\QuadTree.h">
-      <Filter>Header Files\Game Object System</Filter>
-    </ClInclude>
     <ClInclude Include="src\Controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -121,9 +118,6 @@
       <Filter>Header Files\Game Object System</Filter>
     </ClInclude>
     <ClInclude Include="src\SceneBuilder.h">
-      <Filter>Header Files\Game Object System</Filter>
-    </ClInclude>
-    <ClInclude Include="src\SolidObject.h">
       <Filter>Header Files\Game Object System</Filter>
     </ClInclude>
     <ClInclude Include="src\GameObject.h">
@@ -199,9 +193,6 @@
     </ClCompile>
     <ClCompile Include="src\GameObjects\GameObj_Wall.cpp">
       <Filter>Source Files\Game Object System\Game Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\QuadTree.cpp">
-      <Filter>Source Files\Game Object System</Filter>
     </ClCompile>
     <ClCompile Include="src\GameObjectTypes.cpp">
       <Filter>Source Files\Game Object System</Filter>

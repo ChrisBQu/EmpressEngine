@@ -326,7 +326,7 @@ std::vector<GeometryPoint> intersectsLineRectangle(GeometryLineSegment line, Geo
 }
 
 // Helper intersection function: Line - Circle
-std::vector<GeometryPoint> intersectsLineCircle(GeometryLineSegment line, GeometryCircle circle) {
+std::vector<GeometryPoint> intersectsLineCircle(const GeometryLineSegment& line, const GeometryCircle& circle) {
     std::vector<GeometryPoint> intersections;
 
     float x1 = line.start.x - circle.pos.x;
@@ -353,16 +353,29 @@ std::vector<GeometryPoint> intersectsLineCircle(GeometryLineSegment line, Geomet
     intersection2.x = (D * dy - signDy * dx * sqrtDiscriminant) / (dr * dr) + circle.pos.x;
     intersection2.y = (-D * dx - std::abs(dy) * sqrtDiscriminant) / (dr * dr) + circle.pos.y;
 
+    // Ensure that the intersection points lie on the segment
+    auto pointOnSegment = [&](const GeometryPoint& p) {
+        return std::min(line.start.x, line.end.x) <= p.x && p.x <= std::max(line.start.x, line.end.x) &&
+            std::min(line.start.y, line.end.y) <= p.y && p.y <= std::max(line.start.y, line.end.y);
+        };
+
     if (almostEqual(discriminant, 0.0f)) {
-        intersections.push_back(intersection1);
+        if (pointOnSegment(intersection1)) {
+            intersections.push_back(intersection1);
+        }
     }
     else {
-        intersections.push_back(intersection1);
-        intersections.push_back(intersection2);
+        if (pointOnSegment(intersection1)) {
+            intersections.push_back(intersection1);
+        }
+        if (pointOnSegment(intersection2)) {
+            intersections.push_back(intersection2);
+        }
     }
 
     return intersections;
 }
+
 
 // Helper intersection function: Circle - Rectangle
 std::vector<GeometryPoint> intersectsCircleRectangle(GeometryCircle circle, GeometryRectangle rect) {
@@ -495,15 +508,39 @@ std::vector<GeometryPoint> intersectsTriangleLine(GeometryTriangle tri, Geometry
 }
 
 // Helper intersection function: Triangle - Circle
-std::vector<GeometryPoint> intersectsTriangleCircle(GeometryTriangle tri, GeometryCircle circle) {
+std::vector<GeometryPoint> intersectsTriangleCircle(const GeometryTriangle& tri, const GeometryCircle& circle) {
     std::vector<GeometryPoint> intersections;
+
+    // Check if the circle center is inside the triangle
+    if (triangleContainsPoint(tri, circle.pos)) {
+        intersections.push_back(circle.pos);
+        return intersections; // Early return, as we already have a clear intersection
+    }
+
+    // Check for intersections between the circle and the triangle's edges
     GeometryLineSegment edges[] = { {tri.a, tri.b}, {tri.b, tri.c}, {tri.c, tri.a} };
-    for (auto& edge : edges) {
+    for (const auto& edge : edges) {
         auto points = intersectsLineCircle(edge, circle);
         intersections.insert(intersections.end(), points.begin(), points.end());
     }
+
+    // Check if any of the triangle's vertices are inside the circle
+    auto pointInsideCircle = [](const GeometryPoint& p, const GeometryCircle& c) {
+        float dx = p.x - c.pos.x;
+        float dy = p.y - c.pos.y;
+        return (dx * dx + dy * dy) <= (c.radius * c.radius);
+        };
+
+    if (intersections.empty()) {
+        if (pointInsideCircle(tri.a, circle)) intersections.push_back(tri.a);
+        if (pointInsideCircle(tri.b, circle)) intersections.push_back(tri.b);
+        if (pointInsideCircle(tri.c, circle)) intersections.push_back(tri.c);
+    }
+
     return intersections;
 }
+
+
 
 // Helper intersection function: Triangle - Rectangle
 std::vector<GeometryPoint> intersectsTriangleRectangle(GeometryTriangle tri, GeometryRectangle rect) {

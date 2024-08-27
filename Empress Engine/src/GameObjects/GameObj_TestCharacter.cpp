@@ -14,17 +14,14 @@ GameObject_Character::GameObject_Character() {
 	transform->rotation = 0;
 	sprite->setAnimation("PINK_BLOB_WALK");
 
-	//GeometryCircle circ = { {32, 16}, 16 };
+	//GeometryCircle circ = { {16, 16}, 16 };
 	//collider->setShape(circ);
 
-	GeometryTriangle tri = { {0,0}, {32, 32}, {0, 32} };
-	collider->setShape(tri);
+	//GeometryTriangle tri = { {0,0}, {32, 32}, {0, 32} };
+	//collider->setShape(tri);
 
-	//GeometryRectangle rect = { {0,0}, {32, 32} };
-	//collider->setShape(rect);
-
-	//GeometryLineSegment line = { {0, 0}, {32, 32} };
-	//collider->setShape(line);
+	GeometryRectangle rect = { {0,0}, {32, 32} };
+	collider->setShape(rect);
 
 	transform->scale = { 0.5, 0.5 };
 

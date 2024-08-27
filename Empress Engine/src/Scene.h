@@ -5,7 +5,6 @@
 #include "Controller.h"
 #include "Engine.h"
 #include "OrthographicCamera.h"
-#include "QuadTree.h"
 #include "Tileset.h"
 
 #include <vector>

@@ -35,12 +35,10 @@
     <ClInclude Include="src\Logger.h" />
     <ClInclude Include="src\GL_Renderer.h" />
     <ClInclude Include="src\OrthographicCamera.h" />
-    <ClInclude Include="src\QuadTree.h" />
     <ClInclude Include="src\RenderInterface.h" />
     <ClInclude Include="src\Scene.h" />
     <ClInclude Include="src\SceneBuilder.h" />
     <ClInclude Include="src\ShaderManager.h" />
-    <ClInclude Include="src\SolidObject.h" />
     <ClInclude Include="src\Sound.h" />
     <ClInclude Include="src\SpriteComponent.h" />
     <ClInclude Include="src\SpriteAnimation.h" />
@@ -63,7 +61,6 @@
     <ClCompile Include="src\Geometry.cpp" />
     <ClCompile Include="src\Logger.cpp" />
     <ClCompile Include="src\GL_Renderer.cpp" />
-    <ClCompile Include="src\QuadTree.cpp" />
     <ClCompile Include="src\RenderInterface.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\SceneBuilder.cpp" />

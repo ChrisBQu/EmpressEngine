@@ -46,7 +46,7 @@ void Scene::setTileLayer(int layer, TileLayer tl) {
 }
 
 void Scene::toggleTileLayer(int layer, bool toggle) {
-	tileLayers[layer].active = toggle;
+	layers_active[layer] = toggle;
 }
 
 glm::vec2 Scene::getTileLayerPosition(int layer) {
@@ -115,11 +115,11 @@ void Scene::update() {
 }
 
 void Scene::render() {
-	for (TileLayer &each_layer : tileLayers) {
-		if (each_layer.active) {
-			each_layer.render(frameCount);
-		}
-	}
+
+	if (layers_active[0]) { tileLayers[0].render(frameCount); }
+	if (layers_active[0]) { tileLayers[1].render(frameCount); }
+	if (layers_active[0]) { tileLayers[2].render(frameCount); }
+	if (layers_active[0]) { tileLayers[3].render(frameCount); }
 
 	for (GameObject* each_object : myStaticObjects) {
 		each_object->render();

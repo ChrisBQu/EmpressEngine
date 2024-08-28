@@ -6,7 +6,7 @@
 #include "RenderInterface.h"
 #include "Scene.h"
 #include "SpriteAnimation.h"
-
+#include "Tileset.h"
 
 #include "GameObjects/GameObj_TestCharacter.h"
 #include "GameObjects/GameObj_TestHUD.h"
@@ -24,21 +24,10 @@ std::vector<unsigned int> someTiles;
 std::vector<unsigned int> randX;
 std::vector<unsigned int> randY;
 
-TilesetData tsd = {
-    "tex2", {16, 16}, 2,
-    {
-        {0, {0, 1}},
-        {1, {1, 1}},
-        {2, {3, 12}},
-        {3, {2, 12}}
-    },
-};
-
 int depth;
 unsigned int tilesPerRow;
 glm::vec2 pos;
 std::vector<unsigned int> tileData;
-TilesetData tilesetData;
 
 Engine::Engine() {
     frameCount = 0;
@@ -53,16 +42,6 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
         LOG_ERROR("Failed to initialize SDL: \n", SDL_GetError());
         return EngineErrorCode::SDL_UNINITIATED;
     }
-
-    // TESTING
-    for (int i = 0; i < 1000000; i++) {
-        someTiles.push_back(rand() % 4);
-    }
-    for (int i = 0; i < 1000; i++) {
-        randX.push_back(rand() % 1280);
-        randY.push_back(rand() % 720);
-    }
-    //
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
@@ -113,20 +92,10 @@ EngineErrorCode Engine::init(const char* label, unsigned int width, unsigned int
     active = true;
 
     buildSpriteAnimationList(ANIMATION_MANIFEST_FILEPATH);
+    loadTilesetManifest(TILESET_MANIFEST_FILEPATH);
 
     Scene* newscene = buildSceneFromJSON("assets/scenes/scene0.json");
 
-
-
-    TilesetLayerData tld = { 100, 100, {0, 0}, someTiles };
-
-    TileLayer TL(tsd, tld);
-
-
-    /*
-    myScene.setTileLayer(0, TL);
-    myScene.toggleTileLayer(0, true);
-    */
     loadScene(newscene);
 
     return EngineErrorCode::SUCCESS;

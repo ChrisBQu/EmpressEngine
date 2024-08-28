@@ -29,9 +29,11 @@ public:
 	TileLayer(TilesetData tsd, TilesetLayerData tld);
 	void render(int framecount);
 
-	bool active;
 	TilesetData myTSD;
 	TilesetLayerData myTLD;
 };
+
+TilesetData getTilesetData(std::string identifier);
+void loadTilesetManifest(const char* filename);
 
 #endif // TILESET_H

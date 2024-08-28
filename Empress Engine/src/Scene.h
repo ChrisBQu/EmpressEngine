@@ -46,6 +46,7 @@ private:
 	void render();
 
 	unsigned int frameCount;
+	bool layers_active[NUMBER_OF_TILE_LAYERS];
 	TileLayer tileLayers[NUMBER_OF_TILE_LAYERS];
 	std::vector<GameObject*> myDynamicObjects;
 	std::vector<GameObject*> myStaticObjects;

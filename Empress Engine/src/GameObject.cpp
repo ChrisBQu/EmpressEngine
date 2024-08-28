@@ -29,8 +29,8 @@ void GameObject::queryCollisions() {
 }
 
 void GameObject::update() {
-	onUpdate();
 	if (solid) { collider->calibrate(); }
+	onUpdate();
 }
 
 void GameObject::render() {

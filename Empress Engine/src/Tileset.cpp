@@ -1,20 +1,24 @@
 #include "Tileset.h"
 #include "RenderInterface.h"
 #include "Scene.h"
+#include "Utility.h"
 
 #include <algorithm>
+
+#include "3rdParty/json.hpp"
+
+
+std::map<std::string, TilesetData> tilesetDataMap;
 
 // Default Constructor
 TileLayer::TileLayer() {
     myTSD = { "_null_", {16, 16}, 1, {} };
     myTLD = { 0, 1, {0, 0}, { } };
-    active = false;
 }
 
 TileLayer::TileLayer(TilesetData tsd, TilesetLayerData tld) {
     myTSD = tsd;
     myTLD = tld;
-    active = false;
 }
 
 void TileLayer::render(int framecount) { 
@@ -62,3 +66,44 @@ void TileLayer::render(int framecount) {
     }
 }
 
+TilesetData getTilesetData(std::string identifier) {
+    if (tilesetDataMap.find(identifier) == tilesetDataMap.end()) {
+        LOG_ERROR("Tried to retrieve a tileset that doesn't exist: ", identifier);
+        TilesetData dummy_data = { "_dummy_", {1, 1}, 1, { } };
+        return dummy_data;
+    }
+    return tilesetDataMap[identifier];
+}
+
+void loadTilesetManifest(const char *filepath) {
+    tilesetDataMap.clear();
+    std::string s = readFileIntoString(filepath);
+    if (s.length() == 0) {
+        LOG_ERROR("Could not build tileset database because JSON file could not be read: ", filepath);
+        return;
+    }
+    if (!nlohmann::json::accept(s)) {
+        LOG_ERROR("Could not build tileset database because JSON is malformed: ", filepath);
+        return;
+    }
+    nlohmann::json jsondata = nlohmann::json::parse(s);
+    std::map<std::string, TilesetData> tmp_map;
+    try {
+        for (auto it = jsondata.begin(); it != jsondata.end(); it++) {
+            std::map<unsigned int, std::pair<unsigned int, unsigned int>> animation_map;
+            for (auto& item : it.value()["animation_map"]) {
+                unsigned int key = item[0];
+                unsigned int first = item[1];
+                unsigned int second = item[2];
+                animation_map[key] = std::make_pair(first, second);
+            }
+            TilesetData tmp_data = { it.value()["texture"], { it.value()["tile_size"][0], it.value()["tile_size"][1] }, it.value()["frames_per_row"], animation_map };
+            tmp_map[it.key()] = tmp_data;
+        }
+    }
+    catch (int e) {
+        LOG_ERROR("There was a problem parsing the tileset JSON manifest.");
+        return;
+    }
+    tilesetDataMap = tmp_map;
+}

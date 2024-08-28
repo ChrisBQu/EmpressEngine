@@ -90,6 +90,7 @@
     <None Include="assets\shaders\simple_font.frag" />
     <None Include="assets\shaders\simple_font.vert" />
     <None Include="assets\shaders\ui_quad.vert" />
+    <None Include="assets\tileset_manifest.json" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -1,0 +1,13 @@
+{
+  "tileset0": {
+    "texture": "tex2",
+    "tile_size": [ 16, 16 ],
+    "frames_per_row": 2,
+    "animation_map": [
+      [ 0, 0, 1 ],
+      [ 1, 1, 1 ],
+      [ 2, 3, 12 ],
+      [ 3, 2, 12 ]
+    ]
+  }
+}

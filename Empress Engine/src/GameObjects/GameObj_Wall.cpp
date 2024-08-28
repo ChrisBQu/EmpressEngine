@@ -16,6 +16,9 @@ GameObject_Wall::GameObject_Wall() {
 
 	sprite->setStaticSprite("tex1", { 0, 32 }, { 32, 32 });
 
+	LOG(id);
+
+
 }
 
 GameObject_Wall::~GameObject_Wall() { }

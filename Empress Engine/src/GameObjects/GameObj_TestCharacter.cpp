@@ -7,9 +7,6 @@
 GameObject_Character::GameObject_Character() {
 	visible = true;
 	solid = true;
-
-	x = -32;
-	y = 32;
 	transform->depth = 99;
 	transform->rotation = 0;
 	sprite->setAnimation("PINK_BLOB_WALK");

@@ -247,5 +247,8 @@
     <None Include="assets\scenes\scene0.json">
       <Filter>Resource Files\Scenes</Filter>
     </None>
+    <None Include="assets\tileset_manifest.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
